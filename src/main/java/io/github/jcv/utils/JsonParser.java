@@ -84,6 +84,12 @@ public class JsonParser {
             } else {
                 return JsonNumber.optional(name, DESCRIPTION).setExampleValue(element.getAsNumber());
             }
+        } else if (element.isBoolean() || element.getAsString().equals("true") || element.getAsString().equals("false")) {
+            if (name.length() == 0) {
+                return JsonBoolean.ofNullable().setExampleValue(element.getAsBoolean());
+            } else {
+                return JsonBoolean.optional(name, DESCRIPTION).setExampleValue(element.getAsBoolean());
+            }
         } else {
             if (name.length() == 0) {
                 return JsonString.ofNullable().setExampleValue(element.getAsString());

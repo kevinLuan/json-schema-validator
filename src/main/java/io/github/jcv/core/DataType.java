@@ -68,7 +68,7 @@ public enum DataType {
      * @param dataType
      */
     public static boolean isPrimitive(DataType dataType) {
-        if (dataType != null && (DataType.String == dataType || DataType.Number == dataType)) {
+        if (dataType != null && (DataType.String == dataType || DataType.Number == dataType) || DataType.Boolean == dataType) {
             return true;
         }
         return false;

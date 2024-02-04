@@ -46,6 +46,16 @@ class JavaCodeGenerator {
             }
             // 子节点
             String childrenCode = children.getDataType().generatePrimitiveCode(children.isRequired());
+            if (children.isPrimitive()) {
+                String example = children.asPrimitive().getExampleValue();
+                if (example != null) {
+                    if (children.getDataType().isNumber() || children.getDataType().isBoolean()) {
+                        childrenCode += ".setExampleValue(" + example + ")";
+                    } else {
+                        childrenCode += ".setExampleValue(\"" + example + "\")";
+                    }
+                }
+            }
             arrayNode += NEW_LINE + childrenCode + ")";
             builder.append(arrayNode);
         } else {
@@ -133,7 +143,7 @@ class JavaCodeGenerator {
 
     private static String buildExampleValue(Primitive primitive) {
         if (primitive.getExampleValue() != null) {
-            if (primitive.getDataType().isNumber()) {
+            if (primitive.getDataType().isNumber() || primitive.getDataType().isBoolean()) {
                 return ".setExampleValue(" + primitive.getExampleValue() + ")";
             } else {
                 return ".setExampleValue(\"" + primitive.getExampleValue() + "\")";

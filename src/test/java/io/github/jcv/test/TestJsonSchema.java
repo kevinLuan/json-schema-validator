@@ -99,10 +99,7 @@ public class TestJsonSchema {
         map.put("age", "160");
         map.put("sql", "CSRF漏洞");
         request.addParameter("userInfo", JsonUtils.stringify(map));
-        JsonSchema jsonSchema = JsonObject.optional("userInfo", "用户信息",
-                JsonString.required("name", "姓名").setMin(2).setMax(32),
-                JsonNumber.optional("age", null).between(18, 65)
-        );
+        JsonSchema jsonSchema = JsonObject.optional("userInfo", "用户信息", JsonString.required("name", "姓名").setMin(2).setMax(32), JsonNumber.optional("age", null).between(18, 65));
         try {
             Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
             System.out.println(extractData);
@@ -119,10 +116,7 @@ public class TestJsonSchema {
         map.put("name", "张三丰");
         map.put("sql", "CSRF漏洞");//各位传递的参数，在经过提取提取时，将会自动忽略
         request.addParameter("userInfo", JsonUtils.stringify(map));
-        JsonSchema jsonSchema = JsonObject.optional("userInfo", null,
-                JsonString.required("name", null),
-                JsonNumber.optional("age", null)
-        );
+        JsonSchema jsonSchema = JsonObject.optional("userInfo", null, JsonString.required("name", null), JsonNumber.optional("age", null));
         Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
         ObjectNode userInfo = (ObjectNode) extractData.get("userInfo");
         Assert.assertEquals(userInfo.get("name").textValue(), "张三丰");
@@ -132,10 +126,7 @@ public class TestJsonSchema {
     @Test
     public void test_filter_object_max() {
         try {
-            String a1 = DataResult
-                    .make("T",
-                            new Object[]{DataResult.success(new Object[]{DataResult.make("S", "OK").addResult("city", "北京")})})
-                    .toJSON();
+            String a1 = DataResult.make("T", new Object[]{DataResult.success(new Object[]{DataResult.make("S", "OK").addResult("city", "北京")})}).toJSON();
             String b1 = DataResult.make("B", DataResult.success(new Object[]{DataResult.success("OK")})).toJSON();
             System.out.println(a1);
             System.out.println(b1);
@@ -167,8 +158,7 @@ public class TestJsonSchema {
         }
         System.out.println("------------");
         {
-            DataResult<?> data = DataResult.make("T",
-                    new Object[]{DataResult.success(new Object[]{DataResult.make("S", "OK").addResult("city", "北京")})});
+            DataResult<?> data = DataResult.make("T", new Object[]{DataResult.success(new Object[]{DataResult.make("S", "OK").addResult("city", "北京")})});
             String a1 = data.toJSON();
             String b1 = DataResult.make("B", DataResult.success(new Object[]{DataResult.success("OK")})).toJSON();
             MockHttpServletRequest request = new MockHttpServletRequest();
@@ -245,11 +235,9 @@ public class TestJsonSchema {
             );
             Map<String, Object> map = Validator.request(A1, B1).checkRequest(request).extractRequest(request);
             System.out.println(map);
-            String string = "{'result':{'T':[{'status':{'statusCode':0},'result':[{'status':{'statusReason':''},'result':{'city':'北京'}}]}]}}"
-                    .replace("'", "\"");
+            String string = "{'result':{'T':[{'status':{'statusCode':0},'result':[{'status':{'statusReason':''},'result':{'city':'北京'}}]}]}}".replace("'", "\"");
             Assert.assertEquals(string, JsonUtils.stringify(map.get("A1")));
-            String expected = "{'status':{'statusReason':''},'result':{'B':{'status':{'statusCode':0},'result':[{'status':{'statusCode':0},'result':'OK'}]}}}"
-                    .replace("'", "\"");
+            String expected = "{'status':{'statusReason':''},'result':{'B':{'status':{'statusCode':0},'result':[{'status':{'statusCode':0},'result':'OK'}]}}}".replace("'", "\"");
             Assert.assertEquals(expected, JsonUtils.stringify(map.get("B1")));
 
             map = Validator.request(list).checkRequest(request).extractRequest(request);
@@ -625,8 +613,7 @@ public class TestJsonSchema {
                 MockHttpServletRequest request = new MockHttpServletRequest();
                 {
                     try {
-                        request.addParameter("objParam",
-                                "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[100],\"array\":[{\"test\":\"x\"}]}]}");
+                        request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[100],\"array\":[{\"test\":\"x\"}]}]}");
                         Validator.request(param).checkRequest(request);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
@@ -662,10 +649,7 @@ public class TestJsonSchema {
     @Test
     public void test_seriable() {
         try {
-            String a1 = DataResult
-                    .make("T",
-                            new Object[]{DataResult.success(new Object[]{DataResult.make("S", "OK").addResult("city", "北京")})})
-                    .toJSON();
+            String a1 = DataResult.make("T", new Object[]{DataResult.success(new Object[]{DataResult.make("S", "OK").addResult("city", "北京")})}).toJSON();
             String b1 = DataResult.make("B", DataResult.success(new Object[]{DataResult.success("OK")})).toJSON();
             System.out.println(a1);
             System.out.println(b1);
