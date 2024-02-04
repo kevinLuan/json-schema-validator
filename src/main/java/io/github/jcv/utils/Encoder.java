@@ -1,6 +1,6 @@
 package io.github.jcv.utils;
 
-import io.github.jcv.json.api.GsonSerialize;
+import io.github.jcv.codec.GsonEncoder;
 import io.github.jcv.core.JsonSchema;
 import io.github.jcv.core.JsonBase;
 
@@ -16,7 +16,7 @@ public class Encoder {
      * @return
      */
     public static String encode(JsonSchema jsonSchema) {
-        return GsonSerialize.INSTANCE.encode(jsonSchema);
+        return GsonEncoder.INSTANCE.encode(jsonSchema);
     }
 
     /**
@@ -26,6 +26,6 @@ public class Encoder {
      * @return
      */
     public static JsonSchema decode(String paramJson) {
-        return GsonSerialize.INSTANCE.decode(paramJson, JsonBase.class);
+        return GsonEncoder.INSTANCE.decode(paramJson, JsonBase.class);
     }
 }

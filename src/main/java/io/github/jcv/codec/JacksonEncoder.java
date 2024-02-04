@@ -1,4 +1,4 @@
-package io.github.jcv.json.api;
+package io.github.jcv.codec;
 
 import java.io.IOException;
 import java.util.TimeZone;
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-public class JacksonSerialize implements SerializeJsonApi {
+public class JacksonEncoder implements Encoder {
   public static final ObjectMapper mapper = new ObjectMapper();
   static {
      mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -21,7 +21,7 @@ public class JacksonSerialize implements SerializeJsonApi {
      // 解决jackson序列化时默认的时区是UTC导致Date类型慢8小时问题
      mapper.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
   }
-  public static JacksonSerialize INSTANCE = new JacksonSerialize();
+  public static JacksonEncoder INSTANCE = new JacksonEncoder();
 
   public String encode(Object obj) {
     try {
@@ -38,10 +38,5 @@ public class JacksonSerialize implements SerializeJsonApi {
     } catch (IOException e) {
       throw new RuntimeException("decode(" + json + ")error",e);
     }
-  }
-
-  @Override
-  public SerializeJsonApi getInstance() {
-    return INSTANCE;
   }
 }

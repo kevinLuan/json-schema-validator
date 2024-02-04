@@ -1,8 +1,8 @@
 package io.github.jcv.test;
 
 import io.github.jcv.core.*;
-import io.github.jcv.json.api.JsonUtils;
-import io.github.jcv.ext.ApiUnknownNodeFilter;
+import io.github.jcv.codec.JsonUtils;
+import io.github.jcv.ext.DefaultUnknownNodeFilter;
 
 import java.util.Map;
 
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author KEVIN LUAN
  */
 public class TestUnknownNodeFilter {
-    private static JsonSchema buildResult() {
+    private JsonSchema buildResult() {
         return JsonObject.optional("result", "返回数据", //
                 JsonString.required("name", "姓名").setMax(5), //
                 JsonNumber.required("age", "年龄").setMin(0).setMax(120), //
@@ -40,14 +40,14 @@ public class TestUnknownNodeFilter {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("result",
                 "{\"name\":true,\"error\":true,\"remark\":\"remark\",\"extendProps\":[\"不符合邀请类型的属性\"],\"age\":1,\"items\":[{\"id\":1,\"name\":true,\"remark\":true,\"ERROR\":true,\"extendProps\":{\"abc\":12.2423}}],\"ids\":[1]}");
-        Map<String, Object> map = Validator.request(jsonSchema).setUnknownNodeFilter(ApiUnknownNodeFilter.INSTANCE)
-                .checkRequest(request).extractRequest(request);
+        Map<String, Object> map = Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).setUnknownNodeFilter(DefaultUnknownNodeFilter.INSTANCE)
+                .validate(request::getParameter).extract(request::getParameter);
         System.out.println(map);
         String expected = "{result={\"name\":true,\"remark\":\"remark\",\"age\":1,\"items\":[{\"id\":1,\"name\":true,\"extendProps\":{\"abc\":12.2423}}],\"ids\":[1]}}";
         Assert.assertEquals(expected, map.toString());
         JsonNode jsonNode = JsonUtils.parser(request.getParameter("result"));
-        map = Validator.response(jsonSchema).setUnknownNodeFilter(ApiUnknownNodeFilter.INSTANCE).checkResponse(jsonNode)
-                .extractResponse(jsonNode);
+        map = Validator.create(DataVerifyHandler.getInstance(), jsonSchema).setUnknownNodeFilter(DefaultUnknownNodeFilter.INSTANCE).validate(jsonNode)
+                .extract(jsonNode);
         System.out.println(map);
         expected = "{name=true, ids=[1], remark=\"remark\", items=[{\"id\":1,\"name\":true,\"extendProps\":{\"abc\":12.2423}}], age=1}";
         Assert.assertEquals(expected, map.toString());

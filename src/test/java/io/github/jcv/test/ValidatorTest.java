@@ -1,7 +1,7 @@
 package io.github.jcv.test;
 
 import io.github.jcv.core.*;
-import io.github.jcv.json.api.JsonUtils;
+import io.github.jcv.codec.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,14 +17,14 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class ApiHelperTest {
+public class ValidatorTest {
     private static JsonObject getResultParam() {
-        return JsonObject.required(//
-                JsonObject.required("status", "返回", //
-                        JsonNumber.required("status_code", ""), //
-                        JsonString.required("status_reasion", "")//
-                ), //
-                buildResult()//
+        return JsonObject.required(
+                JsonObject.required("status", "返回",
+                        JsonNumber.required("status_code", ""),
+                        JsonString.required("status_reasion", "")
+                ),
+                buildResult()
         );
     }
 
@@ -91,7 +91,7 @@ public class ApiHelperTest {
         String json = getResponseData();
         System.out.println(json);
         JsonNode jsonNode = JsonUtils.parser(json);
-        Map<String, Object> map = Validator.response(getResultParam()).checkResponse(jsonNode).extractResponse(jsonNode);
+        Map<String, Object> map = Validator.create(DataVerifyHandler.getInstance(), getResultParam()).validate(jsonNode).extract(jsonNode);
         System.out.println(JsonUtils.stringify(map));
         String expected = "{'result':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}";
         expected = expected.replace("'", "\"");
@@ -143,8 +143,9 @@ public class ApiHelperTest {
     }
 
     @Test
-    public void test_param() {
-        Map<String, Object> map = Validator.request(buildParam()).checkRequest(buildHttpRequest()).extractRequest(buildHttpRequest());
+    public void testRequestValidate() {
+        HttpServletRequest request = buildHttpRequest();
+        Map<String, Object> map = Validator.create(ArgumentVerifyHandler.getInstance(), buildParam()).validate(request::getParameter).extract(request::getParameter);
         System.out.println("提取数据：" + JsonUtils.stringify(map));
         String expected = "{'objParam':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'}}";
         String actual = JsonUtils.stringify(map);

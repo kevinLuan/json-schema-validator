@@ -1,10 +1,10 @@
 package io.github.jcv.test;
 
 import io.github.jcv.core.*;
-import io.github.jcv.utils.ParamExec;
-import io.github.jcv.utils.ParamHelper;
+import io.github.jcv.utils.JsonSchemaProcessor;
+import org.junit.Test;
 
-public class TestParamHelper {
+public class JsonSchemaProcessorTest {
     private static JsonSchema buildResult() {
         return JsonObject.optional("result", "返回数据", //
                 JsonString.required("name", "姓名").setMax(5), //
@@ -21,14 +21,10 @@ public class TestParamHelper {
         );
     }
 
-    public static void main(String[] args) {
-        JsonSchema jsonSchema = buildResult();
-        ParamHelper paramHelper = new ParamHelper(jsonSchema);
-        paramHelper.exec(new ParamExec() {
-            @Override
-            public void execute(JsonSchema jsonSchema) {
-                System.out.println("节点名称:" + jsonSchema.getName() + "\t是否必须:" + jsonSchema.isRequired() + "-\t路径：" + jsonSchema.getPath());
-            }
+    @Test
+    public void test() {
+        new JsonSchemaProcessor(buildResult()).run((jsonSchema) -> {
+            System.out.println("节点名称:" + jsonSchema.getName() + "\t是否必须:" + jsonSchema.isRequired() + "-\t路径：" + jsonSchema.getPath());
         });
     }
 }

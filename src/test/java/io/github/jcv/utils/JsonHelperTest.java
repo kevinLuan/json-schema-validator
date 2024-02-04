@@ -1,13 +1,13 @@
 package io.github.jcv.utils;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import io.github.jcv.json.api.JsonUtils;
+import io.github.jcv.codec.JsonUtils;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TestJsonHelper {
+public class JsonHelperTest {
 
   String json = ("{"
       + "    'id':100,"

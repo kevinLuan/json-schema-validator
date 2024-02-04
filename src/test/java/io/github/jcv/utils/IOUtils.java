@@ -1,6 +1,6 @@
 package io.github.jcv.utils;
 
-import io.github.jcv.test.TestApi;
+import io.github.jcv.test.SchemaTest;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -9,9 +9,9 @@ import java.nio.file.Paths;
  * @author SHOUSHEN.LUAN
  * @since 2023-02-26
  */
-public class TestHelper {
+public class IOUtils {
     public static String readFile(String name) throws IOException {
-        String path = TestApi.class.getResource("").getPath();
+        String path = SchemaTest.class.getResource("").getPath();
         int index = path.indexOf("/target/test-classes/");
         String baseDir = path.substring(0, index);
         File filePath = Paths.get(baseDir).resolve("src").resolve("test").resolve("resources")

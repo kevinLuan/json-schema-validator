@@ -3,8 +3,8 @@ package io.github.jcv.test;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.jcv.core.*;
 import io.github.jcv.domain.api.DataResult;
-import io.github.jcv.json.api.GsonSerialize;
-import io.github.jcv.json.api.JsonUtils;
+import io.github.jcv.codec.GsonEncoder;
+import io.github.jcv.codec.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.google.gson.Gson;
 
 public class TestJsonSchema {
+
     private JsonSchema buildParam() {
         return JsonObject.required("objParam", "对象参数", //
                 JsonString.required("name", "姓名").setMax(5), //
@@ -82,10 +83,10 @@ public class TestJsonSchema {
         String json = JsonUtils.stringify(map);
         request.addParameter("objParam", json);
         JsonSchema jsonSchema = buildParam();
-        Map<String, Object> data = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
+        Map<String, Object> data = Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(request::getParameter).extract(request::getParameter);
         String actual = JsonUtils.stringify(data);
         HttpServletRequest myRequest = buildHttpRequest();
-        data = Validator.request(jsonSchema).checkRequest(myRequest).extractRequest(myRequest);
+        data = Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(myRequest::getParameter).extract(myRequest::getParameter);
         String expected = JsonUtils.stringify(data);
         Assert.assertEquals(expected, actual);
         System.out.println(actual);
@@ -101,7 +102,7 @@ public class TestJsonSchema {
         request.addParameter("userInfo", JsonUtils.stringify(map));
         JsonSchema jsonSchema = JsonObject.optional("userInfo", "用户信息", JsonString.required("name", "姓名").setMin(2).setMax(32), JsonNumber.optional("age", null).between(18, 65));
         try {
-            Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
+            Map<String, Object> extractData = Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(request::getParameter).extract(request::getParameter);
             System.out.println(extractData);
             Assert.fail("未出现逾期结果");
         } catch (IllegalArgumentException e) {
@@ -117,7 +118,7 @@ public class TestJsonSchema {
         map.put("sql", "CSRF漏洞");//各位传递的参数，在经过提取提取时，将会自动忽略
         request.addParameter("userInfo", JsonUtils.stringify(map));
         JsonSchema jsonSchema = JsonObject.optional("userInfo", null, JsonString.required("name", null), JsonNumber.optional("age", null));
-        Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
+        Map<String, Object> extractData = Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(request::getParameter).extract(request::getParameter);
         ObjectNode userInfo = (ObjectNode) extractData.get("userInfo");
         Assert.assertEquals(userInfo.get("name").textValue(), "张三丰");
         Assert.assertFalse(userInfo.has("sql"));//字段被忽略
@@ -150,7 +151,7 @@ public class TestJsonSchema {
                     )//
             );
             JsonSchema B1 = JsonObject.required("B1", "X", JsonObject.required("result", "X"));
-            Map<String, Object> map = Validator.request(A1, B1).checkRequest(request).extractRequest(request);
+            Map<String, Object> map = Validator.create(ArgumentVerifyHandler.getInstance(), A1, B1).validate(request::getParameter).extract(request::getParameter);
             Assert.fail("没有出现预期错误");
             System.out.println(map);
         } catch (Exception e) {
@@ -233,21 +234,21 @@ public class TestJsonSchema {
                             JsonString.required("statusReason", "statusReason")//
                     )//
             );
-            Map<String, Object> map = Validator.request(A1, B1).checkRequest(request).extractRequest(request);
+            Map<String, Object> map = Validator.create(ArgumentVerifyHandler.getInstance(), A1, B1).validate(request::getParameter).extract(request::getParameter);
             System.out.println(map);
             String string = "{'result':{'T':[{'status':{'statusCode':0},'result':[{'status':{'statusReason':''},'result':{'city':'北京'}}]}]}}".replace("'", "\"");
             Assert.assertEquals(string, JsonUtils.stringify(map.get("A1")));
             String expected = "{'status':{'statusReason':''},'result':{'B':{'status':{'statusCode':0},'result':[{'status':{'statusCode':0},'result':'OK'}]}}}".replace("'", "\"");
             Assert.assertEquals(expected, JsonUtils.stringify(map.get("B1")));
 
-            map = Validator.request(list).checkRequest(request).extractRequest(request);
+            map = Validator.create(ArgumentVerifyHandler.getInstance(), list).validate(request::getParameter).extract(request::getParameter);
             ArrayNode arrayNode = (ArrayNode) map.get("list");
             Assert.assertEquals(JsonUtils.stringify(arrayNode.get(0)), JsonUtils.stringify(arrayNode.get(1)));
             Assert.assertEquals(JsonUtils.stringify(arrayNode.get(0)), string);
             System.out.println("List-->>>" + JsonUtils.stringify(map.get("list")));
             long start = System.currentTimeMillis();
             for (int i = 0; i < 50000; i++) {
-                Validator.request(A1, B1, list).checkRequest(request).extractRequest(request);
+                Validator.create(ArgumentVerifyHandler.getInstance(), A1, B1, list).validate(request::getParameter).extract(request::getParameter);
             }
             System.out.println("使用耗时:" + (System.currentTimeMillis() - start));
         }
@@ -261,7 +262,7 @@ public class TestJsonSchema {
         System.out.println(gson.toJson(jsonSchema));
         HttpServletRequest request = buildHttpRequest();
         System.out.println("objParam:" + request.getParameter("objParam"));
-        Validator.request(jsonSchema).checkRequest(request);
+        Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(request::getParameter);
     }
 
     @Test
@@ -288,7 +289,7 @@ public class TestJsonSchema {
         String json1 = JsonUtils.stringify(map);
         mock_request.addParameter("objParam", json1);
         try {
-            Validator.request(jsonSchema).checkRequest(mock_request);
+            Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(mock_request::getParameter);
         } catch (Exception e) {
             Assert.assertEquals("`objParam.ids[]`必须小于等于100", e.getMessage());
         }
@@ -300,7 +301,7 @@ public class TestJsonSchema {
         request.addParameter("password", "zhangsanfeng---------");
         Primitive param = JsonString.required("password", "密码").setMin(8).setMax(20);
         try {
-            Validator.request(param).checkRequest(request);
+            Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
             Assert.fail("没有出现预期错误");
         } catch (Exception e) {
             Assert.assertEquals(param.getTipMsg(), e.getMessage());
@@ -316,7 +317,7 @@ public class TestJsonSchema {
         {
             Primitive param = JsonNumber.required("price", "价格").setMin(8).setMax(20);
             try {
-                Validator.request(param).checkRequest(request);
+                Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                 Assert.fail("没有出现预期错误");
             } catch (Exception e) {
                 Assert.assertEquals(param.getTipMsg(), e.getMessage());
@@ -324,13 +325,13 @@ public class TestJsonSchema {
         }
         {
             Primitive param = JsonNumber.required("price_min", "价格").setMin(7.18).setMax(20);
-            Validator.request(param).checkRequest(request);
+            Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
         }
 
         {
             Primitive param = JsonNumber.required("price_max", "价格").setMin(7.18).setMax(20);
             try {
-                Validator.request(param).checkRequest(request);
+                Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                 Assert.fail("没有出现预期错误");
             } catch (Exception e) {
                 Assert.assertEquals(param.getTipMsg(), e.getMessage());
@@ -365,7 +366,7 @@ public class TestJsonSchema {
             {
                 try {
                     request.addParameter("objParam", "{\"obj1\":{}}");
-                    Validator.request(param).checkRequest(request);
+                    Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                     Assert.fail("没有出现预期错误");
                 } catch (Exception e) {
                     Assert.assertEquals("`objParam.obj1.name`参数缺失", e.getMessage());
@@ -402,7 +403,7 @@ public class TestJsonSchema {
             {
                 try {
                     request.addParameter("objParam", "{\"obj1\":{\"name\":\"张三\"}}");
-                    Validator.request(param).checkRequest(request);
+                    Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                     Assert.fail("没有出现预期错误");
                 } catch (Exception e) {
                     Assert.assertEquals("`objParam.items`参数缺失", e.getMessage());
@@ -427,7 +428,7 @@ public class TestJsonSchema {
                 {
                     try {
                         request.addParameter("objParam", "{\"items\":{\"name\":\"张三\"}}");
-                        Validator.request(param).checkRequest(request);
+                        Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
                         Assert.assertEquals("`objParam.items`参数错误", e.getMessage());
@@ -453,7 +454,7 @@ public class TestJsonSchema {
                 {
                     try {
                         request.addParameter("objParam", "{\"items\":[{\"name\":\"张三\"}]}");
-                        Validator.request(param).checkRequest(request);
+                        Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
                         Assert.assertEquals("`objParam.items.id`参数缺失", e.getMessage());
@@ -463,105 +464,93 @@ public class TestJsonSchema {
         }
 
         {
+            JsonObject param = JsonObject.required("objParam", "对象参数", //
+                    JsonArray.required("items", "商品列表", //
+                            JsonObject.required(//
+                                    JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                                    JsonString.required("name", "商品名称").setMax(50), //
+                                    JsonArray.required("ids", "id列表", //
+                                            JsonNumber.make().setMax(100) //
+                                    )//
+                            )//
+                    ) //
+            );
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            try {
+                request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":null}]}");
+                Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
+                Assert.fail("没有出现预期错误");
+            } catch (Exception e) {
+                Assert.assertEquals("`objParam.items.ids`参数缺失", e.getMessage());
+            }
+        }
+        {
+            JsonObject param = JsonObject.required("objParam", "对象参数", //
+                    JsonArray.required("items", "商品列表", //
+                            JsonObject.required(//
+                                    JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                                    JsonString.required("name", "商品名称").setMax(50), //
+                                    JsonArray.required("ids", "id列表", //
+                                            JsonNumber.make().setMax(100) //
+                                    )//
+                            )//
+                    ) //
+            );
+            MockHttpServletRequest request = new MockHttpServletRequest();
             {
-                JsonObject param = JsonObject.required("objParam", "对象参数", //
-                        JsonArray.required("items", "商品列表", //
-                                JsonObject.required(//
-                                        JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
-                                        JsonString.required("name", "商品名称").setMax(50), //
-                                        JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMax(100) //
-                                        )//
-                                )//
-                        ) //
-                );
-                MockHttpServletRequest request = new MockHttpServletRequest();
-                {
-                    try {
-                        request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":null}]}");
-                        Validator.request(param).checkRequest(request);
-                        Assert.fail("没有出现预期错误");
-                    } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items.ids`参数缺失", e.getMessage());
-                    }
+                try {
+                    request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[]}]}");
+                    Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
+                    Assert.fail("没有出现预期错误");
+                } catch (Exception e) {
+                    Assert.assertEquals("objParam.items.ids[]不能为空", e.getMessage());
                 }
             }
         }
 
         {
-            {
-                JsonObject param = JsonObject.required("objParam", "对象参数", //
-                        JsonArray.required("items", "商品列表", //
-                                JsonObject.required(//
-                                        JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
-                                        JsonString.required("name", "商品名称").setMax(50), //
-                                        JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMax(100) //
-                                        )//
-                                )//
-                        ) //
-                );
-                MockHttpServletRequest request = new MockHttpServletRequest();
-                {
-                    try {
-                        request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[]}]}");
-                        Validator.request(param).checkRequest(request);
-                        Assert.fail("没有出现预期错误");
-                    } catch (Exception e) {
-                        Assert.assertEquals("objParam.items.ids[]不能为空", e.getMessage());
-                    }
-                }
+            JsonObject param = JsonObject.required("objParam", "对象参数", //
+                    JsonArray.required("items", "商品列表", //
+                            JsonObject.required(//
+                                    JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                                    JsonString.required("name", "商品名称").setMax(50), //
+                                    JsonArray.required("ids", "id列表", //
+                                            JsonNumber.make().setMin(10).setMax(100) //
+                                    )//
+                            )//
+                    ) //
+            );
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            try {
+
+                request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[10000]}]}");
+                Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
+                Assert.fail("没有出现预期错误");
+            } catch (Exception e) {
+                Assert.assertEquals("`objParam.items.ids`限制范围10~100", e.getMessage());
             }
         }
 
         {
+            JsonObject param = JsonObject.required("objParam", "对象参数", //
+                    JsonArray.required("items", "商品列表", //
+                            JsonObject.required(//
+                                    JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                                    JsonString.required("name", "商品名称").setMax(50), //
+                                    JsonArray.required("ids", "id列表", //
+                                            JsonNumber.make().setMin(10).setMax(100) //
+                                    )//
+                            )//
+                    ) //
+            );
+            MockHttpServletRequest request = new MockHttpServletRequest();
             {
-                JsonObject param = JsonObject.required("objParam", "对象参数", //
-                        JsonArray.required("items", "商品列表", //
-                                JsonObject.required(//
-                                        JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
-                                        JsonString.required("name", "商品名称").setMax(50), //
-                                        JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMin(10).setMax(100) //
-                                        )//
-                                )//
-                        ) //
-                );
-                MockHttpServletRequest request = new MockHttpServletRequest();
-                {
-                    try {
-                        request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[10000]}]}");
-                        Validator.request(param).checkRequest(request);
-                        Assert.fail("没有出现预期错误");
-                    } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items.ids`限制范围10~100", e.getMessage());
-                    }
-                }
-            }
-        }
-
-        {
-            {
-                JsonObject param = JsonObject.required("objParam", "对象参数", //
-                        JsonArray.required("items", "商品列表", //
-                                JsonObject.required(//
-                                        JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
-                                        JsonString.required("name", "商品名称").setMax(50), //
-                                        JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMin(10).setMax(100) //
-                                        )//
-                                )//
-                        ) //
-                );
-                MockHttpServletRequest request = new MockHttpServletRequest();
-                {
-                    try {
-                        request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[true,false]}]}");
-                        Validator.request(param).checkRequest(request);
-                        Assert.fail("没有出现预期错误");
-                    } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items.ids[]`限制范围10~100", e.getMessage());
-                    }
+                try {
+                    request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[true,false]}]}");
+                    Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
+                    Assert.fail("没有出现预期错误");
+                } catch (Exception e) {
+                    Assert.assertEquals("`objParam.items.ids[]`限制范围10~100", e.getMessage());
                 }
             }
         }
@@ -583,7 +572,7 @@ public class TestJsonSchema {
                 {
                     try {
                         request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[{}]}]}");
-                        Validator.request(param).checkRequest(request);
+                        Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
                         Assert.assertEquals("`objParam.items.ids`参数错误", e.getMessage());
@@ -614,7 +603,7 @@ public class TestJsonSchema {
                 {
                     try {
                         request.addParameter("objParam", "{\"items\":[{\"id\":1,\"name\":\"张三\",\"ids\":[100],\"array\":[{\"test\":\"x\"}]}]}");
-                        Validator.request(param).checkRequest(request);
+                        Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
                         Assert.assertEquals("`objParam.items.array.test`必须是一个数字", e.getMessage());
@@ -626,23 +615,21 @@ public class TestJsonSchema {
 
     @Test
     public void test_init_param_error() {
-        {
-            try {
-                JsonObject.required("objParam", "对象参数", //
-                        JsonArray.required("items", "商品列表", //
-                                JsonObject.required(//
-                                        JsonArray.required("array", "x", //
-                                                JsonObject.required("x", "x", //
-                                                        JsonNumber.optional("test", "")//
-                                                )//
-                                        )//
-                                )//
-                        ) //
-                );
-                Assert.fail("没有出现预期错误");
-            } catch (Exception e) {
-                Assert.assertEquals("ParamArray节点的子节点不应该存在节点名称", e.getMessage());
-            }
+        try {
+            JsonObject.required("objParam", "对象参数", //
+                    JsonArray.required("items", "商品列表", //
+                            JsonObject.required(//
+                                    JsonArray.required("array", "x", //
+                                            JsonObject.required("x", "x", //
+                                                    JsonNumber.optional("test", "")//
+                                            )//
+                                    )//
+                            )//
+                    ) //
+            );
+            Assert.fail("没有出现预期错误");
+        } catch (Exception e) {
+            Assert.assertEquals("ParamArray节点的子节点不应该存在节点名称", e.getMessage());
         }
     }
 
@@ -674,10 +661,10 @@ public class TestJsonSchema {
             );
             JsonSchema B1 = JsonObject.required("B1", "X", JsonObject.required("result", "X"));
             {// 经过一次序列化在反序列化处理
-                A1 = GsonSerialize.INSTANCE.decode(GsonSerialize.INSTANCE.encode(A1), JsonBase.class);
-                B1 = GsonSerialize.INSTANCE.decode(GsonSerialize.INSTANCE.encode(B1), JsonBase.class);
+                A1 = GsonEncoder.INSTANCE.decode(GsonEncoder.INSTANCE.encode(A1), JsonBase.class);
+                B1 = GsonEncoder.INSTANCE.decode(GsonEncoder.INSTANCE.encode(B1), JsonBase.class);
             }
-            Map<String, Object> map = Validator.request(A1, B1).checkRequest(request).extractRequest(request);
+            Map<String, Object> map = Validator.create(ArgumentVerifyHandler.getInstance(), A1, B1).validate(request::getParameter).extract(request::getParameter);
             Assert.fail("没有出现预期错误");
             System.out.println(map);
         } catch (Exception e) {
@@ -691,7 +678,7 @@ public class TestJsonSchema {
             MockHttpServletRequest request = new MockHttpServletRequest();
             request.addParameter("obj", "");
             JsonSchema jsonSchema = JsonObject.required("obj", "参数描述");
-            Validator.request(jsonSchema).checkRequest(request);
+            Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(request::getParameter);
             Assert.fail("没有出现预期错误");
         } catch (IllegalArgumentException e) {
             Assert.assertEquals("`obj`参数错误", e.getMessage());

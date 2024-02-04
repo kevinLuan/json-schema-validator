@@ -1,8 +1,7 @@
 package io.github.jcv.test;
 
 import io.github.jcv.core.*;
-import io.github.jcv.ext.ApiParams;
-import io.github.jcv.json.api.JsonUtils;
+import io.github.jcv.codec.JsonUtils;
 import io.github.jcv.core.JsonArray;
 
 import java.util.ArrayList;
@@ -85,27 +84,27 @@ public class TestResponse {
     public void test_ok() {
         JsonSchema jsonSchema = getResultParam();
         JsonNode dataResult = JsonUtils.parser(getResponseData());
-        Map<String, Object> response = Validator.response(jsonSchema).checkResponse(dataResult).extractResponse(dataResult);
+        Map<String, Object> response = Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
         System.out.println("提取数据：" + JsonUtils.stringify(response));
         String expected = "{'result':{'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}"
                 .replace("'", "\"");
         Assert.assertEquals(expected, JsonUtils.stringify(response));
     }
 
-    public static void main(String[] args) {
+    @Test
+    public void test() {
         {
             JsonSchema jsonSchema = getResultParam();
             JsonNode dataResult = JsonUtils.parser(getResponseData());
             System.out.println("返回原始数据：" + dataResult.toString());
-            Map<String, Object> response = Validator.response(jsonSchema).checkResponse(dataResult).extractResponse(dataResult);
+            Map<String, Object> response = Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
             System.out.println("提取需要的数据：" + JsonUtils.stringify(response));
-            ApiParams.make(jsonSchema).check(null);
         }
         long start = System.currentTimeMillis();
         for (int i = 0; i < 10000; i++) {
             JsonSchema jsonSchema = getResultParam();
             JsonNode dataResult = JsonUtils.parser(getResponseData());
-            Validator.response(jsonSchema).checkResponse(dataResult).extractResponse(dataResult);
+            Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
         }
         System.out.println("use time:" + (System.currentTimeMillis() - start));
     }

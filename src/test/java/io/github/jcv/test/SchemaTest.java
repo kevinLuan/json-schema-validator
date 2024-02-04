@@ -11,7 +11,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-public class TestApi {
+public class SchemaTest {
     private static JsonSchema product = JsonObject.required("product", "商品对象", //
             JsonString.required("name", "商品名称").setExampleValue("IPhone7"),
             JsonNumber.required("price", "商品价格").setExampleValue(99.98),
@@ -60,13 +60,11 @@ public class TestApi {
     public void serializationTest() throws IOException {
         JsonParser.DESCRIPTION = "参数描述";
         String paramDefine = CodeGenerator.serialization(product);
-        String fileData = TestHelper.readFile("product_param_define.json");
+        String fileData = IOUtils.readFile("product_param_define.json");
         Assert.assertEquals(CodeGenerator.serialization(CodeGenerator.deserialization(fileData)), paramDefine);
         JsonSchema jsonSchema = CodeGenerator.deserialization(paramDefine);
         System.out.println("生成数据示例:" + JsonSchemaCodec.toJsonDataExample(jsonSchema));
         String json = "{\"name\":\"IPhone7\",\"price\":99.98,\"skus\":[{\"id\":100,\"name\":\"移动版\",\"code\":[{\"id\":12345,\"title\":\"土黄金色\"}]}]}";
         Assert.assertEquals(json, JsonSchemaCodec.toJsonDataExample(JsonParser.parseJsonSchema(json)));
-
-
     }
 }

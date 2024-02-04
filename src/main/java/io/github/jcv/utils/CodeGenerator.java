@@ -2,7 +2,7 @@ package io.github.jcv.utils;
 
 import io.github.jcv.core.JsonBase;
 import io.github.jcv.core.JsonSchema;
-import io.github.jcv.json.api.GsonSerialize;
+import io.github.jcv.codec.GsonEncoder;
 
 /**
  * 代码自动生成
@@ -56,7 +56,7 @@ public class CodeGenerator {
      * @return
      */
     public static String serialization(JsonSchema product) {
-        return GsonSerialize.INSTANCE.encode(product);
+        return GsonEncoder.INSTANCE.encode(product);
     }
 
     /**
@@ -66,6 +66,6 @@ public class CodeGenerator {
      * @return
      */
     public static JsonSchema deserialization(String paramDefine) {
-        return GsonSerialize.INSTANCE.decode(paramDefine, JsonBase.class);
+        return GsonEncoder.INSTANCE.decode(paramDefine, JsonBase.class);
     }
 }

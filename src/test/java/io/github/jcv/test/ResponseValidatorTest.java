@@ -3,29 +3,26 @@ package io.github.jcv.test;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import io.github.jcv.core.*;
-import io.github.jcv.json.api.GsonSerialize;
-import io.github.jcv.json.api.JsonUtils;
-
-import java.io.IOException;
+import io.github.jcv.codec.GsonEncoder;
+import io.github.jcv.codec.JsonUtils;
 
 import io.github.jcv.utils.*;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 
-public class TestJsonSchemaUtils {
+public class ResponseValidatorTest {
 
     @Test
-    public void testFromJsonConvertParam_and_CheckParam() throws JsonProcessingException, IOException {
+    public void testFromJsonConvertParam_and_CheckParam() {
         String json = "{\"name\":\"张三丰\",\"ids\":[100],\"items\":[{\"name\":\"手机\",\"id\":2}],\"age\":100.11}";
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
         // 修改参数验证范围
         jsonSchema.asObject().getChildren()[0].asPrimitive().between(10, 20);
         try {
             JsonNode node = JsonUtils.parser(json);
-            Validator.response(jsonSchema).checkResponse(node);
+            Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
             Assert.assertEquals("`name`长度限制在10~20", e.getMessage());
@@ -36,7 +33,7 @@ public class TestJsonSchemaUtils {
         jsonSchema.asObject().getChildren()[1].asArray().getChildrenAsParam().asPrimitive().between(1, 50);
         try {
             JsonNode node = JsonUtils.parser(json);
-            Validator.response(jsonSchema).checkResponse(node);
+            Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
             Assert.assertEquals("`ids`限制范围1~50", e.getMessage());
@@ -60,8 +57,8 @@ public class TestJsonSchemaUtils {
                 ), //
                 JsonNumber.optional("age", desc).setExampleValue(100.11)//
         );
-        System.out.println(GsonSerialize.INSTANCE.encode(expected));
-        System.out.println(GsonSerialize.INSTANCE.encode(actual));
+        System.out.println(GsonEncoder.INSTANCE.encode(expected));
+        System.out.println(GsonEncoder.INSTANCE.encode(actual));
         Assert.assertTrue(expected.equals(actual));
     }
 
@@ -109,7 +106,7 @@ public class TestJsonSchemaUtils {
     @Test
     public void test_fromParamAsJsonData1() {
         String json = "{\"dataType\":\"Object\",\"children\":[{\"name\":\"status\",\"description\":\"状态\",\"dataType\":\"Object\",\"children\":[{\"name\":\"statusCode\",\"description\":\"状态码\",\"exampleValue\":\"1500\",\"dataType\":\"Number\"},{\"name\":\"statusReason\",\"description\":\"状态描述\",\"exampleValue\":\"参数错误\",\"dataType\":\"String\"}]},{\"name\":\"result\",\"description\":\"结果\",\"dataType\":\"Object\",\"children\":[{\"name\":\"id\",\"description\":\"ID\",\"exampleValue\":\"1234\",\"dataType\":\"String\"},{\"name\":\"name\",\"description\":\"名称\",\"exampleValue\":\"xxx\",\"dataType\":\"String\"}]}]}";
-        JsonSchema jsonSchema = GsonSerialize.INSTANCE.decode(json, JsonBase.class);
+        JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBase.class);
         String expected = "{\"status\":{\"statusCode\":1500,\"statusReason\":\"参数错误\"},\"items\":[1,2,3]}";
         System.out.println(CodeGenerator.serialization(JsonParser.parseJsonSchema(expected)));
     }
@@ -117,7 +114,7 @@ public class TestJsonSchemaUtils {
     @Test
     public void test_fromParamAsJavaCode() {
         String json = "{\"dataType\":\"Object\",\"children\":[{\"name\":\"status\",\"description\":\"状态\",\"dataType\":\"Object\",\"children\":[{\"name\":\"statusCode\",\"description\":\"状态码\",\"exampleValue\":\"1500\",\"dataType\":\"Number\"},{\"name\":\"statusReason\",\"description\":\"状态描述\",\"exampleValue\":\"参数错误\",\"dataType\":\"String\"}]},{\"name\":\"result\",\"description\":\"结果\",\"dataType\":\"Object\",\"children\":[{\"name\":\"id\",\"description\":\"ID\",\"exampleValue\":\"1234\",\"dataType\":\"String\"},{\"name\":\"name\",\"description\":\"名称\",\"exampleValue\":\"xxx\",\"dataType\":\"String\"}]}]}";
-        JsonSchema jsonSchema = GsonSerialize.INSTANCE.decode(json, JsonBase.class);
+        JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBase.class);
         String expected = "JsonObject.optional(\n" +
                 "                JsonObject.optional(\"status\", \"状态\",\n" +
                 "                        JsonNumber.optional(\"statusCode\", \"状态码\").setExampleValue(1500),\n" +

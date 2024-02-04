@@ -3,7 +3,7 @@ package io.github.jcv.core;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.jcv.utils.NodeHelper;
 import io.github.jcv.utils.ErrorUtils;
-import io.github.jcv.json.api.GsonSerialize;
+import io.github.jcv.codec.GsonEncoder;
 import org.apache.commons.lang3.StringUtils;
 
 public class JsonBase implements JsonSchema {
@@ -148,8 +148,8 @@ public class JsonBase implements JsonSchema {
 
 	@Override
 	public boolean equals(Object obj) {
-		String this_json = GsonSerialize.INSTANCE.encode(this);
-		String input_json = GsonSerialize.INSTANCE.encode(obj);
+		String this_json = GsonEncoder.INSTANCE.encode(this);
+		String input_json = GsonEncoder.INSTANCE.encode(obj);
 		return this_json.equals(input_json);
 	}
 
