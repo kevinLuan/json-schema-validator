@@ -1,6 +1,6 @@
 package io.github.jcv.utils;
 
-import io.github.jcv.codec.GsonEncoder;
+import io.github.jcv.encode.GsonEncoder;
 import io.github.jcv.core.JsonSchema;
 import io.github.jcv.core.JsonBase;
 

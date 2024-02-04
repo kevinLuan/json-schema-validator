@@ -1,7 +1,7 @@
 package io.github.jcv.test;
 
 import io.github.jcv.core.*;
-import io.github.jcv.codec.JsonUtils;
+import io.github.jcv.encode.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.Date;

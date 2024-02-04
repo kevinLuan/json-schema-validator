@@ -2,7 +2,7 @@ package io.github.jcv.utils;
 
 import io.github.jcv.core.JsonBase;
 import io.github.jcv.core.JsonSchema;
-import io.github.jcv.codec.GsonEncoder;
+import io.github.jcv.encode.GsonEncoder;
 
 /**
  * 代码自动生成

@@ -3,8 +3,8 @@ package io.github.jcv.test;
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.printer.configuration.DefaultPrinterConfiguration;
 import io.github.jcv.core.*;
-import io.github.jcv.codec.GsonEncoder;
-import io.github.jcv.codec.JsonUtils;
+import io.github.jcv.encode.GsonEncoder;
+import io.github.jcv.encode.JsonUtils;
 
 import io.github.jcv.utils.*;
 import org.junit.Assert;

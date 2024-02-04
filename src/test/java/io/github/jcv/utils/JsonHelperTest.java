@@ -1,7 +1,7 @@
 package io.github.jcv.utils;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import io.github.jcv.codec.JsonUtils;
+import io.github.jcv.encode.JsonUtils;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.Assert;

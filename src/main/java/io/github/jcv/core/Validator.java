@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import io.github.jcv.datatype.NumberParser;
-import io.github.jcv.codec.JsonUtils;
+import io.github.jcv.encode.JsonUtils;
 
 import java.util.*;
 import java.util.function.Function;

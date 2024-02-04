@@ -1,4 +1,4 @@
-package io.github.jcv.codec;
+package io.github.jcv.encode;
 
 
 public interface Encoder {

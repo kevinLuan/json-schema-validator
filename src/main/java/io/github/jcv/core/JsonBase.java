@@ -3,7 +3,7 @@ package io.github.jcv.core;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.github.jcv.utils.NodeHelper;
 import io.github.jcv.utils.ErrorUtils;
-import io.github.jcv.codec.GsonEncoder;
+import io.github.jcv.encode.GsonEncoder;
 import org.apache.commons.lang3.StringUtils;
 
 public class JsonBase implements JsonSchema {

@@ -3,8 +3,8 @@ package io.github.jcv.test;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.github.jcv.core.*;
 import io.github.jcv.domain.api.DataResult;
-import io.github.jcv.codec.GsonEncoder;
-import io.github.jcv.codec.JsonUtils;
+import io.github.jcv.encode.GsonEncoder;
+import io.github.jcv.encode.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
