@@ -106,7 +106,7 @@ public class ResponseValidatorTest {
     @Test
     public void test_fromParamAsJsonData1() {
         String json = "{\"dataType\":\"Object\",\"children\":[{\"name\":\"status\",\"description\":\"状态\",\"dataType\":\"Object\",\"children\":[{\"name\":\"statusCode\",\"description\":\"状态码\",\"exampleValue\":\"1500\",\"dataType\":\"Number\"},{\"name\":\"statusReason\",\"description\":\"状态描述\",\"exampleValue\":\"参数错误\",\"dataType\":\"String\"}]},{\"name\":\"result\",\"description\":\"结果\",\"dataType\":\"Object\",\"children\":[{\"name\":\"id\",\"description\":\"ID\",\"exampleValue\":\"1234\",\"dataType\":\"String\"},{\"name\":\"name\",\"description\":\"名称\",\"exampleValue\":\"xxx\",\"dataType\":\"String\"}]}]}";
-        JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBase.class);
+        JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBasicSchema.class);
         String expected = "{\"status\":{\"statusCode\":1500,\"statusReason\":\"参数错误\"},\"items\":[1,2,3]}";
         System.out.println(CodeGenerator.serialization(JsonParser.parseJsonSchema(expected)));
     }
@@ -114,7 +114,7 @@ public class ResponseValidatorTest {
     @Test
     public void test_fromParamAsJavaCode() {
         String json = "{\"dataType\":\"Object\",\"children\":[{\"name\":\"status\",\"description\":\"状态\",\"dataType\":\"Object\",\"children\":[{\"name\":\"statusCode\",\"description\":\"状态码\",\"exampleValue\":\"1500\",\"dataType\":\"Number\"},{\"name\":\"statusReason\",\"description\":\"状态描述\",\"exampleValue\":\"参数错误\",\"dataType\":\"String\"}]},{\"name\":\"result\",\"description\":\"结果\",\"dataType\":\"Object\",\"children\":[{\"name\":\"id\",\"description\":\"ID\",\"exampleValue\":\"1234\",\"dataType\":\"String\"},{\"name\":\"name\",\"description\":\"名称\",\"exampleValue\":\"xxx\",\"dataType\":\"String\"}]}]}";
-        JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBase.class);
+        JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBasicSchema.class);
         String expected = "JsonObject.optional(\n" +
                 "                JsonObject.optional(\"status\", \"状态\",\n" +
                 "                        JsonNumber.optional(\"statusCode\", \"状态码\").setExampleValue(1500),\n" +

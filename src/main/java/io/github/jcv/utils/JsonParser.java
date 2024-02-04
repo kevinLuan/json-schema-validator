@@ -37,7 +37,7 @@ public class JsonParser {
         return jsonSchema;
     }
 
-    private static JsonBase parserObject(String name, com.google.gson.JsonObject jsonObject) {
+    private static JsonBasicSchema parserObject(String name, com.google.gson.JsonObject jsonObject) {
         JsonSchema values[] = new JsonSchema[jsonObject.size()];
         Iterator<Map.Entry<String, JsonElement>> iterator = jsonObject.entrySet().iterator();
         int index = 0;

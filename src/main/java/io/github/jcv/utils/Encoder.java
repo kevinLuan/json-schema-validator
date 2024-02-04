@@ -2,7 +2,7 @@ package io.github.jcv.utils;
 
 import io.github.jcv.encode.GsonEncoder;
 import io.github.jcv.core.JsonSchema;
-import io.github.jcv.core.JsonBase;
+import io.github.jcv.core.JsonBasicSchema;
 
 /**
  * @author SHOUSHEN.LUAN
@@ -26,6 +26,6 @@ public class Encoder {
      * @return
      */
     public static JsonSchema decode(String paramJson) {
-        return GsonEncoder.INSTANCE.decode(paramJson, JsonBase.class);
+        return GsonEncoder.INSTANCE.decode(paramJson, JsonBasicSchema.class);
     }
 }

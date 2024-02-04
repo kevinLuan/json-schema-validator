@@ -5,7 +5,7 @@ package io.github.jcv.core;
  *
  * @author KEVIN LUAN
  */
-public class Primitive extends JsonBase {
+public class Primitive extends JsonBasicSchema {
 
     public Primitive(String name, boolean require, DataType dataType, String description, Number min, Number max) {
         super(name, require, dataType, description);

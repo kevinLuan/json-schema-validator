@@ -5,7 +5,7 @@ package io.github.jcv.core;
  * 
  * @author KEVIN LUAN
  */
-public class JsonObject extends JsonBase {
+public class JsonObject extends JsonBasicSchema {
 
 	JsonObject() {
 		super();
@@ -14,10 +14,10 @@ public class JsonObject extends JsonBase {
 	public JsonObject(String name, boolean required, String description, JsonSchema[] children) {
 		super(name, required, DataType.Object, description);
 		if (children != null) {
-			this.children = new JsonBase[children.length];
+			this.children = new JsonBasicSchema[children.length];
 			for (int i = 0; i < children.length; i++) {
 				JsonSchema jsonSchema = children[i];
-				this.children[i] = (JsonBase) jsonSchema;
+				this.children[i] = (JsonBasicSchema) jsonSchema;
 				if (jsonSchema.isObjectValue()) {
 					throw new IllegalArgumentException("ParamObject子节点Name不能为空");
 				}

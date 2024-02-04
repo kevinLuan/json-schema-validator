@@ -1,6 +1,6 @@
 package io.github.jcv.utils;
 
-import io.github.jcv.core.JsonBase;
+import io.github.jcv.core.JsonBasicSchema;
 import io.github.jcv.core.JsonSchema;
 import io.github.jcv.encode.GsonEncoder;
 
@@ -66,6 +66,6 @@ public class CodeGenerator {
      * @return
      */
     public static JsonSchema deserialization(String paramDefine) {
-        return GsonEncoder.INSTANCE.decode(paramDefine, JsonBase.class);
+        return GsonEncoder.INSTANCE.decode(paramDefine, JsonBasicSchema.class);
     }
 }

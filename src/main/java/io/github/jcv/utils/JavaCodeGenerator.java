@@ -25,7 +25,7 @@ class JavaCodeGenerator {
     private static void parserArray(JsonArray array, StringBuilder builder) {
         String name = array.getName();
         String description = array.getDescription();
-        JsonBase children = (JsonBase) array.getChildrenAsParam();
+        JsonBasicSchema children = (JsonBasicSchema) array.getChildrenAsParam();
         if (children.isObject()) {
             StringBuilder stringBuilder = new StringBuilder();
             parserObject(children.asObject(), stringBuilder);

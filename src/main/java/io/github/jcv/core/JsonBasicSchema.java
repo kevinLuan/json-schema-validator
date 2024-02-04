@@ -6,7 +6,7 @@ import io.github.jcv.utils.ErrorUtils;
 import io.github.jcv.encode.GsonEncoder;
 import org.apache.commons.lang3.StringUtils;
 
-public class JsonBase implements JsonSchema {
+public class JsonBasicSchema implements JsonSchema {
 	private String name;
 	private boolean required;
 	private DataType dataType;
@@ -15,7 +15,7 @@ public class JsonBase implements JsonSchema {
 	public transient JsonSchema parentNode;
 
 	// 子节点(ParamArray,ParamObject)
-	JsonBase[] children = new JsonBase[0];
+	JsonBasicSchema[] children = new JsonBasicSchema[0];
 	// 限制最小输入值(Primitive)
 	Number min;
 	// 限制最大输入值(Primitive)
@@ -25,17 +25,17 @@ public class JsonBase implements JsonSchema {
 	 */
 	String exampleValue;
 
-	public JsonBase() {
+	public JsonBasicSchema() {
 	}
 
-	public JsonBase(String name, boolean required, DataType dataType, String description) {
+	public JsonBasicSchema(String name, boolean required, DataType dataType, String description) {
 		this.name = name;
 		this.required = required;
 		this.dataType = dataType;
 		this.description = description;
 	}
 
-	public JsonBase(String name, boolean required, DataType dataType) {
+	public JsonBasicSchema(String name, boolean required, DataType dataType) {
 		this.name = name;
 		this.required = required;
 		this.dataType = dataType;
@@ -69,7 +69,7 @@ public class JsonBase implements JsonSchema {
 		this.dataType = dataType;
 	}
 
-	public JsonBase setDescription(String description) {
+	public JsonBasicSchema setDescription(String description) {
 		this.description = description;
 		return this;
 	}
@@ -121,7 +121,7 @@ public class JsonBase implements JsonSchema {
 	@Override
 	public JsonArray asArray() {
 		if (isArray()) {
-			JsonBase param = null;
+			JsonBasicSchema param = null;
 			if (children != null && children.length > 0) {
 				param = children[0];
 			}

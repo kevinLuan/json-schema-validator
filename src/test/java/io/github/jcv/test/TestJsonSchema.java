@@ -273,7 +273,7 @@ public class TestJsonSchema {
         String json = gson.toJson(jsonSchema);
         System.out.println(json);
         MockHttpServletRequest mock_request = new MockHttpServletRequest();
-        jsonSchema = gson.fromJson(json, JsonBase.class);
+        jsonSchema = gson.fromJson(json, JsonBasicSchema.class);
         Map<String, Object> map = new HashMap<>();
         map.put("name", "张三丰");
         map.put("age", "100.11");
@@ -661,8 +661,8 @@ public class TestJsonSchema {
             );
             JsonSchema B1 = JsonObject.required("B1", "X", JsonObject.required("result", "X"));
             {// 经过一次序列化在反序列化处理
-                A1 = GsonEncoder.INSTANCE.decode(GsonEncoder.INSTANCE.encode(A1), JsonBase.class);
-                B1 = GsonEncoder.INSTANCE.decode(GsonEncoder.INSTANCE.encode(B1), JsonBase.class);
+                A1 = GsonEncoder.INSTANCE.decode(GsonEncoder.INSTANCE.encode(A1), JsonBasicSchema.class);
+                B1 = GsonEncoder.INSTANCE.decode(GsonEncoder.INSTANCE.encode(B1), JsonBasicSchema.class);
             }
             Map<String, Object> map = Validator.create(ArgumentVerifyHandler.getInstance(), A1, B1).validate(request::getParameter).extract(request::getParameter);
             Assert.fail("没有出现预期错误");

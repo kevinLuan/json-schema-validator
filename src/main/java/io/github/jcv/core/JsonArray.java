@@ -7,16 +7,16 @@ import org.apache.commons.lang3.StringUtils;
  * 
  * @author KEVIN LUAN
  */
-public class JsonArray extends JsonBase {
+public class JsonArray extends JsonBasicSchema {
 
 	public JsonArray() {
 	}
 
-	public JsonArray(String name, boolean required, String description, JsonBase childrens) {
+	public JsonArray(String name, boolean required, String description, JsonBasicSchema childrens) {
 		super(name, required, DataType.Array, description);
 		check(childrens);
 		if (childrens != null) {
-			this.children = new JsonBase[] { childrens };
+			this.children = new JsonBasicSchema[] { childrens };
 		}
 	}
 
@@ -38,7 +38,7 @@ public class JsonArray extends JsonBase {
 	 * @param name
 	 * @return
 	 */
-	public static JsonArray required(String name, String description, JsonBase childrens) {
+	public static JsonArray required(String name, String description, JsonBasicSchema childrens) {
 		return new JsonArray(name, true, description, childrens);
 	}
 
@@ -53,7 +53,7 @@ public class JsonArray extends JsonBase {
 		return new JsonArray(name, true, description, null);
 	}
 
-	public static JsonArray optional(String name, String description, JsonBase childrens) {
+	public static JsonArray optional(String name, String description, JsonBasicSchema childrens) {
 		return new JsonArray(name, false, description, childrens);
 	}
 
