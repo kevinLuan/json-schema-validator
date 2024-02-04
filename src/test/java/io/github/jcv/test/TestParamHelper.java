@@ -1,0 +1,34 @@
+package io.github.jcv.test;
+
+import io.github.jcv.core.*;
+import io.github.jcv.utils.ParamExec;
+import io.github.jcv.utils.ParamHelper;
+
+public class TestParamHelper {
+    private static JsonSchema buildResult() {
+        return JsonObject.optional("result", "返回数据", //
+                JsonString.required("name", "姓名").setMax(5), //
+                JsonNumber.required("age", "年龄").setMin(0).setMax(120), //
+                JsonArray.required("items", "商品列表", //
+                        JsonObject.required(//
+                                JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                                JsonString.required("name", "商品名称").setMax(50)//
+                        )//
+                ), //
+                JsonArray.required("ids", "id列表", //
+                        JsonNumber.make().setMax(100) //
+                )//
+        );
+    }
+
+    public static void main(String[] args) {
+        JsonSchema jsonSchema = buildResult();
+        ParamHelper paramHelper = new ParamHelper(jsonSchema);
+        paramHelper.exec(new ParamExec() {
+            @Override
+            public void execute(JsonSchema jsonSchema) {
+                System.out.println("节点名称:" + jsonSchema.getName() + "\t是否必须:" + jsonSchema.isRequired() + "-\t路径：" + jsonSchema.getPath());
+            }
+        });
+    }
+}
