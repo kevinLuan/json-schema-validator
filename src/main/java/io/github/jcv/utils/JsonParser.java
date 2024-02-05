@@ -14,7 +14,7 @@ import io.github.jcv.core.*;
  * @author KEVIN LUAN
  */
 public class JsonParser {
-    public static String DESCRIPTION = null;
+    public static final String DESCRIPTION = null;
 
     /**
      * 根据json数据生成Param验证对象

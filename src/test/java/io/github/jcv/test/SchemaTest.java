@@ -38,16 +38,16 @@ public class SchemaTest {
         System.out.println("根据json数据生成验证参数代码:" + javaCode);
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
         JsonSchema generateJsonSchema = JsonObject.optional(//
-                JsonString.optional("name", "参数描述").setExampleValue("IPhone7"),//
-                JsonNumber.optional("price", "参数描述").setExampleValue(99.98),//
-                JsonArray.optional("skus", "参数描述",//
+                JsonString.optional("name", null).setExampleValue("IPhone7"),//
+                JsonNumber.optional("price", null).setExampleValue(99.98),//
+                JsonArray.optional("skus", null,//
                         JsonObject.optional(//
-                                JsonNumber.optional("id", "参数描述").setExampleValue(100),//
-                                JsonString.optional("name", "参数描述").setExampleValue("移动版"),//
-                                JsonArray.optional("code", "参数描述",//
+                                JsonNumber.optional("id", null).setExampleValue(100),//
+                                JsonString.optional("name", null).setExampleValue("移动版"),//
+                                JsonArray.optional("code", null,//
                                         JsonObject.optional(//
-                                                JsonNumber.optional("id", "参数描述").setExampleValue(12345),//
-                                                JsonString.optional("title", "参数描述").setExampleValue("土黄金色")//
+                                                JsonNumber.optional("id", null).setExampleValue(12345),//
+                                                JsonString.optional("title", null).setExampleValue("土黄金色")//
                                         )//
                                 )//
                         )//
@@ -58,7 +58,6 @@ public class SchemaTest {
 
     @Test
     public void serializationTest() throws IOException {
-        JsonParser.DESCRIPTION = "参数描述";
         String paramDefine = CodeGenerator.serialization(product);
         String fileData = IOUtils.readFile("product_param_define.json");
         Assert.assertEquals(CodeGenerator.serialization(CodeGenerator.deserialization(fileData)), paramDefine);

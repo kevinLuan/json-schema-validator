@@ -1,6 +1,7 @@
 package io.github.jcv.core;
 
 import io.github.jcv.exception.NotSupportedException;
+import io.github.jcv.utils.JsvUtils;
 
 public enum DataType {
     String {
@@ -129,23 +130,23 @@ public enum DataType {
         switch (this) {
             case Number:
                 if (required) {
-                    code = java.lang.String.format("JsonNumber.required('%s','%s')", name, desc);
+                    code = java.lang.String.format("JsonNumber.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                 } else {
-                    code = java.lang.String.format("JsonNumber.optional('%s','%s')", name, desc);
+                    code = java.lang.String.format("JsonNumber.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                 }
                 break;
             case String:
                 if (required) {
-                    code = java.lang.String.format("JsonString.required('%s','%s')", name, desc);
+                    code = java.lang.String.format("JsonString.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                 } else {
-                    code = java.lang.String.format("JsonString.optional('%s','%s')", name, desc);
+                    code = java.lang.String.format("JsonString.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                 }
                 break;
             case Boolean:
                 if (required) {
-                    code = java.lang.String.format("JsonBoolean.required('%s','%s')", name, desc);
+                    code = java.lang.String.format("JsonBoolean.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                 } else {
-                    code = java.lang.String.format("JsonBoolean.optional('%s','%s')", name, desc);
+                    code = java.lang.String.format("JsonBoolean.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                 }
                 break;
             default:

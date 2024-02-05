@@ -43,7 +43,7 @@ public class ResponseValidatorTest {
     @Test
     public void test_jsonToParam() {
         String json = "{\"name\":\"张三丰\",\"ids\":[100],\"items\":[{\"name\":\"手机\",\"id\":2}],\"age\":100.11}";
-        String desc = (JsonParser.DESCRIPTION = "参数描述");
+        String desc = null;//(JsonParser.DESCRIPTION = "参数描述");
         JsonSchema actual = JsonParser.parseJsonSchema(json);
         JsonSchema expected = JsonObject.optional(//
                 JsonString.optional("name", desc).setExampleValue("张三丰"), //

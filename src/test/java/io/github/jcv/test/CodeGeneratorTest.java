@@ -26,16 +26,17 @@ public class CodeGeneratorTest {
                 "}";
         String javaCode = CodeGenerator.generateCode(json);
         String expected = String.valueOf("JsonObject.optional(" +
-                "   JsonBoolean.optional('b', 'null').setExampleValue(true)," +
-                "   JsonBoolean.optional('a', 'null').setExampleValue(false)," +
+                "   JsonBoolean.optional('b', null).setExampleValue(true)," +
+                "   JsonBoolean.optional('a', null).setExampleValue(false)," +
                 "   JsonArray.optional('bools', null, JsonBoolean.make().setExampleValue(true))" +
                 ");").replace('\'', '"');
-        System.out.println(StaticJavaParser.parseStatement(javaCode));
-        Assert.assertEquals(StaticJavaParser.parseStatement(expected), StaticJavaParser.parseStatement(javaCode));
+        System.out.println("格式化代码：" + StaticJavaParser.parseStatement(javaCode));
+        System.out.println("原始代码:" + StaticJavaParser.parseStatement(expected).toString());
+        Assert.assertEquals(StaticJavaParser.parseStatement(expected).toString(), StaticJavaParser.parseStatement(javaCode).toString());
 
         JsonSchema jsonSchema = JsonObject.optional(
-                JsonBoolean.optional("b", "null").setExampleValue("true"),
-                JsonBoolean.optional("a", "null").setExampleValue("false"),
+                JsonBoolean.optional("b", null).setExampleValue("true"),
+                JsonBoolean.optional("a", null).setExampleValue("false"),
                 JsonArray.optional("bools", null, JsonBoolean.make().setExampleValue("true"))
         );
         System.out.println(CodeGenerator.generateSampleData(jsonSchema));
