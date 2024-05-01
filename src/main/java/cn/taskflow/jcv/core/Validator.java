@@ -1,8 +1,8 @@
 package cn.taskflow.jcv.core;
 
-import cn.taskflow.jcv.ext.AdjustParamInstance;
-import cn.taskflow.jcv.ext.ParentReference;
-import cn.taskflow.jcv.ext.UnknownNodeFilter;
+import cn.taskflow.jcv.extension.AdjustParamInstance;
+import cn.taskflow.jcv.extension.ParentReference;
+import cn.taskflow.jcv.extension.UnknownNodeFilter;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;

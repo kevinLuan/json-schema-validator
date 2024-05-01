@@ -1,4 +1,4 @@
-package cn.taskflow.jcv.domain.api;
+package cn.taskflow.jcv.pojo;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;

@@ -3,8 +3,8 @@ package cn.taskflow.jcv.utils;
 import cn.taskflow.jcv.core.JsonArray;
 import cn.taskflow.jcv.core.JsonObject;
 import cn.taskflow.jcv.core.JsonSchema;
-import cn.taskflow.jcv.ext.AdjustParamInstance;
-import cn.taskflow.jcv.ext.ParentReference;
+import cn.taskflow.jcv.extension.AdjustParamInstance;
+import cn.taskflow.jcv.extension.ParentReference;
 
 public class JsonSchemaProcessor {
     public JsonSchema[] jsonSchemas;

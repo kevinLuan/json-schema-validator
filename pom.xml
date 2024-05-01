@@ -107,7 +107,7 @@
             <version>1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- google json api-->
+        <!-- google json pojo-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

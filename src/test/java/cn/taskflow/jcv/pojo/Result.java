@@ -1,4 +1,4 @@
-package cn.taskflow.jcv.domain.api;
+package cn.taskflow.jcv.pojo;
 
 import java.io.Serializable;
 import com.google.gson.Gson;
