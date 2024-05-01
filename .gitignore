@@ -4,3 +4,4 @@
 .settings/
 validate.iml
 target/
+.DS_Store
