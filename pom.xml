@@ -13,7 +13,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <log4j.version>2.0.1</log4j.version>
+        <!--suppress UnresolvedMavenProperty -->
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
+        <!--suppress UnresolvedMavenProperty -->
         <gpg.keyname>${env.GPG_KEYNAME}</gpg.keyname>
         <gpg.homedir>/Users/kevin/.gnupg</gpg.homedir>
     </properties>
@@ -107,7 +109,7 @@
             <version>1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- google json api-->
+        <!-- google json pojo-->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>

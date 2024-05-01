@@ -2,6 +2,6 @@
 .idea/
 .project
 .settings/
-validate.iml
+*.iml
 target/
 .DS_Store

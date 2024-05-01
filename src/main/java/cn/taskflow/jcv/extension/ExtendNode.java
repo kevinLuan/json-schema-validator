@@ -1,4 +1,4 @@
-package cn.taskflow.jcv.ext;
+package cn.taskflow.jcv.extension;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

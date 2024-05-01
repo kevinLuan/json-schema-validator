@@ -1,7 +1,7 @@
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
-import cn.taskflow.jcv.domain.api.DataResult;
+import cn.taskflow.jcv.pojo.DataResult;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import cn.taskflow.jcv.encode.JsonUtils;
 import com.fasterxml.jackson.databind.node.ObjectNode;

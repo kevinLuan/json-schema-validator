@@ -2,7 +2,7 @@ package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.encode.JsonUtils;
-import cn.taskflow.jcv.ext.DefaultUnknownNodeFilter;
+import cn.taskflow.jcv.extension.DefaultUnknownNodeFilter;
 
 import java.util.Map;
 
