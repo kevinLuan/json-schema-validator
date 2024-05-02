@@ -1,5 +1,7 @@
 package cn.taskflow.jcv.core;
 
+import cn.taskflow.jcv.utils.JsvUtils;
+
 /**
  * 对象ObjectNode参数
  * 
@@ -19,7 +21,7 @@ public class JsonObject extends JsonBasicSchema {
 				JsonSchema jsonSchema = children[i];
 				this.children[i] = (JsonBasicSchema) jsonSchema;
 				if (jsonSchema.isObjectValue()) {
-					throw new IllegalArgumentException("ParamObject子节点Name不能为空");
+					throw JsvUtils.throwParamException(jsonSchema.getPath());
 				}
 			}
 		}

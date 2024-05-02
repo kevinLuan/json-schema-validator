@@ -50,7 +50,7 @@ public class ParentReference {
 			} else if (pm.isArray()) {
 				arrayParam(pm.asArray(), array);
 			} else {
-				LOGGER.warn("没有父级引用类型->" + pm);
+				LOGGER.warn("There is no parent reference type -> " + pm);
 			}
 		}
 	}
@@ -66,7 +66,7 @@ public class ParentReference {
 				} else if (pm.isArray()) {
 					arrayParam(pm.asArray(), object);
 				} else {
-					LOGGER.warn("没有父级引用类型->" + pm);
+					LOGGER.warn("There is no parent reference type -> " + pm);
 				}
 			}
 		}

@@ -49,7 +49,7 @@ public enum DataType {
         public void check(Primitive primitive, String value) {
             if (primitive.isRequired()) {
                 if (value == null) {
-                    throw new IllegalArgumentException(primitive.getName() + "参数不能为空");
+                    throw JsvUtils.throwMissingParamException(primitive.getName());
                 }
             } else {
                 if (value == null) {
@@ -57,7 +57,7 @@ public enum DataType {
                 }
             }
             if (!"true".equals(value) && !"false".equals(value) && !"1".equals(value) && !"0".equals(value)) {
-                throw new IllegalArgumentException(primitive.getName() + "参数只能是true或者false");
+                throw JsvUtils.throwParamException(primitive.getName());
             }
         }
     },
@@ -97,7 +97,7 @@ public enum DataType {
                 return type;
             }
         }
-        throw new IllegalArgumentException("不支持的dataType:" + dataType);
+        throw new IllegalArgumentException("Invalid type: " + dataType);
     }
 
     public String generatePrimitiveCode(boolean required) {
@@ -121,7 +121,7 @@ public enum DataType {
                     return "JsonBoolean.ofNullable()";
                 }
             default:
-                throw new NotSupportedException("不支持的类型:" + this);
+                throw new NotSupportedException("Invalid type: " + this);
         }
     }
 
@@ -150,7 +150,7 @@ public enum DataType {
                 }
                 break;
             default:
-                throw new NotSupportedException("不支持的类型:" + this);
+                throw new NotSupportedException("Invalid type: " + this);
         }
         return code.replace('\'', '"');
     }

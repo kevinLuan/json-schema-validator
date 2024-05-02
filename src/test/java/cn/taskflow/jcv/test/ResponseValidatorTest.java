@@ -26,7 +26,7 @@ public class ResponseValidatorTest {
             Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
-            Assert.assertEquals("`name`长度限制在10~20", e.getMessage());
+            Assert.assertEquals("`name` between character size [ 10~20 ]", e.getMessage());
         }
         // 重置验证逻辑
         jsonSchema.asObject().getChildren()[0].asPrimitive().between(1, 10);
@@ -37,7 +37,7 @@ public class ResponseValidatorTest {
             Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
-            Assert.assertEquals("`ids`限制范围1~50", e.getMessage());
+            Assert.assertEquals("`ids` between [1 ~ 50]", e.getMessage());
         }
     }
 

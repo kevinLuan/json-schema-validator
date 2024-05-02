@@ -27,7 +27,7 @@ public class AdjustParamInstance {
 			} else if (jsonSchema.isPrimitive()) {
 				jsonSchemaList.set(i, jsonSchema.asPrimitive());
 			} else {
-				throw new IllegalArgumentException("不支持的类型:" + jsonSchema);
+				throw new IllegalArgumentException("Unsupported type: " + jsonSchema);
 			}
 		}
 	}
@@ -43,7 +43,7 @@ public class AdjustParamInstance {
 		} else if (jsonSchema.isPrimitive()) {
 			refJsonSchema = jsonSchema.asPrimitive();
 		} else {
-			throw new IllegalArgumentException("不支持的类型:" + jsonSchema);
+			throw new IllegalArgumentException("Unsupported type: " + jsonSchema);
 		}
 		return refJsonSchema;
 	}
@@ -70,7 +70,7 @@ public class AdjustParamInstance {
 				} else if (childrens[i].isPrimitive()) {
 					childrens[i] = childrens[i].asPrimitive();
 				} else {
-					throw new IllegalArgumentException("不支持的类型:" + childrens[i]);
+					throw new IllegalArgumentException("Unsupported type: " + childrens[i]);
 				}
 			}
 		}
