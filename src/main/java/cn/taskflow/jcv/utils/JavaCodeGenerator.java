@@ -75,7 +75,7 @@ class JavaCodeGenerator {
             arrayNode += NEW_LINE + childrenCode + ")";
             builder.append(arrayNode);
         } else {
-            throw new IllegalArgumentException("不支持的类型:" + children);
+            throw new IllegalArgumentException("Unsupported type: " + children);
         }
     }
 

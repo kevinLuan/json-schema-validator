@@ -69,7 +69,7 @@ public class JsonHelperTest {
         Assert.assertEquals("😁", JsonHelper.of(arrayNode.get(2)).get("objs.name"));
         Assert.fail("没有出现预期错误");
       } catch (IllegalArgumentException ex) {
-        Assert.assertEquals("不支持的node操作:ARRAY", ex.getMessage());
+        Assert.assertEquals("Not supported operator: `objs.name` node", ex.getMessage());
       }
       JsonHelper.of(arrayNode.get(2)).cd("objs").foreach((node) -> {
         Assert.assertEquals("😁", node.get("name").textValue());

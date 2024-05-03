@@ -23,6 +23,8 @@ import java.util.Map.Entry;
 import cn.taskflow.jcv.core.*;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 将JSON协议转到到Param
@@ -30,7 +32,8 @@ import com.google.gson.JsonPrimitive;
  * @author KEVIN LUAN
  */
 public class JsonParser {
-    public static final String DESCRIPTION = null;
+    private final static Logger log         = LoggerFactory.getLogger(JsonParser.class);
+    public static final String  DESCRIPTION = null;
 
     /**
      * 根据json数据生成Param验证对象
@@ -48,7 +51,7 @@ public class JsonParser {
         } else if (element.isJsonPrimitive()) {
             jsonSchema = parserPrimitive("", element.getAsJsonPrimitive());
         } else {
-            System.out.println("不支持的类型->" + element);
+            throw new IllegalArgumentException("Not Support type:" + element);
         }
         return jsonSchema;
     }
@@ -68,7 +71,7 @@ public class JsonParser {
             } else if (val.isJsonPrimitive()) {
                 values[index] = parserPrimitive(key, val.getAsJsonPrimitive());
             } else {
-                System.out.println("不支持的类型 key:" + key + "->" + val);
+                throw new IllegalArgumentException("Not support key:`" + key + "`,value:`" + val + "`");
             }
             index++;
         }
@@ -87,7 +90,7 @@ public class JsonParser {
             } else if (element.isJsonPrimitive()) {
                 return JsonArray.optional(name, DESCRIPTION, parserPrimitive("", element.getAsJsonPrimitive()));
             } else {
-                throw new IllegalArgumentException("不支持的类型:" + element);
+                throw new IllegalArgumentException("Not support type: `" + element + "`");
             }
         }
         return JsonArray.optional(name, DESCRIPTION);

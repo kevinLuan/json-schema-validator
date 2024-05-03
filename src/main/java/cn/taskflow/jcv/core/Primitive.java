@@ -28,7 +28,7 @@ public class Primitive extends JsonBasicSchema {
     public Primitive(String name, boolean require, DataType dataType, String description, Number min, Number max) {
         super(name, require, dataType, description);
         if (!DataType.isPrimitive(dataType)) {
-            throw new IllegalArgumentException("无效的数据类型:" + dataType);
+            throw new IllegalArgumentException("Unsupported dataType: " + dataType);
         }
         this.min = min;
         this.max = max;
@@ -62,17 +62,17 @@ public class Primitive extends JsonBasicSchema {
         if (min != null && max != null) {
             if (String.valueOf(min).indexOf(".") != -1 || String.valueOf(max).indexOf(".") != -1) {
                 if (min.doubleValue() > max.doubleValue()) {
-                    throw new IllegalArgumentException("`" + max + "`必须大于`" + min + "`");
+                    throw new IllegalArgumentException("Validation parameters error. `" + max + "` must gt `" + min
+                                                       + "`");
                 }
             } else {
                 if (min.longValue() > max.longValue()) {
-                    throw new IllegalArgumentException("`" + max + "`必须大于`" + min + "`");
+                    throw new IllegalArgumentException("Validation parameters error. `" + max + "` must gt `" + min
+                                                       + "`");
                 }
             }
         }
     }
-
-    //json-schema-validator
 
     public Primitive between(Number min, Number max) {
         this.setMin(min);
