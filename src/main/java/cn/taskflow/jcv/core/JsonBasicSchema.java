@@ -1,8 +1,8 @@
 package cn.taskflow.jcv.core;
 
+import cn.taskflow.jcv.utils.JsvUtils;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import cn.taskflow.jcv.utils.NodeHelper;
-import cn.taskflow.jcv.utils.ErrorUtils;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import org.apache.commons.lang3.StringUtils;
 
@@ -127,7 +127,7 @@ public class JsonBasicSchema implements JsonSchema {
 			}
 			return new JsonArray(name, required, description, param);
 		}
-		throw ErrorUtils.newClassCastException(this.getClass(), JsonArray.class);
+		throw JsvUtils.newClassCastException(this.getClass(), JsonArray.class);
 	}
 
 	@Override
@@ -135,7 +135,7 @@ public class JsonBasicSchema implements JsonSchema {
 		if (isObject()) {
 			return new JsonObject(name, required, description, children);
 		}
-		throw ErrorUtils.newClassCastException(this.getClass(), JsonObject.class);
+		throw JsvUtils.newClassCastException(this.getClass(), JsonObject.class);
 	}
 
 	@Override
@@ -143,7 +143,7 @@ public class JsonBasicSchema implements JsonSchema {
 		if (isPrimitive()) {
 			return new Primitive(name, required, dataType, description, min, max).setExampleValue(exampleValue);
 		}
-		throw ErrorUtils.newClassCastException(this.getClass(), Primitive.class);
+		throw JsvUtils.newClassCastException(this.getClass(), Primitive.class);
 	}
 
 	@Override

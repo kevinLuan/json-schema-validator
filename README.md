@@ -37,10 +37,9 @@
 客户端请求数据示例：
 
 ```json
-  {
+{
   "name": "张三",
   "age": 30
-  //    ...
 }
 ```
 
@@ -73,8 +72,7 @@
         JsonString.required("name","姓名").setMin(2).setMax(32),
         JsonNumber.optional("age",null).between(3,18)
     );
-    Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request)
-        .extractRequest(request);
+    Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
 ```
 
 #### 代码生成
@@ -82,7 +80,7 @@
 ##### 根据任意 JSON 数据自动生成 Param 定义
 
 ```json
-  {
+{
   "name": "张三丰",
   "ids": [
     100

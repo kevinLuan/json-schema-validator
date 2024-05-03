@@ -21,7 +21,7 @@ public class JsonSchemaCodec {
         } else if (jsonSchema.isPrimitive()) {
             element = primitive(jsonSchema.asPrimitive());
         } else {
-            throw new IllegalArgumentException("不支持的类型:" + jsonSchema);
+            throw new IllegalArgumentException("Unsupported type: " + jsonSchema);
         }
         return element.toString();
     }

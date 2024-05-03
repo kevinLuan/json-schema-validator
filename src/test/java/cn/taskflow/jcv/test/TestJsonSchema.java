@@ -106,7 +106,7 @@ public class TestJsonSchema {
             System.out.println(extractData);
             Assert.fail("未出现逾期结果");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("`userInfo.age`限制范围18~65", e.getMessage());
+            Assert.assertEquals("`userInfo.age` between [18 ~ 65]", e.getMessage());
         }
     }
 
@@ -155,7 +155,7 @@ public class TestJsonSchema {
             Assert.fail("没有出现预期错误");
             System.out.println(map);
         } catch (Exception e) {
-            Assert.assertEquals("`A1.result.T.result.result`参数错误", e.getMessage());
+            Assert.assertEquals("`A1.result.T.result.result` parameter error", e.getMessage());
         }
         System.out.println("------------");
         {
@@ -291,7 +291,7 @@ public class TestJsonSchema {
         try {
             Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(mock_request::getParameter);
         } catch (Exception e) {
-            Assert.assertEquals("`objParam.ids[]`必须小于等于100", e.getMessage());
+            Assert.assertEquals("`objParam.ids[]` less than or equal to 100", e.getMessage());
         }
     }
 
@@ -353,7 +353,7 @@ public class TestJsonSchema {
             );
             Assert.fail("没有出现预期错误");
         } catch (Exception e) {
-            Assert.assertEquals("无效的数据格式(数组不应该直接嵌套数组)", e.getMessage());
+            Assert.assertEquals("illegal parameter", e.getMessage());
         }
     }
 
@@ -369,7 +369,7 @@ public class TestJsonSchema {
                     Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                     Assert.fail("没有出现预期错误");
                 } catch (Exception e) {
-                    Assert.assertEquals("`objParam.obj1.name`参数缺失", e.getMessage());
+                    Assert.assertEquals("Missing `objParam.obj1.name` parameter", e.getMessage());
                 }
             }
         }
@@ -381,7 +381,7 @@ public class TestJsonSchema {
                 );
                 Assert.fail("没有出现预期错误");
             } catch (Exception e) {
-                Assert.assertEquals("ParamArray节点的子节点不应该存在节点名称", e.getMessage());
+                Assert.assertEquals("parameter error", e.getMessage());
             }
         }
         {
@@ -406,7 +406,7 @@ public class TestJsonSchema {
                     Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                     Assert.fail("没有出现预期错误");
                 } catch (Exception e) {
-                    Assert.assertEquals("`objParam.items`参数缺失", e.getMessage());
+                    Assert.assertEquals("Missing `objParam.items` parameter", e.getMessage());
                 }
             }
         }
@@ -431,7 +431,7 @@ public class TestJsonSchema {
                         Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items`参数错误", e.getMessage());
+                        Assert.assertEquals("`objParam.items` parameter error", e.getMessage());
                     }
                 }
             }
@@ -457,7 +457,7 @@ public class TestJsonSchema {
                         Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items.id`参数缺失", e.getMessage());
+                        Assert.assertEquals("Missing `objParam.items.id` parameter", e.getMessage());
                     }
                 }
             }
@@ -481,7 +481,7 @@ public class TestJsonSchema {
                 Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                 Assert.fail("没有出现预期错误");
             } catch (Exception e) {
-                Assert.assertEquals("`objParam.items.ids`参数缺失", e.getMessage());
+                Assert.assertEquals("Missing `objParam.items.ids` parameter", e.getMessage());
             }
         }
         {
@@ -503,7 +503,7 @@ public class TestJsonSchema {
                     Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                     Assert.fail("没有出现预期错误");
                 } catch (Exception e) {
-                    Assert.assertEquals("objParam.items.ids[]不能为空", e.getMessage());
+                    Assert.assertEquals("`objParam.items.ids` parameter error", e.getMessage());
                 }
             }
         }
@@ -527,7 +527,7 @@ public class TestJsonSchema {
                 Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                 Assert.fail("没有出现预期错误");
             } catch (Exception e) {
-                Assert.assertEquals("`objParam.items.ids`限制范围10~100", e.getMessage());
+                Assert.assertEquals("`objParam.items.ids` between [10 ~ 100]", e.getMessage());
             }
         }
 
@@ -550,7 +550,7 @@ public class TestJsonSchema {
                     Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                     Assert.fail("没有出现预期错误");
                 } catch (Exception e) {
-                    Assert.assertEquals("`objParam.items.ids[]`限制范围10~100", e.getMessage());
+                    Assert.assertEquals("`objParam.items.ids[]` between [10 ~ 100]", e.getMessage());
                 }
             }
         }
@@ -575,7 +575,7 @@ public class TestJsonSchema {
                         Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items.ids`参数错误", e.getMessage());
+                        Assert.assertEquals("`objParam.items.ids` parameter error", e.getMessage());
                     }
                 }
             }
@@ -606,7 +606,7 @@ public class TestJsonSchema {
                         Validator.create(ArgumentVerifyHandler.getInstance(), param).validate(request::getParameter);
                         Assert.fail("没有出现预期错误");
                     } catch (Exception e) {
-                        Assert.assertEquals("`objParam.items.array.test`必须是一个数字", e.getMessage());
+                        Assert.assertEquals("`objParam.items.array.test` parameter error", e.getMessage());
                     }
                 }
             }
@@ -629,7 +629,7 @@ public class TestJsonSchema {
             );
             Assert.fail("没有出现预期错误");
         } catch (Exception e) {
-            Assert.assertEquals("ParamArray节点的子节点不应该存在节点名称", e.getMessage());
+            Assert.assertEquals("parameter error", e.getMessage());
         }
     }
 
@@ -668,7 +668,7 @@ public class TestJsonSchema {
             Assert.fail("没有出现预期错误");
             System.out.println(map);
         } catch (Exception e) {
-            Assert.assertEquals("`A1.result.T.result.result`参数错误", e.getMessage());
+            Assert.assertEquals("`A1.result.T.result.result` parameter error", e.getMessage());
         }
     }
 
@@ -681,7 +681,7 @@ public class TestJsonSchema {
             Validator.create(ArgumentVerifyHandler.getInstance(), jsonSchema).validate(request::getParameter);
             Assert.fail("没有出现预期错误");
         } catch (IllegalArgumentException e) {
-            Assert.assertEquals("`obj`参数错误", e.getMessage());
+            Assert.assertEquals("`obj` parameter error", e.getMessage());
         }
     }
 }

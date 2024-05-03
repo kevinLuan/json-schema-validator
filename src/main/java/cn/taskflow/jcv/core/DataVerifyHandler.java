@@ -1,5 +1,7 @@
 package cn.taskflow.jcv.core;
 
+import cn.taskflow.jcv.utils.JsvUtils;
+
 /**
  * @author SHOUSHEN.LUAN
  * @since 2024-02-04
@@ -11,11 +13,11 @@ public class DataVerifyHandler implements VerifyHandler {
 
     @Override
     public String getTipError(String path) {
-        return "下游服务返回数据错误->`" + path + "`";
+        return JsvUtils.formatParamError(path);
     }
 
     @Override
     public String getTipMissing(String path) {
-        return "下游服务返回数据缺失->`" + path + "`";
+        return JsvUtils.formatParamMissing(path);
     }
 }

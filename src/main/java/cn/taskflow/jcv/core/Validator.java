@@ -3,6 +3,7 @@ package cn.taskflow.jcv.core;
 import cn.taskflow.jcv.extension.AdjustParamInstance;
 import cn.taskflow.jcv.extension.ParentReference;
 import cn.taskflow.jcv.extension.UnknownNodeFilter;
+import cn.taskflow.jcv.utils.JsvUtils;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -112,7 +113,7 @@ public class Validator {
                     } else if (jsonSchema.isObject()) {
                         object(node, jsonSchema.asObject());
                     } else {
-                        throw new IllegalArgumentException("不支持的操作" + jsonSchema);
+                        throw new IllegalArgumentException("Unsupported operation: " + jsonSchema);
                     }
                     data.put(jsonSchema.getName(), node);
                 }
@@ -240,7 +241,7 @@ public class Validator {
             } else if (jsonSchema.isObject()) {
                 checkObject(jsonSchema, jsonNode);
             } else {
-                throw new IllegalArgumentException("不支持的类型:" + jsonSchema);
+                throw new IllegalArgumentException("Unsupported type: " + jsonSchema);
             }
         }
 
@@ -274,7 +275,7 @@ public class Validator {
                     } else if (jsonSchema.isObject()) {
                         checkObject(jsonSchema, jsonNode);
                     } else {
-                        throw new IllegalArgumentException("不支持的类型:" + jsonSchema);
+                        throw new IllegalArgumentException("Unsupported type: " + jsonSchema);
                     }
                 }
             }
@@ -289,7 +290,7 @@ public class Validator {
                 JsonSchema children = array.getChildrenAsParam();
                 if (array.isRequired()) {
                     if (value.size() == 0) {
-                        throw new IllegalArgumentException(jsonSchema.getPath() + "[]不能为空");
+                        throw JsvUtils.throwParamException(jsonSchema.getPath());
                     }
                 }
                 for (int i = 0; i < value.size(); i++) {
@@ -299,7 +300,7 @@ public class Validator {
                     } else if (children.isPrimitive()) {
                         checkSimple(children.asPrimitive(), node);
                     } else {
-                        throw new IllegalArgumentException("不支持的类型" + children);
+                        throw new IllegalArgumentException("Unsupported type: " + children);
                     }
                 }
             } else {
@@ -323,7 +324,7 @@ public class Validator {
                                     String msg = jsonSchema.asPrimitive().getTipMsg(jsonSchema.getPath() + "[]");
                                     throw new IllegalArgumentException(msg);
                                 } else {
-                                    throw new IllegalArgumentException("`" + jsonSchema.getPath() + "[]`只能包含数字");
+                                    throw JsvUtils.throwParamException(jsonSchema.getPath());
                                 }
                             }
                         }
@@ -331,14 +332,14 @@ public class Validator {
                             String msg = jsonSchema.asPrimitive().getTipMsg(jsonSchema.getPath());
                             throw new IllegalArgumentException(msg);
                         } else {
-                            throw new IllegalArgumentException("`" + jsonSchema.getPath() + "`必须是一个数字");
+                            throw JsvUtils.throwParamException(jsonSchema.getPath());
                         }
 
                     }
                 } else if (jsonSchema.getDataType().isString()) {
                     DataType.String.check(jsonSchema.asPrimitive(), value);
                 } else {
-                    throw new IllegalArgumentException("不支持的类型:" + jsonSchema.getDataType());
+                    throw new IllegalArgumentException("Unsupported type: " + jsonSchema.getDataType());
                 }
             }
         }
@@ -367,7 +368,7 @@ public class Validator {
                 } else if (p.isPrimitive()) {
                     checkSimple(p, value);
                 } else {
-                    throw new IllegalArgumentException("不支持的类型:" + p);
+                    throw new IllegalArgumentException("Unsupported type: " + p);
                 }
             }
         }

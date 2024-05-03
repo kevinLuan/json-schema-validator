@@ -1,5 +1,7 @@
 package cn.taskflow.jcv.core;
 
+import cn.taskflow.jcv.utils.JsvUtils;
+
 /**
  * 原子参数（参数的最小单位）
  *
@@ -74,24 +76,24 @@ public class Primitive extends JsonBasicSchema {
     public String getTipMsg(String path) {
         if (getDataType().isNumber()) {
             if (this.min != null && this.max != null) {
-                return "`" + path + "`限制范围" + min + "~" + max;
+                return JsvUtils.formatBetween(path, min, max);
             } else if (this.min != null) {
-                return "`" + path + "`必须大于等于" + min;
+                return JsvUtils.formatBetweenGtOrEq(path, min);
             } else if (this.max != null) {
-                return "`" + path + "`必须小于等于" + this.max;
+                return JsvUtils.formatBetweenLtOrEq(path, max);
             } else {
-                return "`" + path + "`必须是一个数字";
+                return JsvUtils.mustBeNumber(path);
             }
         } else if (getDataType().isString()) {
             if (this.min != null && this.max != null) {
-                return "`" + path + "`长度限制在" + min + "~" + max;
+                return JsvUtils.formatBetweenLength(path, min, max);
             } else if (this.min != null) {
-                return "`" + path + "`长度必须大于等于" + min;
+                return JsvUtils.formatBetweenLengthGtOrEq(path, min);
             } else if (this.max != null) {
-                return "`" + path + "`长度必须小于等于" + this.max;
+                return JsvUtils.formatBetweenLengthLtOrEq(path, max);
             }
         }
-        return "`" + getPath() + "`参数错误";
+        return JsvUtils.formatParamError(path);
     }
 
     /**
