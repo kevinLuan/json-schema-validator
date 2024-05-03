@@ -18,12 +18,17 @@ package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.JsonBoolean;
 import cn.taskflow.jcv.core.JsonObject;
+import cn.taskflow.jcv.utils.IOUtils;
+import cn.taskflow.jcv.utils.JsvUtils;
 import com.github.javaparser.StaticJavaParser;
 import cn.taskflow.jcv.core.JsonArray;
 import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.utils.CodeGenerator;
+import com.google.gson.Gson;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
 
 /**
  * @author SHOUSHEN.LUAN
@@ -31,24 +36,19 @@ import org.junit.Test;
  */
 public class CodeGeneratorTest {
     @Test
-    public void test() {
-        String json = "{" + "    'b':true," + "    'a':false," + "    'bools':[" + "        true," + "        false"
-                      + "    ]" + "}";
-        String javaCode = CodeGenerator.generateCode(json);
-        String expected = String.valueOf(
-            "JsonObject.optional(" + "   JsonBoolean.optional('b', null).setExampleValue(true),"
-                    + "   JsonBoolean.optional('a', null).setExampleValue(false),"
-                    + "   JsonArray.optional('bools', null, JsonBoolean.make().setExampleValue(true))" + ");").replace(
-            '\'', '"');
-        System.out.println("格式化代码：" + StaticJavaParser.parseStatement(javaCode));
-        System.out.println("原始代码:" + StaticJavaParser.parseStatement(expected).toString());
-        Assert.assertEquals(StaticJavaParser.parseStatement(expected).toString(),
-            StaticJavaParser.parseStatement(javaCode).toString());
-
-        JsonSchema jsonSchema = JsonObject.optional(JsonBoolean.optional("b", null).setExampleValue("true"),
-            JsonBoolean.optional("a", null).setExampleValue("false"),
-            JsonArray.optional("bools", null, JsonBoolean.make().setExampleValue("true")));
-        System.out.println(CodeGenerator.generateSampleData(jsonSchema));
-        System.out.println(CodeGenerator.serialization(jsonSchema));
+    public void test() throws IOException {
+        String json = IOUtils.readFile("CodeGeneratorTest_data.json");
+        String generateJavaCode = StaticJavaParser.parseStatement(CodeGenerator.generateCode(json)).toString();
+        String exampleJavaCode = StaticJavaParser.parseStatement(IOUtils.readFile("CodeGeneratorTest_data.java")).toString();
+        Assert.assertEquals(exampleJavaCode, generateJavaCode);
+        JsonSchema jsonSchema = JsonObject.optional(
+                JsonBoolean.optional("b", null).setExampleValue("true"),
+                JsonBoolean.optional("a", null).setExampleValue("false"),
+                JsonArray.optional("bools", null,
+                        JsonBoolean.make().setExampleValue("true")
+                )
+        );
+        Assert.assertEquals(IOUtils.readJson(this.getClass(), "sample"), CodeGenerator.generateSampleData(jsonSchema));
+        Assert.assertEquals(IOUtils.readJson(getClass(), "schema"), CodeGenerator.serialization(jsonSchema));
     }
 }

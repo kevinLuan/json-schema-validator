@@ -17,6 +17,9 @@
 package cn.taskflow.jcv.utils;
 
 import cn.taskflow.jcv.test.SchemaTest;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -31,7 +34,7 @@ public class IOUtils {
         int index = path.indexOf("/target/test-classes/");
         String baseDir = path.substring(0, index);
         File filePath = Paths.get(baseDir).resolve("src").resolve("test").resolve("resources").resolve(name)
-            .toAbsolutePath().toFile();
+                .toAbsolutePath().toFile();
         StringBuilder builder = new StringBuilder();
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
@@ -41,5 +44,10 @@ public class IOUtils {
             }
         }
         return builder.toString();
+    }
+
+    public static String readJson(Class<?> testType, String suffixName) throws IOException {
+        String json = readFile(testType.getSimpleName() + "_" + suffixName + ".json");
+        return JsonParser.parseString(json).toString();
     }
 }
