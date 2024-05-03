@@ -28,13 +28,17 @@
             <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
         </license>
     </licenses>
+    <issueManagement>
+        <system>Github Issues</system>
+        <url>https://github.com/kevinLuan/json-schema-validator/issues</url>
+    </issueManagement>
     <!-- Developer account -->
     <developers>
         <developer>
             <name>kevin.luan</name>
             <email>kevin_luan@126.com</email>
             <organization>taskflow technologies inc.</organization>
-            <organizationUrl>http://www.taskflow.cn</organizationUrl>
+            <organizationUrl>http://www.taskflow.cn/</organizationUrl>
         </developer>
     </developers>
     <scm>
