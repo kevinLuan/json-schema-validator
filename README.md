@@ -1,9 +1,23 @@
-#### 项目介绍
 
-    1. 根据自定义的结构化参数模型进行合法性验证验证
-    2. 根据定义参数结构提取有效数据结构体，忽略未定义的参数；
+## Architecture
 
-#### Maven 依赖
+![Architecture](...)
+
+## Features
+* 根据自定义的结构化参数模型进行合法性验证验证
+* 根据定义参数结构提取有效数据结构体，忽略未定义的参数； 
+
+## Getting started
+
+The following code snippet comes from [Json-schema-validator Samples](https://github.com/kevinLuan/json-schema-validator.git). You may clone the sample project.
+
+```bash
+git clone https://github.com/kevinLuan/json-schema-validator.git
+```
+
+There's a [README](https://github.com/kevinLuan/json-schema-validator/blob/feature/domain/README.md) file under `json-schema-validator` directory. We recommend referencing the samples in that directory by following the below-mentioned instructions:
+
+### Maven dependency
 ```xml
 <dependency>
     <groupId>cn.taskflow.jsv</groupId>
@@ -126,3 +140,6 @@ JsonObject.optional(
 
 ##### Param 可以支持序列化和反序列能力，用来满足动态配置验证规则场景
 
+## License
+
+json-schema-validator software is licensed under the Apache License Version 2.0. See the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) file for details.
