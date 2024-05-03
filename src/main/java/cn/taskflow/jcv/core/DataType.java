@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.core;
 
 import cn.taskflow.jcv.exception.NotSupportedException;
@@ -69,7 +85,8 @@ public enum DataType {
      * @param dataType
      */
     public static boolean isPrimitive(DataType dataType) {
-        if (dataType != null && (DataType.String == dataType || DataType.Number == dataType) || DataType.Boolean == dataType) {
+        if (dataType != null && (DataType.String == dataType || DataType.Number == dataType)
+            || DataType.Boolean == dataType) {
             return true;
         }
         return false;
@@ -130,23 +147,29 @@ public enum DataType {
         switch (this) {
             case Number:
                 if (required) {
-                    code = java.lang.String.format("JsonNumber.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
+                    code = java.lang.String.format("JsonNumber.required('%s',%s)", name,
+                        JsvUtils.formatStringArgs(desc));
                 } else {
-                    code = java.lang.String.format("JsonNumber.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
+                    code = java.lang.String.format("JsonNumber.optional('%s',%s)", name,
+                        JsvUtils.formatStringArgs(desc));
                 }
                 break;
             case String:
                 if (required) {
-                    code = java.lang.String.format("JsonString.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
+                    code = java.lang.String.format("JsonString.required('%s',%s)", name,
+                        JsvUtils.formatStringArgs(desc));
                 } else {
-                    code = java.lang.String.format("JsonString.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
+                    code = java.lang.String.format("JsonString.optional('%s',%s)", name,
+                        JsvUtils.formatStringArgs(desc));
                 }
                 break;
             case Boolean:
                 if (required) {
-                    code = java.lang.String.format("JsonBoolean.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
+                    code = java.lang.String.format("JsonBoolean.required('%s',%s)", name,
+                        JsvUtils.formatStringArgs(desc));
                 } else {
-                    code = java.lang.String.format("JsonBoolean.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
+                    code = java.lang.String.format("JsonBoolean.optional('%s',%s)", name,
+                        JsvUtils.formatStringArgs(desc));
                 }
                 break;
             default:

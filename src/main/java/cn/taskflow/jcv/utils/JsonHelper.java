@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,10 +28,10 @@ import java.util.Objects;
 
 public class JsonHelper {
 
-    private String json = null;
-    private JsonNode jsonNode;
-    private boolean failover = true;
-    private static ObjectMapper mapper = new ObjectMapper();
+    private String              json     = null;
+    private JsonNode            jsonNode;
+    private boolean             failover = true;
+    private static ObjectMapper mapper   = new ObjectMapper();
 
     public JsonHelper(String json) throws IOException {
         this.json = json;
@@ -202,13 +218,13 @@ public class JsonHelper {
         }
     }
 
-    private void deepSearch(String path, ObjectNode objectNode, String[] nodes, String expect,
-                            String update, Option option) {
+    private void deepSearch(String path, ObjectNode objectNode, String[] nodes, String expect, String update,
+                            Option option) {
         doDeepSearch(path, objectNode, nodes, expect, update, option, null);
     }
 
-    private void doDeepSearch(String path, ObjectNode objectNode, String[] nodes, String expect,
-                              String update, Option option, IteratorFunc func) {
+    private void doDeepSearch(String path, ObjectNode objectNode, String[] nodes, String expect, String update,
+                              Option option, IteratorFunc func) {
         JsonNode root = objectNode;
         for (int i = 0; i < nodes.length - 1; i++) {
             root = root.get(nodes[i]);
@@ -233,8 +249,7 @@ public class JsonHelper {
         nodeOperator(name, expect, update, root, option, func);
     }
 
-    private void nodeOperator(String name, String expect, String update, JsonNode root,
-                              Option option, IteratorFunc func) {
+    private void nodeOperator(String name, String expect, String update, JsonNode root, Option option, IteratorFunc func) {
         if (root.isObject()) {
             ObjectNode objNode = (ObjectNode) root;
             process(name, expect, update, option, func, objNode);
@@ -252,8 +267,7 @@ public class JsonHelper {
         }
     }
 
-    private void process(String name, String expect, String update, Option option, IteratorFunc func,
-                         ObjectNode objNode) {
+    private void process(String name, String expect, String update, Option option, IteratorFunc func, ObjectNode objNode) {
         if (option == Option.compareAndSet) {
             if (checkValueEq(objNode, name, expect)) {
                 objNode.put(name, update);
@@ -300,13 +314,13 @@ public class JsonHelper {
         }
     }
 
-    private void deepSearch(String path, ArrayNode arrayNode, String[] nodes, String expect,
-                            String update, Option option) {
+    private void deepSearch(String path, ArrayNode arrayNode, String[] nodes, String expect, String update,
+                            Option option) {
         doDeepSearch(path, arrayNode, nodes, expect, update, option, null);
     }
 
-    private void doDeepSearch(String path, ArrayNode arrayNode, String[] nodes, String expect,
-                              String update, Option option, IteratorFunc func) {
+    private void doDeepSearch(String path, ArrayNode arrayNode, String[] nodes, String expect, String update,
+                              Option option, IteratorFunc func) {
         for (int i = 0; i < arrayNode.size(); i++) {
             if (arrayNode.get(i).isObject()) {
                 doDeepSearch(path, (ObjectNode) arrayNode.get(i), nodes, expect, update, option, func);
@@ -357,7 +371,7 @@ public class JsonHelper {
         if (path.indexOf(".") != -1) {
             return path.split("\\.");
         } else {
-            return new String[]{path};
+            return new String[] { path };
         }
     }
 

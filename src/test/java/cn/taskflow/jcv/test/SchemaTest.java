@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.utils.CodeGenerator;
@@ -16,21 +32,21 @@ import java.io.IOException;
 
 public class SchemaTest {
     private static JsonSchema product = JsonObject.required("product", "商品对象", //
-            JsonString.required("name", "商品名称").setExampleValue("IPhone7"),
-            JsonNumber.required("price", "商品价格").setExampleValue(99.98),
-            JsonArray.required("skus", "商品SKU属性列表", //
-                    JsonObject.required(//
-                            JsonNumber.required("id", "参数描述").setExampleValue(100), //
-                            JsonString.required("name", "参数描述").setExampleValue("移动版"), //
-                            JsonArray.required("code", "参数描述", //
-                                    JsonObject.optional(//
-                                            JsonNumber.optional("id", "id").setExampleValue(12345), //
-                                            JsonString.optional("title", "标题").setExampleValue("土黄金色")//
-                                    )//
-                            )//
-                    )//
-            )//
-    );
+                                          JsonString.required("name", "商品名称").setExampleValue("IPhone7"), JsonNumber
+                                              .required("price", "商品价格").setExampleValue(99.98), JsonArray.required(
+                                              "skus", "商品SKU属性列表", //
+                                              JsonObject.required(//
+                                                  JsonNumber.required("id", "参数描述").setExampleValue(100), //
+                                                  JsonString.required("name", "参数描述").setExampleValue("移动版"), //
+                                                  JsonArray.required("code", "参数描述", //
+                                                      JsonObject.optional(//
+                                                          JsonNumber.optional("id", "id").setExampleValue(12345), //
+                                                          JsonString.optional("title", "标题").setExampleValue("土黄金色")//
+                                                          )//
+                                                      )//
+                                                  )//
+                                              )//
+                                          );
 
     @Test
     public void test() {
@@ -41,21 +57,21 @@ public class SchemaTest {
         System.out.println("根据json数据生成验证参数代码:" + javaCode);
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
         JsonSchema generateJsonSchema = JsonObject.optional(//
-                JsonString.optional("name", null).setExampleValue("IPhone7"),//
-                JsonNumber.optional("price", null).setExampleValue(99.98),//
-                JsonArray.optional("skus", null,//
+            JsonString.optional("name", null).setExampleValue("IPhone7"),//
+            JsonNumber.optional("price", null).setExampleValue(99.98),//
+            JsonArray.optional("skus", null,//
+                JsonObject.optional(//
+                    JsonNumber.optional("id", null).setExampleValue(100),//
+                    JsonString.optional("name", null).setExampleValue("移动版"),//
+                    JsonArray.optional("code", null,//
                         JsonObject.optional(//
-                                JsonNumber.optional("id", null).setExampleValue(100),//
-                                JsonString.optional("name", null).setExampleValue("移动版"),//
-                                JsonArray.optional("code", null,//
-                                        JsonObject.optional(//
-                                                JsonNumber.optional("id", null).setExampleValue(12345),//
-                                                JsonString.optional("title", null).setExampleValue("土黄金色")//
-                                        )//
-                                )//
+                            JsonNumber.optional("id", null).setExampleValue(12345),//
+                            JsonString.optional("title", null).setExampleValue("土黄金色")//
+                            )//
                         )//
+                    )//
                 )//
-        );
+            );
         Assert.assertEquals(CodeGenerator.generateCode(jsonSchema), CodeGenerator.generateCode(generateJsonSchema));
     }
 

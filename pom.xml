@@ -13,6 +13,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <log4j.version>2.0.1</log4j.version>
+        <main.user.dir>${user.dir}</main.user.dir>
         <!--suppress UnresolvedMavenProperty -->
         <gpg.passphrase>${env.GPG_PASSPHRASE}</gpg.passphrase>
         <!--suppress UnresolvedMavenProperty -->
@@ -232,6 +233,57 @@
                     <algorithms>
                         <algorithm>MD5</algorithm>
                     </algorithms>
+                </configuration>
+            </plugin>
+            <!-- 代码开源规范插件 -->
+            <plugin>
+                <groupId>com.mycila</groupId>
+                <artifactId>license-maven-plugin</artifactId>
+                <version>3.0</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>remove</goal>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <quiet>true</quiet>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <header>${main.user.dir}/tools/codestyle/HEADER</header>
+                    <includes>
+                        <include>**/src/main/java/**</include>
+                        <include>**/src/test/java/**</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/ignore.java</exclude>
+                    </excludes>
+                    <strictCheck>true</strictCheck>
+                    <mapping>
+                        <java>SLASHSTAR_STYLE</java>
+                    </mapping>
+                </configuration>
+            </plugin>
+
+            <!-- formatter -->
+            <plugin>
+                <groupId>com.googlecode.maven-java-formatter-plugin</groupId>
+                <artifactId>maven-java-formatter-plugin</artifactId>
+                <version>0.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <configFile>${main.user.dir}/tools/codestyle/formatter.xml</configFile>
+                    <!--suppress UnresolvedMavenProperty -->
+                    <encoding>${project.encoding}</encoding>
                 </configuration>
             </plugin>
         </plugins>

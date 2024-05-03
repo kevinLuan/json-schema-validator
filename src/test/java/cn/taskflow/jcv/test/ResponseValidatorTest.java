@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
@@ -47,17 +63,17 @@ public class ResponseValidatorTest {
         String desc = null;//(JsonParser.DESCRIPTION = "参数描述");
         JsonSchema actual = JsonParser.parseJsonSchema(json);
         JsonSchema expected = JsonObject.optional(//
-                JsonString.optional("name", desc).setExampleValue("张三丰"), //
-                JsonArray.optional("ids", desc, //
-                        JsonNumber.ofNullable().setExampleValue(100)), //
-                JsonArray.optional("items", desc, //
-                        JsonObject.optional(//
-                                JsonString.optional("name", desc).setExampleValue("手机"), //
-                                JsonNumber.optional("id", desc).setExampleValue(2)//
-                        )//
+            JsonString.optional("name", desc).setExampleValue("张三丰"), //
+            JsonArray.optional("ids", desc, //
+                JsonNumber.ofNullable().setExampleValue(100)), //
+            JsonArray.optional("items", desc, //
+                JsonObject.optional(//
+                    JsonString.optional("name", desc).setExampleValue("手机"), //
+                    JsonNumber.optional("id", desc).setExampleValue(2)//
+                    )//
                 ), //
-                JsonNumber.optional("age", desc).setExampleValue(100.11)//
-        );
+            JsonNumber.optional("age", desc).setExampleValue(100.11)//
+            );
         System.out.println(GsonEncoder.INSTANCE.encode(expected));
         System.out.println(GsonEncoder.INSTANCE.encode(actual));
         Assert.assertTrue(expected.equals(actual));
@@ -65,31 +81,24 @@ public class ResponseValidatorTest {
 
     @Test
     public void test_jsonToCode() {
-        JsonSchema jsonSchema = JsonObject.required(
-                JsonString.optional("name", "张三丰"),
-                JsonArray.required("ids", "Array[100]",
-                        JsonNumber.ofNullable()),
-                JsonArray.required("items", "Array[{Object}]",
-                        JsonObject.required(
-                                JsonString.optional("name", "手机"), //
-                                JsonNumber.optional("id", "2")//
-                        )
-                ),
-                JsonNumber.optional("age", "100.11")//
-        );
-        String expected = ("JsonObject.required(" +
-                "                JsonString.optional('name', '张三丰')," +
-                "                JsonArray.required('ids', 'Array[100]'," +
-                "                        JsonNumber.ofNullable())," +
-                "                JsonArray.required('items', 'Array[{Object}]'," +
-                "                        JsonObject.required(" +
-                "                                JsonString.optional('name', '手机')," +
-                "                                JsonNumber.optional('id', '2')" +
-                "                        ))," +
-                "                JsonNumber.optional('age', '100.11')" +
-                "        );").replace("'", "\"");
+        JsonSchema jsonSchema = JsonObject.required(JsonString.optional("name", "张三丰"),
+            JsonArray.required("ids", "Array[100]", JsonNumber.ofNullable()),
+            JsonArray.required("items", "Array[{Object}]", JsonObject.required(JsonString.optional("name", "手机"), //
+                JsonNumber.optional("id", "2")//
+                )), JsonNumber.optional("age", "100.11")//
+            );
+        String expected = ("JsonObject.required(" + "                JsonString.optional('name', '张三丰'),"
+                           + "                JsonArray.required('ids', 'Array[100]',"
+                           + "                        JsonNumber.ofNullable()),"
+                           + "                JsonArray.required('items', 'Array[{Object}]',"
+                           + "                        JsonObject.required("
+                           + "                                JsonString.optional('name', '手机'),"
+                           + "                                JsonNumber.optional('id', '2')"
+                           + "                        ))," + "                JsonNumber.optional('age', '100.11')"
+                           + "        );").replace("'", "\"");
         expected = expected.replace("'", "\"");
-        Assert.assertEquals(StaticJavaParser.parseStatement(expected), StaticJavaParser.parseStatement(CodeGenerator.generateCode(jsonSchema)));
+        Assert.assertEquals(StaticJavaParser.parseStatement(expected),
+            StaticJavaParser.parseStatement(CodeGenerator.generateCode(jsonSchema)));
     }
 
     @Test
@@ -116,17 +125,17 @@ public class ResponseValidatorTest {
     public void test_fromParamAsJavaCode() {
         String json = "{\"dataType\":\"Object\",\"children\":[{\"name\":\"status\",\"description\":\"状态\",\"dataType\":\"Object\",\"children\":[{\"name\":\"statusCode\",\"description\":\"状态码\",\"exampleValue\":\"1500\",\"dataType\":\"Number\"},{\"name\":\"statusReason\",\"description\":\"状态描述\",\"exampleValue\":\"参数错误\",\"dataType\":\"String\"}]},{\"name\":\"result\",\"description\":\"结果\",\"dataType\":\"Object\",\"children\":[{\"name\":\"id\",\"description\":\"ID\",\"exampleValue\":\"1234\",\"dataType\":\"String\"},{\"name\":\"name\",\"description\":\"名称\",\"exampleValue\":\"xxx\",\"dataType\":\"String\"}]}]}";
         JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBasicSchema.class);
-        String expected = "JsonObject.optional(\n" +
-                "                JsonObject.optional(\"status\", \"状态\",\n" +
-                "                        JsonNumber.optional(\"statusCode\", \"状态码\").setExampleValue(1500),\n" +
-                "                        JsonString.optional(\"statusReason\", \"状态描述\").setExampleValue(\"参数错误\")),\n" +
-                "                JsonObject.optional(\"result\", \"结果\",\n" +
-                "                        JsonString.optional(\"id\", \"ID\").setExampleValue(\"1234\"),\n" +
-                "                        JsonString.optional(\"name\", \"名称\").setExampleValue(\"xxx\")\n" +
-                "                )\n" +
-                "        );";
+        String expected = "JsonObject.optional(\n"
+                          + "                JsonObject.optional(\"status\", \"状态\",\n"
+                          + "                        JsonNumber.optional(\"statusCode\", \"状态码\").setExampleValue(1500),\n"
+                          + "                        JsonString.optional(\"statusReason\", \"状态描述\").setExampleValue(\"参数错误\")),\n"
+                          + "                JsonObject.optional(\"result\", \"结果\",\n"
+                          + "                        JsonString.optional(\"id\", \"ID\").setExampleValue(\"1234\"),\n"
+                          + "                        JsonString.optional(\"name\", \"名称\").setExampleValue(\"xxx\")\n"
+                          + "                )\n" + "        );";
         String actual = CodeGenerator.generateCode(jsonSchema);
         System.out.println(StaticJavaParser.parseStatement(actual).toString(new DefaultPrinterConfiguration()));
-        Assert.assertEquals(StaticJavaParser.parseStatement(expected).toString(), StaticJavaParser.parseStatement(actual).toString());
+        Assert.assertEquals(StaticJavaParser.parseStatement(expected).toString(),
+            StaticJavaParser.parseStatement(actual).toString());
     }
 }
