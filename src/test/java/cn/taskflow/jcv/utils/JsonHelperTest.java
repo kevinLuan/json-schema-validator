@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.utils;
 
 import cn.taskflow.jcv.encode.JsonUtils;
@@ -10,38 +26,18 @@ import org.junit.Test;
 
 public class JsonHelperTest {
 
-  String json = ("{"
-      + "    'id':100,"
-      + "    'name':'张三',"
-      + "    'level1':{"
-      + "        'productName':'iphone',"
-      + "        'other':'5G',"
-      + "        'level2':{"
-      + "            'name':'测试',"
-      + "            'kevin':'hello',"
-      + "            'x':'xx1111111',"
-      + "            'items':["
-      + "                {"
-      + "                    'a1':'yes',"
-      + "                    'a2':'xx',"
-      + "                    'abc':'OK'"
-      + "                },"
-      + "                {"
-      + "                    'a1':'no',"
-      + "                    'a2':'xx11',"
-      + "                    'abc':'OK'"
-      + "                },"
-      + "                {"
-      + "                    'a1':'OK',"
-      + "                    'a2':'xx1',"
-      + "                    'abc':'OK','objs':[{'name':'智联招聘'}]"
-      + "                }"
-      + "            ]"
-      + "        }"
-      + "    }"
-      + "}").replace("'", "\"");
+    String json = ("{" + "    'id':100," + "    'name':'张三'," + "    'level1':{" + "        'productName':'iphone',"
+                   + "        'other':'5G'," + "        'level2':{" + "            'name':'测试',"
+                   + "            'kevin':'hello'," + "            'x':'xx1111111'," + "            'items':["
+                   + "                {" + "                    'a1':'yes'," + "                    'a2':'xx',"
+                   + "                    'abc':'OK'" + "                }," + "                {"
+                   + "                    'a1':'no'," + "                    'a2':'xx11',"
+                   + "                    'abc':'OK'" + "                }," + "                {"
+                   + "                    'a1':'OK'," + "                    'a2':'xx1',"
+                   + "                    'abc':'OK','objs':[{'name':'智联招聘'}]" + "                }" + "            ]"
+                   + "        }" + "    }" + "}").replace("'", "\"");
 
-  @Test
+    @Test
   public void test() throws IOException {
     JsonHelper root = JsonHelper.of(json);
     {

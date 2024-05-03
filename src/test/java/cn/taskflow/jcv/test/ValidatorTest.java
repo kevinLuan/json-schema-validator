@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
@@ -20,30 +36,26 @@ import com.fasterxml.jackson.databind.JsonNode;
 public class ValidatorTest {
     private static JsonObject getResultParam() {
         return JsonObject.required(
-                JsonObject.required("status", "返回",
-                        JsonNumber.required("status_code", ""),
-                        JsonString.required("status_reasion", "")
-                ),
-                buildResult()
-        );
+            JsonObject.required("status", "返回", JsonNumber.required("status_code", ""),
+                JsonString.required("status_reasion", "")), buildResult());
     }
 
     private static JsonSchema buildResult() {
         return JsonObject.optional("result", "返回数据", //
-                JsonString.required("name", "姓名").setMax(5), //
-                JsonNumber.required("age", "年龄").setMin(0).setMax(120), //
-                JsonArray.required("items", "商品列表", //
-                        JsonObject.required(//
-                                JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
-                                JsonString.required("name", "商品名称").setMax(50)//
-                        )//
+            JsonString.required("name", "姓名").setMax(5), //
+            JsonNumber.required("age", "年龄").setMin(0).setMax(120), //
+            JsonArray.required("items", "商品列表", //
+                JsonObject.required(//
+                    JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                    JsonString.required("name", "商品名称").setMax(50)//
+                    )//
                 ), //
-                JsonArray.required("ids", "id列表", //
-                        JsonNumber.make().setMax(100) //
+            JsonArray.required("ids", "id列表", //
+                JsonNumber.make().setMax(100) //
                 ), //
-                JsonObject.optional("extendMap", "扩展字段"), //
-                JsonArray.optional("array_any", "任意数组节点"), //
-                JsonArray.optional("array_any_simple", "任意数组节点"));
+            JsonObject.optional("extendMap", "扩展字段"), //
+            JsonArray.optional("array_any", "任意数组节点"), //
+            JsonArray.optional("array_any_simple", "任意数组节点"));
     }
 
     private static Object getResult() {
@@ -67,8 +79,8 @@ public class ValidatorTest {
         extendMap.put("a", 10);
         extendMap.put("obj", new HashMap<String, Object>());
         map.put("extendMap", extendMap);
-        map.put("array_any", new Object[]{extendMap});
-        map.put("array_any_simple", new int[]{1, 2, 3, 4, 5});
+        map.put("array_any", new Object[] { extendMap });
+        map.put("array_any_simple", new int[] { 1, 2, 3, 4, 5 });
         return map;
     }
 
@@ -91,7 +103,8 @@ public class ValidatorTest {
         String json = getResponseData();
         System.out.println(json);
         JsonNode jsonNode = JsonUtils.parser(json);
-        Map<String, Object> map = Validator.create(DataVerifyHandler.getInstance(), getResultParam()).validate(jsonNode).extract(jsonNode);
+        Map<String, Object> map = Validator.create(DataVerifyHandler.getInstance(), getResultParam())
+            .validate(jsonNode).extract(jsonNode);
         System.out.println(JsonUtils.stringify(map));
         String expected = "{'result':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}";
         expected = expected.replace("'", "\"");
@@ -99,20 +112,21 @@ public class ValidatorTest {
     }
 
     private JsonSchema buildParam() {
-        return JsonObject.required("objParam", "对象参数", //
-                JsonString.required("name", "姓名").setMax(5), //
-                JsonNumber.required("age", "年龄").setMin(0).setMax(120), //
-                JsonArray.required("items", "商品列表", //
-                        JsonObject.required(//
-                                JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
-                                JsonString.required("name", "商品名称").setMax(50)//
-                        )//
+        return JsonObject.required("objParam",
+            "对象参数", //
+            JsonString.required("name", "姓名").setMax(5), //
+            JsonNumber.required("age", "年龄").setMin(0).setMax(120), //
+            JsonArray.required("items", "商品列表", //
+                JsonObject.required(//
+                    JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
+                    JsonString.required("name", "商品名称").setMax(50)//
+                    )//
                 ), //
-                JsonArray.required("ids", "id列表", //
-                        JsonNumber.make().setMax(100) //
+            JsonArray.required("ids", "id列表", //
+                JsonNumber.make().setMax(100) //
                 ), //
-                JsonObject.optional("extendMap", "扩展Map(任意子节点)"), JsonArray.optional("array_any", "任意数组类型"),
-                JsonArray.optional("array_any_simple", "任意数组类型"));
+            JsonObject.optional("extendMap", "扩展Map(任意子节点)"), JsonArray.optional("array_any", "任意数组类型"),
+            JsonArray.optional("array_any_simple", "任意数组类型"));
     }
 
     private HttpServletRequest buildHttpRequest() {
@@ -134,8 +148,8 @@ public class ValidatorTest {
             extendMap.put("a", 10);
             extendMap.put("obj", new HashMap<String, Object>());
             map.put("extendMap", extendMap);
-            map.put("array_any", new Object[]{extendMap});
-            map.put("array_any_simple", new int[]{1, 2, 3, 4, 5});
+            map.put("array_any", new Object[] { extendMap });
+            map.put("array_any_simple", new int[] { 1, 2, 3, 4, 5 });
         }
         String json = JsonUtils.stringify(map);
         request.addParameter("objParam", json);
