@@ -39,7 +39,7 @@ public class JsonHelper {
     }
 
     public JsonHelper(JsonNode jsonNode) {
-        Objects.requireNonNull(jsonNode, "`jsonNode`参数不能为空");
+        Objects.requireNonNull(jsonNode, "`jsonNode` Parameter cannot be null");
         this.jsonNode = jsonNode;
         this.json = jsonNode.toString();
     }
@@ -64,7 +64,7 @@ public class JsonHelper {
         } else if (this.jsonNode.isArray()) {
             doDeepSearch(path, (ArrayNode) this.jsonNode, nodes, null, null, Option.traversal, func);
         } else {
-            throw new IllegalArgumentException("不支持的:" + path + "节点");
+            throw new IllegalArgumentException("Not supported: `" + path + "` node");
         }
     }
 
@@ -81,7 +81,7 @@ public class JsonHelper {
         } else if (this.jsonNode.isArray()) {
             deepSearch(path, (ArrayNode) this.jsonNode, nodes, null, value, Option.missingAndAdd);
         } else {
-            throw new IllegalArgumentException("不支持的:" + path + "节点");
+            throw new IllegalArgumentException("Not supported: `" + path + "` node");
         }
     }
 
@@ -101,7 +101,7 @@ public class JsonHelper {
                     if (failover) {
                         return null;
                     } else {
-                        throw new IllegalArgumentException("存在无效node:`" + nodes[i] + "` path:" + path);
+                        throw new IllegalArgumentException("invalid node:`" + nodes[i] + "` path: `" + path + "`");
                     }
                 }
             }
@@ -109,7 +109,7 @@ public class JsonHelper {
                 return root.get(nodes[nodes.length - 1]);
             }
         }
-        throw new IllegalArgumentException("不支持的node操作:" + root.getNodeType());
+        throw new IllegalArgumentException("Not supported operator: `" + path + "` node");
     }
 
     /**
@@ -124,7 +124,7 @@ public class JsonHelper {
         } else if (this.jsonNode.isArray()) {
             deepSearch(path, (ArrayNode) this.jsonNode, nodes, null, null, Option.delete);
         } else {
-            throw new IllegalArgumentException("不支持的:" + path + "节点");
+            throw new IllegalArgumentException("Not supported: `" + path + "` node");
         }
     }
 
@@ -141,7 +141,7 @@ public class JsonHelper {
         } else if (this.jsonNode.isArray()) {
             deepSearch(path, (ArrayNode) this.jsonNode, nodes, expect, null, Option.compareAndDel);
         } else {
-            throw new IllegalArgumentException("不支持的:" + path + "节点");
+            throw new IllegalArgumentException("Not supported: `" + path + "` node");
         }
     }
 
@@ -185,17 +185,17 @@ public class JsonHelper {
         String[] nodes = parsePath(path);
         JsonNode root = jsonNode;
         if (!root.isObject()) {
-            throw new IllegalArgumentException("无效的数据类型:" + root.getNodeType());
+            throw new IllegalArgumentException("invalid nodeType:`" + root.getNodeType() + "`");
         }
         for (int i = 0; i < nodes.length - 1; i++) {
             root = root.get(nodes[i]);
             if (root == null || !root.isObject()) {
-                throw new IllegalArgumentException("无效的path:`" + path + "`");
+                throw new IllegalArgumentException("invalid path:`" + path + "`");
             }
         }
         root = root.get(nodes[nodes.length - 1]);
         if (root == null) {
-            throw new IllegalArgumentException("无效的path:`" + path + "`");
+            throw new IllegalArgumentException("invalid path:`" + path + "`");
         }
         return JsonHelper.of(root);
     }
@@ -214,7 +214,7 @@ public class JsonHelper {
         } else if (this.jsonNode.isArray()) {
             deepSearch(path, (ArrayNode) this.jsonNode, nodes, expect, update, Option.compareAndSet);
         } else {
-            throw new IllegalArgumentException("不支持的:" + path + "节点");
+            throw new IllegalArgumentException("Not supported: `" + path + "` node");
         }
     }
 
@@ -232,7 +232,7 @@ public class JsonHelper {
                 if (failover) {
                     return;
                 } else {
-                    throw new IllegalArgumentException("无效的节点`" + nodes[i] + "` path:" + path);
+                    throw new IllegalArgumentException("invalid node: `" + nodes[i] + "` path:" + path);
                 }
             } else if (root.isObject()) {
                 continue;
@@ -242,7 +242,7 @@ public class JsonHelper {
                 doDeepSearch(path, (ArrayNode) root, array, expect, update, option, func);
                 return;
             } else {
-                throw new IllegalArgumentException("无效的节点:`" + nodes[i] + "` path:" + path);
+                throw new IllegalArgumentException("invalid node: `" + nodes[i] + "` path:" + path);
             }
         }
         String name = nodes[nodes.length - 1];
@@ -259,11 +259,11 @@ public class JsonHelper {
                     ObjectNode objNode = (ObjectNode) root.get(i);
                     process(name, expect, update, option, func, objNode);
                 } else {
-                    throw new IllegalArgumentException("无效的节点");
+                    throw new IllegalArgumentException("invalid node");
                 }
             }
         } else {
-            throw new IllegalArgumentException("无效的节点");
+            throw new IllegalArgumentException("invalid node");
         }
     }
 
@@ -291,7 +291,7 @@ public class JsonHelper {
                 func.run(value);
             }
         } else {
-            throw new IllegalArgumentException("不支持的option:" + option);
+            throw new IllegalArgumentException("option:" + option);
         }
     }
 
@@ -325,7 +325,7 @@ public class JsonHelper {
             if (arrayNode.get(i).isObject()) {
                 doDeepSearch(path, (ObjectNode) arrayNode.get(i), nodes, expect, update, option, func);
             } else {
-                throw new IllegalArgumentException("无效的Node");
+                throw new IllegalArgumentException("invalid node");
             }
         }
     }
@@ -339,7 +339,8 @@ public class JsonHelper {
                 func.run(jsonNode.get(i));
             }
         } else {
-            throw new IllegalArgumentException("foreach操作仅在ArrayNode节点下可以支持 " + this.jsonNode);
+            throw new IllegalArgumentException("The foreach operation is only supported under the ArrayNode node :`"
+                                               + this.jsonNode + "`");
         }
     }
 
@@ -363,7 +364,7 @@ public class JsonHelper {
         } else if (this.jsonNode.isArray()) {
             deepSearch(path, (ArrayNode) this.jsonNode, nodes, null, value, Option.set);
         } else {
-            throw new IllegalArgumentException("不支持的:" + path + "节点");
+            throw new IllegalArgumentException("Not supported path: `" + path + "` node");
         }
     }
 

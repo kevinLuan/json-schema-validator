@@ -1,0 +1,35 @@
+{
+  "id": 100,
+  "name": "张三",
+  "level1": {
+    "productName": "iphone",
+    "other": "5G",
+    "level2": {
+      "name": "测试",
+      "kevin": "hello",
+      "x": "xx1111111",
+      "items": [
+        {
+          "a1": "yes",
+          "a2": "xx",
+          "abc": "OK"
+        },
+        {
+          "a1": "no",
+          "a2": "xx11",
+          "abc": "OK"
+        },
+        {
+          "a1": "OK",
+          "a2": "xx1",
+          "abc": "OK",
+          "objs": [
+            {
+              "name": "\uD83D\uDE01"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

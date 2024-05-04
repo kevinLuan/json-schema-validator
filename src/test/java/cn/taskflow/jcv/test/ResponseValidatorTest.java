@@ -19,7 +19,7 @@ package cn.taskflow.jcv.test;
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import cn.taskflow.jcv.encode.JsonUtils;
-import cn.taskflow.jcv.utils.CodeGenerator;
+import cn.taskflow.jcv.utils.GeneratorCode;
 import cn.taskflow.jcv.utils.JsonParser;
 import cn.taskflow.jcv.utils.JsonSchemaCodec;
 import com.github.javaparser.StaticJavaParser;
@@ -39,7 +39,7 @@ public class ResponseValidatorTest {
         jsonSchema.asObject().getChildren()[0].asPrimitive().between(10, 20);
         try {
             JsonNode node = JsonUtils.parser(json);
-            Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
+            Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
             Assert.assertEquals("`name` between character size [ 10~20 ]", e.getMessage());
@@ -50,7 +50,7 @@ public class ResponseValidatorTest {
         jsonSchema.asObject().getChildren()[1].asArray().getChildrenAsParam().asPrimitive().between(1, 50);
         try {
             JsonNode node = JsonUtils.parser(json);
-            Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
+            Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
             Assert.assertEquals("`ids` between [1 ~ 50]", e.getMessage());
@@ -98,7 +98,7 @@ public class ResponseValidatorTest {
                            + "        );").replace("'", "\"");
         expected = expected.replace("'", "\"");
         Assert.assertEquals(StaticJavaParser.parseStatement(expected),
-            StaticJavaParser.parseStatement(CodeGenerator.generateCode(jsonSchema)));
+            StaticJavaParser.parseStatement(GeneratorCode.generateJavaCode(jsonSchema)));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class ResponseValidatorTest {
         String json = "{\"dataType\":\"Object\",\"children\":[{\"name\":\"status\",\"description\":\"状态\",\"dataType\":\"Object\",\"children\":[{\"name\":\"statusCode\",\"description\":\"状态码\",\"exampleValue\":\"1500\",\"dataType\":\"Number\"},{\"name\":\"statusReason\",\"description\":\"状态描述\",\"exampleValue\":\"参数错误\",\"dataType\":\"String\"}]},{\"name\":\"result\",\"description\":\"结果\",\"dataType\":\"Object\",\"children\":[{\"name\":\"id\",\"description\":\"ID\",\"exampleValue\":\"1234\",\"dataType\":\"String\"},{\"name\":\"name\",\"description\":\"名称\",\"exampleValue\":\"xxx\",\"dataType\":\"String\"}]}]}";
         JsonSchema jsonSchema = GsonEncoder.INSTANCE.decode(json, JsonBasicSchema.class);
         String expected = "{\"status\":{\"statusCode\":1500,\"statusReason\":\"参数错误\"},\"items\":[1,2,3]}";
-        System.out.println(CodeGenerator.serialization(JsonParser.parseJsonSchema(expected)));
+        System.out.println(GeneratorCode.serialization(JsonParser.parseJsonSchema(expected)));
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ResponseValidatorTest {
                           + "                        JsonString.optional(\"id\", \"ID\").setExampleValue(\"1234\"),\n"
                           + "                        JsonString.optional(\"name\", \"名称\").setExampleValue(\"xxx\")\n"
                           + "                )\n" + "        );";
-        String actual = CodeGenerator.generateCode(jsonSchema);
+        String actual = GeneratorCode.generateJavaCode(jsonSchema);
         System.out.println(StaticJavaParser.parseStatement(actual).toString(new DefaultPrinterConfiguration()));
         Assert.assertEquals(StaticJavaParser.parseStatement(expected).toString(),
             StaticJavaParser.parseStatement(actual).toString());

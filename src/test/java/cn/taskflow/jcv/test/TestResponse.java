@@ -100,8 +100,8 @@ public class TestResponse {
     public void test_ok() {
         JsonSchema jsonSchema = getResultParam();
         JsonNode dataResult = JsonUtils.parser(getResponseData());
-        Map<String, Object> response = Validator.create(DataVerifyHandler.getInstance(), jsonSchema)
-            .validate(dataResult).extract(dataResult);
+        Map<String, Object> response = Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult)
+            .extract(dataResult);
         System.out.println("提取数据：" + JsonUtils.stringify(response));
         String expected = "{'result':{'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}"
             .replace("'", "\"");
@@ -114,7 +114,7 @@ public class TestResponse {
             JsonSchema jsonSchema = getResultParam();
             JsonNode dataResult = JsonUtils.parser(getResponseData());
             System.out.println("返回原始数据：" + dataResult.toString());
-            Map<String, Object> response = Validator.create(DataVerifyHandler.getInstance(), jsonSchema)
+            Map<String, Object> response = Validator.of(DataVerifyHandler.getInstance(), jsonSchema)
                 .validate(dataResult).extract(dataResult);
             System.out.println("提取需要的数据：" + JsonUtils.stringify(response));
         }
@@ -122,7 +122,7 @@ public class TestResponse {
         for (int i = 0; i < 10000; i++) {
             JsonSchema jsonSchema = getResultParam();
             JsonNode dataResult = JsonUtils.parser(getResponseData());
-            Validator.create(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
+            Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
         }
         System.out.println("use time:" + (System.currentTimeMillis() - start));
     }

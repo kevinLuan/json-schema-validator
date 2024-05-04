@@ -17,6 +17,9 @@
 package cn.taskflow.jcv.utils;
 
 import cn.taskflow.jcv.test.SchemaTest;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -41,5 +44,10 @@ public class IOUtils {
             }
         }
         return builder.toString();
+    }
+
+    public static String readJson(Class<?> testType, String suffixName) throws IOException {
+        String json = readFile(testType.getSimpleName() + "_" + suffixName + ".json");
+        return JsonParser.parseString(json).toString();
     }
 }

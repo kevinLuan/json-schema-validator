@@ -19,6 +19,8 @@ package cn.taskflow.jcv.utils;
 import cn.taskflow.jcv.core.JsonBasicSchema;
 import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.encode.GsonEncoder;
+import cn.taskflow.jcv.extension.SchemaOption;
+import cn.taskflow.jcv.extension.SchemaProcess;
 
 /**
  * 代码自动生成
@@ -26,13 +28,22 @@ import cn.taskflow.jcv.encode.GsonEncoder;
  * @author SHOUSHEN.LUAN
  * @since 2023-04-16
  */
-public class CodeGenerator {
-    public static String generateCode(String json) {
+public class GeneratorCode {
+    public static String generateJavaCode(String json) {
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
         return JavaCodeGenerator.generateCode(jsonSchema);
     }
 
-    public static String generateCode(JsonSchema jsonSchema) {
+    public static String generateJavaCode(String json, SchemaProcess option) {
+        JsonSchema jsonSchema = JsonParser.parseJsonSchema(json, option);
+        return JavaCodeGenerator.generateCode(jsonSchema);
+    }
+
+    public static String generateJavaCode(String json, SchemaOption option) {
+        return generateJavaCode(json, option.getSchemaProcess());
+    }
+
+    public static String generateJavaCode(JsonSchema jsonSchema) {
         return JavaCodeGenerator.generateCode(jsonSchema);
     }
 

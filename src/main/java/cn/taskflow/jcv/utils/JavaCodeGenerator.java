@@ -75,7 +75,7 @@ class JavaCodeGenerator {
             arrayNode += NEW_LINE + childrenCode + ")";
             builder.append(arrayNode);
         } else {
-            throw new IllegalArgumentException("不支持的类型:" + children);
+            throw new IllegalArgumentException("Unsupported type: " + children);
         }
     }
 
@@ -86,18 +86,16 @@ class JavaCodeGenerator {
         StringBuilder nodeBuilder = new StringBuilder();
         for (int i = 0; i < childrens.length; i++) {
             JsonSchema jsonSchema = childrens[i];
+            if (i != 0) {
+                nodeBuilder.append(",");
+                newLine(nodeBuilder);
+            }
             if (jsonSchema.isArray()) {
                 newLine(nodeBuilder);
                 StringBuilder stringBuilder = new StringBuilder();
                 parserArray(jsonSchema.asArray(), stringBuilder);
                 nodeBuilder.append(stringBuilder.toString());
-                nodeBuilder.append(",");
-                newLine(nodeBuilder);
             } else if (jsonSchema.isObject()) {
-                if (nodeBuilder.length() > 0) {
-                    nodeBuilder.append(",");
-                    newLine(nodeBuilder);
-                }
                 StringBuilder childrenObjectBuilder = new StringBuilder();
                 parserObject(jsonSchema.asObject(), childrenObjectBuilder);
                 nodeBuilder.append(childrenObjectBuilder.toString());
@@ -105,9 +103,7 @@ class JavaCodeGenerator {
                 StringBuilder stringBuilder = new StringBuilder();
                 parserPrimitive(jsonSchema.asPrimitive(), stringBuilder);
                 newLine(nodeBuilder);
-                nodeBuilder.append(stringBuilder.toString());
-                nodeBuilder.append(",");
-                newLine(nodeBuilder);
+                nodeBuilder.append(stringBuilder);
             }
         }
         if (name != null && name.length() > 0) {

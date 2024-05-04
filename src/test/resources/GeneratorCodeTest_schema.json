@@ -1,0 +1,35 @@
+{
+  "name": "",
+  "required": false,
+  "dataType": "Object",
+  "children": [
+    {
+      "name": "b",
+      "required": false,
+      "dataType": "Boolean",
+      "children": [],
+      "exampleValue": "true"
+    },
+    {
+      "name": "a",
+      "required": false,
+      "dataType": "Boolean",
+      "children": [],
+      "exampleValue": "false"
+    },
+    {
+      "name": "bools",
+      "required": false,
+      "dataType": "Array",
+      "children": [
+        {
+          "name": "",
+          "required": true,
+          "dataType": "Boolean",
+          "children": [],
+          "exampleValue": "true"
+        }
+      ]
+    }
+  ]
+}

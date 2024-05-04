@@ -30,7 +30,7 @@ public enum DataType {
         public void check(Primitive primitive, String value) {
             if (primitive.isRequired()) {
                 if (value == null) {
-                    throw new IllegalArgumentException(primitive.getName() + "参数不能为空");
+                    throw JsvUtils.throwMissingParamException(primitive.getName());
                 }
             } else {
                 if (value == null) {
