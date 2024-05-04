@@ -22,7 +22,7 @@ There's a [README](https://github.com/kevinLuan/json-schema-validator/blob/featu
 <dependency>
     <groupId>cn.taskflow.jsv</groupId>
     <artifactId>json-schema-validator</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.4</version>
 </dependency>
 ```
 
