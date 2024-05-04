@@ -103,8 +103,8 @@ public class ValidatorTest {
         String json = getResponseData();
         System.out.println(json);
         JsonNode jsonNode = JsonUtils.parser(json);
-        Map<String, Object> map = Validator.of(DataVerifyHandler.getInstance(), getResultParam())
-            .validate(jsonNode).extract(jsonNode);
+        Map<String, Object> map = Validator.of(DataVerifyHandler.getInstance(), getResultParam()).validate(jsonNode)
+            .extract(jsonNode);
         System.out.println(JsonUtils.stringify(map));
         String expected = "{'result':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}";
         expected = expected.replace("'", "\"");

@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
  * @author KEVIN LUAN
  */
 public class JsonParser {
-    private final static Logger log = LoggerFactory.getLogger(JsonParser.class);
-    public static final String DESCRIPTION = null;
+    private final static Logger log         = LoggerFactory.getLogger(JsonParser.class);
+    public static final String  DESCRIPTION = null;
 
     /**
      * 根据json数据生成Param验证对象
@@ -61,7 +61,6 @@ public class JsonParser {
         }
         return jsonSchema;
     }
-
 
     private static JsonBasicSchema parserObject(String name, com.google.gson.JsonObject jsonObject, SchemaProcess option) {
         JsonSchema values[] = new JsonSchema[jsonObject.size()];

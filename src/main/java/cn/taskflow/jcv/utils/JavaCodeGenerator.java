@@ -109,10 +109,10 @@ class JavaCodeGenerator {
         if (name != null && name.length() > 0) {
             if (object.isRequired()) {
                 builder.append("JsonObject.required(" + formatParam(name) + "," + formatParam(description) + ","
-                        + remoteLastComma(newLine(nodeBuilder)) + NEW_LINE + ")");
+                               + remoteLastComma(newLine(nodeBuilder)) + NEW_LINE + ")");
             } else {
                 builder.append("JsonObject.optional(" + formatParam(name) + "," + formatParam(description) + ","
-                        + remoteLastComma(newLine(nodeBuilder)) + NEW_LINE + ")");
+                               + remoteLastComma(newLine(nodeBuilder)) + NEW_LINE + ")");
             }
 
         } else {

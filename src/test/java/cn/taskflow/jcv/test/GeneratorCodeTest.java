@@ -35,9 +35,9 @@ import java.io.IOException;
 public class GeneratorCodeTest {
     @Test
     public void test() throws IOException {
-        String json = IOUtils.readFile("CodeGeneratorTest_data.json");
+        String json = IOUtils.readFile("GeneratorCodeTest_data.json");
         String generateJavaCode = StaticJavaParser.parseStatement(GeneratorCode.generateJavaCode(json)).toString();
-        String exampleJavaCode = StaticJavaParser.parseStatement(IOUtils.readFile("CodeGeneratorTest_data.java"))
+        String exampleJavaCode = StaticJavaParser.parseStatement(IOUtils.readFile("GeneratorCodeTest_data.java"))
             .toString();
         Assert.assertEquals(exampleJavaCode, generateJavaCode);
         JsonSchema jsonSchema = JsonObject.optional(JsonBoolean.optional("b", null).setExampleValue("true"),

@@ -1,3 +1,19 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package cn.taskflow.jcv.utils;
 
 import cn.taskflow.jcv.core.*;
@@ -30,14 +46,10 @@ public class MyTest {
     public void test() {
         String json = "{\"item\":{\"id\":1000,\"orderIds\":[1,2,3,4,5],\"title\":\"item name\"},\"name\":\"张三丰\",\"age\":60}";
         System.out.println("JSON: " + json);
-        JsonObject jsonSchema = JsonObject.required(
-                JsonObject.required("item", null,
-                        JsonNumber.required("id", null).setExampleValue(1000),
-                        JsonArray.required("orderIds", null,
-                                JsonNumber.make().setExampleValue(1)),
-                        JsonString.required("title", null).setExampleValue("item name")),
-                JsonString.required("name", null).setExampleValue("张三丰"),
-                JsonNumber.required("age", null).setExampleValue(60));
+        JsonObject jsonSchema = JsonObject.required(JsonObject.required("item", null, JsonNumber.required("id", null)
+            .setExampleValue(1000), JsonArray.required("orderIds", null, JsonNumber.make().setExampleValue(1)),
+            JsonString.required("title", null).setExampleValue("item name")), JsonString.required("name", null)
+            .setExampleValue("张三丰"), JsonNumber.required("age", null).setExampleValue(60));
 
         Map<String, Object> request = getRequest();
         //创建验证器
@@ -54,7 +66,6 @@ public class MyTest {
         //根据根据定义参数提取数据
         Map<String, Object> response = validator.extract(request);
         System.out.println("提取数据：" + JsonUtils.stringify(response));
-
 
     }
 
@@ -73,4 +84,3 @@ public class MyTest {
         JsonSchema jsonSchema1 = GeneratorCode.deserialization(paramDefine);
     }
 }
-

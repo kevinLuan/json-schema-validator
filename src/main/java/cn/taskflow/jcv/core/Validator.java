@@ -50,7 +50,6 @@ public class Validator {
         return validator;
     }
 
-
     public Validator validate(Function<String, String> dataSupplier) {
         dataValidator.validate(dataSupplier);
         return this;
@@ -91,13 +90,13 @@ public class Validator {
 
     public static class AbstractDataValidator {
         private UnknownNodeFilter filter;
-        private VerifyHandler verifyHandler;
+        private VerifyHandler     verifyHandler;
 
         public void setUnknownNodeFilter(UnknownNodeFilter filter) {
             this.filter = filter;
         }
 
-        public List<JsonSchema> jsonSchemas;
+        public List<JsonSchema>     jsonSchemas;
         private DataStructValidator dataStructValidator = DataStructValidator.getInstance(this);
 
         public AbstractDataValidator(List<JsonSchema> jsonSchemas, VerifyHandler verifyHandler) {

@@ -72,7 +72,8 @@ public class SchemaTest {
                     )//
                 )//
             );
-        Assert.assertEquals(GeneratorCode.generateJavaCode(jsonSchema), GeneratorCode.generateJavaCode(generateJsonSchema));
+        Assert.assertEquals(GeneratorCode.generateJavaCode(jsonSchema),
+            GeneratorCode.generateJavaCode(generateJsonSchema));
     }
 
     @Test
