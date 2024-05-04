@@ -16,7 +16,7 @@
  */
 package cn.taskflow.jcv.test;
 
-import cn.taskflow.jcv.utils.CodeGenerator;
+import cn.taskflow.jcv.utils.GeneratorCode;
 import cn.taskflow.jcv.utils.IOUtils;
 import cn.taskflow.jcv.utils.JsonParser;
 import cn.taskflow.jcv.utils.JsonSchemaCodec;
@@ -53,7 +53,7 @@ public class SchemaTest {
         String json = JsonSchemaCodec.toJsonDataExample(product);
         String expected = "{\"name\":\"IPhone7\",\"price\":99.98,\"skus\":[{\"id\":100,\"name\":\"移动版\",\"code\":[{\"id\":12345,\"title\":\"土黄金色\"}]}]}";
         Assert.assertEquals(expected, json);
-        String javaCode = CodeGenerator.generateCode(json);
+        String javaCode = GeneratorCode.generateJavaCode(json);
         System.out.println("根据json数据生成验证参数代码:" + javaCode);
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
         JsonSchema generateJsonSchema = JsonObject.optional(//
@@ -72,15 +72,15 @@ public class SchemaTest {
                     )//
                 )//
             );
-        Assert.assertEquals(CodeGenerator.generateCode(jsonSchema), CodeGenerator.generateCode(generateJsonSchema));
+        Assert.assertEquals(GeneratorCode.generateJavaCode(jsonSchema), GeneratorCode.generateJavaCode(generateJsonSchema));
     }
 
     @Test
     public void serializationTest() throws IOException {
-        String paramDefine = CodeGenerator.serialization(product);
+        String paramDefine = GeneratorCode.serialization(product);
         String fileData = IOUtils.readFile("product_param_define.json");
-        Assert.assertEquals(CodeGenerator.serialization(CodeGenerator.deserialization(fileData)), paramDefine);
-        JsonSchema jsonSchema = CodeGenerator.deserialization(paramDefine);
+        Assert.assertEquals(GeneratorCode.serialization(GeneratorCode.deserialization(fileData)), paramDefine);
+        JsonSchema jsonSchema = GeneratorCode.deserialization(paramDefine);
         System.out.println("生成数据示例:" + JsonSchemaCodec.toJsonDataExample(jsonSchema));
         String json = "{\"name\":\"IPhone7\",\"price\":99.98,\"skus\":[{\"id\":100,\"name\":\"移动版\",\"code\":[{\"id\":12345,\"title\":\"土黄金色\"}]}]}";
         Assert.assertEquals(json, JsonSchemaCodec.toJsonDataExample(JsonParser.parseJsonSchema(json)));

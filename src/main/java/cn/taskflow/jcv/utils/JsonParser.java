@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import cn.taskflow.jcv.core.*;
+import cn.taskflow.jcv.extension.SchemaOption;
+import cn.taskflow.jcv.extension.SchemaProcess;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import org.slf4j.Logger;
@@ -32,8 +34,8 @@ import org.slf4j.LoggerFactory;
  * @author KEVIN LUAN
  */
 public class JsonParser {
-    private final static Logger log         = LoggerFactory.getLogger(JsonParser.class);
-    public static final String  DESCRIPTION = null;
+    private final static Logger log = LoggerFactory.getLogger(JsonParser.class);
+    public static final String DESCRIPTION = null;
 
     /**
      * 根据json数据生成Param验证对象
@@ -42,21 +44,26 @@ public class JsonParser {
      * @return
      */
     public static JsonSchema parseJsonSchema(String json) {
+        return parseJsonSchema(json, SchemaOption.OPTIONAL.getSchemaProcess());
+    }
+
+    public static JsonSchema parseJsonSchema(String json, SchemaProcess option) {
         JsonElement element = com.google.gson.JsonParser.parseString(json);
         JsonSchema jsonSchema = null;
         if (element.isJsonArray()) {
-            jsonSchema = parserArray("", element.getAsJsonArray());
+            jsonSchema = parserArray("", element.getAsJsonArray(), option);
         } else if (element.isJsonObject()) {
-            jsonSchema = parserObject("", element.getAsJsonObject());
+            jsonSchema = parserObject("", element.getAsJsonObject(), option);
         } else if (element.isJsonPrimitive()) {
-            jsonSchema = parserPrimitive("", element.getAsJsonPrimitive());
+            jsonSchema = parserPrimitive("", element.getAsJsonPrimitive(), option);
         } else {
             throw new IllegalArgumentException("Not Support type:" + element);
         }
         return jsonSchema;
     }
 
-    private static JsonBasicSchema parserObject(String name, com.google.gson.JsonObject jsonObject) {
+
+    private static JsonBasicSchema parserObject(String name, com.google.gson.JsonObject jsonObject, SchemaProcess option) {
         JsonSchema values[] = new JsonSchema[jsonObject.size()];
         Iterator<Map.Entry<String, JsonElement>> iterator = jsonObject.entrySet().iterator();
         int index = 0;
@@ -65,55 +72,102 @@ public class JsonParser {
             String key = entry.getKey();
             JsonElement val = entry.getValue();
             if (val.isJsonObject()) {
-                values[index] = parserObject(key, val.getAsJsonObject());
+                values[index] = parserObject(key, val.getAsJsonObject(), option);
             } else if (val.isJsonArray()) {
-                values[index] = parserArray(key, val.getAsJsonArray());
+                values[index] = parserArray(key, val.getAsJsonArray(), option);
             } else if (val.isJsonPrimitive()) {
-                values[index] = parserPrimitive(key, val.getAsJsonPrimitive());
+                values[index] = parserPrimitive(key, val.getAsJsonPrimitive(), option);
             } else {
                 throw new IllegalArgumentException("Not support key:`" + key + "`,value:`" + val + "`");
             }
             index++;
         }
         if (name.length() == 0) {
-            return JsonObject.optional(values);
+            if (option.isRequired(name, DataType.Object, values)) {
+                return JsonObject.required(values);
+            } else {
+                return JsonObject.optional(values);
+            }
         } else {
-            return JsonObject.optional(name, DESCRIPTION, values);
+            if (option.isRequired(name, DataType.Object, values)) {
+                return JsonObject.required(name, DESCRIPTION, values);
+            } else {
+                return JsonObject.optional(name, DESCRIPTION, values);
+            }
         }
     }
 
-    private static JsonArray parserArray(String name, com.google.gson.JsonArray array) {
+    private static JsonArray parserArray(String name, com.google.gson.JsonArray array, SchemaProcess option) {
         if (array.size() > 0) {
             JsonElement element = array.get(0);
             if (element.isJsonObject()) {
-                return JsonArray.optional(name, DESCRIPTION, parserObject("", element.getAsJsonObject()));
+                JsonBasicSchema children = parserObject("", element.getAsJsonObject(), option);
+                if (option.isRequired(name, DataType.Array, children)) {
+                    return JsonArray.required(name, DESCRIPTION, children);
+                } else {
+                    return JsonArray.optional(name, DESCRIPTION, children);
+                }
             } else if (element.isJsonPrimitive()) {
-                return JsonArray.optional(name, DESCRIPTION, parserPrimitive("", element.getAsJsonPrimitive()));
+                Primitive primitive = parserPrimitive("", element.getAsJsonPrimitive(), option);
+                if (option.isRequired(name, DataType.Array, primitive)) {
+                    return JsonArray.required(name, DESCRIPTION, primitive);
+                } else {
+                    return JsonArray.optional(name, DESCRIPTION, primitive);
+                }
             } else {
                 throw new IllegalArgumentException("Not support type: `" + element + "`");
             }
+        } else {
+            if (option.isRequired(name, DataType.Array)) {
+                return JsonArray.required(name, DESCRIPTION);
+            } else {
+                return JsonArray.optional(name, DESCRIPTION);
+            }
         }
-        return JsonArray.optional(name, DESCRIPTION);
     }
 
-    private static Primitive parserPrimitive(String name, JsonPrimitive element) {
+    private static Primitive parserPrimitive(String name, JsonPrimitive element, SchemaProcess option) {
         if (element.isNumber()) {
             if (name.length() == 0) {
-                return JsonNumber.ofNullable().setExampleValue(element.getAsNumber());
+                if (option.isOptional(name, DataType.Number)) {
+                    return JsonNumber.ofNullable().setExampleValue(element.getAsNumber());
+                } else {
+                    return JsonNumber.make().setExampleValue(element.getAsNumber());
+                }
             } else {
-                return JsonNumber.optional(name, DESCRIPTION).setExampleValue(element.getAsNumber());
+                if (option.isOptional(name, DataType.Number)) {
+                    return JsonNumber.optional(name, DESCRIPTION).setExampleValue(element.getAsNumber());
+                } else {
+                    return JsonNumber.required(name, DESCRIPTION).setExampleValue(element.getAsNumber());
+                }
             }
         } else if (element.isBoolean() || element.getAsString().equals("true") || element.getAsString().equals("false")) {
             if (name.length() == 0) {
-                return JsonBoolean.ofNullable().setExampleValue(element.getAsBoolean());
+                if (option.isOptional(name, DataType.Boolean)) {
+                    return JsonBoolean.ofNullable().setExampleValue(element.getAsBoolean());
+                } else {
+                    return JsonBoolean.make().setExampleValue(element.getAsBoolean());
+                }
             } else {
-                return JsonBoolean.optional(name, DESCRIPTION).setExampleValue(element.getAsBoolean());
+                if (option.isOptional(name, DataType.Boolean)) {
+                    return JsonBoolean.optional(name, DESCRIPTION).setExampleValue(element.getAsBoolean());
+                } else {
+                    return JsonBoolean.required(name, DESCRIPTION).setExampleValue(element.getAsBoolean());
+                }
             }
         } else {
             if (name.length() == 0) {
-                return JsonString.ofNullable().setExampleValue(element.getAsString());
+                if (option.isOptional(name, DataType.String)) {
+                    return JsonString.ofNullable().setExampleValue(element.getAsString());
+                } else {
+                    return JsonString.make().setExampleValue(element.getAsString());
+                }
             } else {
-                return JsonString.optional(name, DESCRIPTION).setExampleValue(element.getAsString());
+                if (option.isOptional(name, DataType.String)) {
+                    return JsonString.optional(name, DESCRIPTION).setExampleValue(element.getAsString());
+                } else {
+                    return JsonString.required(name, DESCRIPTION).setExampleValue(element.getAsString());
+                }
             }
         }
     }

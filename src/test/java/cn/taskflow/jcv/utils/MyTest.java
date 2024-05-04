@@ -1,0 +1,76 @@
+package cn.taskflow.jcv.utils;
+
+import cn.taskflow.jcv.core.*;
+import cn.taskflow.jcv.encode.JsonUtils;
+import cn.taskflow.jcv.extension.SchemaOption;
+import com.google.common.collect.Lists;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @author SHOUSHEN.LUAN
+ * @since 2024-05-04
+ */
+public class MyTest {
+    private Map<String, Object> getRequest() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("name", "张三丰");
+        map.put("age", 60);
+        map.put("item", new HashMap<>());
+        ((Map<String, Object>) map.get("item")).put("id", 1000);
+        ((Map<String, Object>) map.get("item")).put("title", "item name");
+        ((Map<String, Object>) map.get("item")).put("orderIds", Lists.newArrayList(1, 2, 3, 4, 5));
+        return map;
+    }
+
+    @Test
+    public void test() {
+        String json = "{\"item\":{\"id\":1000,\"orderIds\":[1,2,3,4,5],\"title\":\"item name\"},\"name\":\"张三丰\",\"age\":60}";
+        System.out.println("JSON: " + json);
+        JsonObject jsonSchema = JsonObject.required(
+                JsonObject.required("item", null,
+                        JsonNumber.required("id", null).setExampleValue(1000),
+                        JsonArray.required("orderIds", null,
+                                JsonNumber.make().setExampleValue(1)),
+                        JsonString.required("title", null).setExampleValue("item name")),
+                JsonString.required("name", null).setExampleValue("张三丰"),
+                JsonNumber.required("age", null).setExampleValue(60));
+
+        Map<String, Object> request = getRequest();
+        //创建验证器
+        Validator validator = Validator.of(jsonSchema);
+        request.put("age", "十八岁");
+        try {
+            validator.validate(request);
+            Assert.fail("未出现预期异常");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("`age` parameter error", e.getMessage());
+        }
+        //增加忽略字段
+        request.put("ignore_field", "忽略数据");
+        //根据根据定义参数提取数据
+        Map<String, Object> response = validator.extract(request);
+        System.out.println("提取数据：" + JsonUtils.stringify(response));
+
+
+    }
+
+    @Test
+    public void testGenerateCode() {
+        String json = "{\"item\":{\"id\":1000,\"orderIds\":[1,2,3,4,5],\"title\":\"item name\"},\"name\":\"张三丰\",\"age\":60}";
+        System.out.println("--根据任意JSON数据化生成java代码：定义属性为必须类型--");
+        System.out.println(GeneratorCode.generateJavaCode(json, SchemaOption.REQUIRED));
+        System.out.println("--根据任意JSON数据化生成java代码：定义为缺省值--");
+        System.out.println(GeneratorCode.generateJavaCode(json, SchemaOption.OPTIONAL));
+        JsonSchema jsonSchema = GeneratorCode.generateParamFromJson(json);
+        System.out.println("-------------根据参数 schema 生成示例数据------------");
+        System.out.println(GeneratorCode.generateSampleData(jsonSchema));
+        System.out.println("-------------验证schema参数序列化和反序列------------------");
+        String paramDefine = GeneratorCode.serialization(jsonSchema);
+        JsonSchema jsonSchema1 = GeneratorCode.deserialization(paramDefine);
+    }
+}
+

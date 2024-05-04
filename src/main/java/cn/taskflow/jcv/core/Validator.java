@@ -40,11 +40,16 @@ public class Validator {
         return this;
     }
 
-    public static Validator create(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
+    public static Validator of(JsonSchema... jsonSchemas) {
+        return of(DataVerifyHandler.getInstance(), jsonSchemas);
+    }
+
+    public static Validator of(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
         Validator validator = new Validator();
         validator.dataValidator = AbstractDataValidator.make(verifyHandler, jsonSchemas);
         return validator;
     }
+
 
     public Validator validate(Function<String, String> dataSupplier) {
         dataValidator.validate(dataSupplier);
@@ -60,19 +65,39 @@ public class Validator {
         return this;
     }
 
+    public Validator validate(String json) {
+        dataValidator.validate(JsonUtils.parser(json));
+        return this;
+    }
+
+    public Validator validate(Object obj) {
+        dataValidator.validate(JsonUtils.convert(obj));
+        return this;
+    }
+
     public Map<String, Object> extract(JsonNode json) {
         return dataValidator.extract(json);
     }
 
+    public Map<String, Object> extract(Object obj) {
+        JsonNode json = JsonUtils.convert(obj);
+        return dataValidator.extract(json);
+    }
+
+    public Map<String, Object> extract(String json) {
+        JsonNode jsonNode = JsonUtils.parser(json);
+        return dataValidator.extract(jsonNode);
+    }
+
     public static class AbstractDataValidator {
         private UnknownNodeFilter filter;
-        private VerifyHandler     verifyHandler;
+        private VerifyHandler verifyHandler;
 
         public void setUnknownNodeFilter(UnknownNodeFilter filter) {
             this.filter = filter;
         }
 
-        public List<JsonSchema>     jsonSchemas;
+        public List<JsonSchema> jsonSchemas;
         private DataStructValidator dataStructValidator = DataStructValidator.getInstance(this);
 
         public AbstractDataValidator(List<JsonSchema> jsonSchemas, VerifyHandler verifyHandler) {

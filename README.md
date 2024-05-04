@@ -26,119 +26,104 @@ There's a [README](https://github.com/kevinLuan/json-schema-validator/blob/featu
 </dependency>
 ```
 
-##### 定义请求参数对象结构
+
+### 应用示例
+
+#### JSON 数据
+```json
+{
+  "item": {
+    "id": 1000,
+    "orderIds": [ 1, 2, 3, 4, 5 ],
+    "title": "item name"
+  },
+  "name": "张三丰",
+  "age": 60
+} 
+```
+#### 运行以下代码生成JAVA代码
+```java
+    String code = GeneratorCode.generateCode(json, DefaultMustSchema.INSTANCE);
+    System.out.println(code);
+```
+##### 生成后的代码如下：
 
 ```Java
-    JsonSchema jsonSchema = JsonObject.optional("userInfo","用户信息",
-        JsonString.required("name","姓名").setMin(2).setMax(10),//姓名必填,格式: 2~10字符
-        JsonNumber.optional("age","年龄").between(18,65)//年龄字段选填，格式: 18岁~65岁
-    );
+    JsonObject.required(
+        JsonObject.required("item", null,
+            JsonNumber.required("id", null).setExampleValue(1000),
+            JsonArray.required("orderIds", null, JsonNumber.make().setExampleValue(1)),
+            JsonString.required("title", null).setExampleValue("item name")
+        ),
+        JsonString.required("name", null).setExampleValue("张三丰"),
+        JsonNumber.required("age", null).setExampleValue(60)
+    );    
 ```
-
-##### 参数合法性验证
-
-客户端请求代码示例：
+#### 完整示例如下：
 
 ```java
-    MockHttpServletRequest request=new MockHttpServletRequest();
-    Map<String, Object> map=new HashMap<>();
-    map.put("name","张三丰");
-    map.put("age","60");
-    map.put("sql","CSRF漏洞");
-    request.addParameter("userInfo",JsonUtils.stringify(map));
+    // 请求参数
+    Map<String, Object> map = new HashMap<>();
+    map.put("name", "张三丰");
+    map.put("age", 60);
+    map.put("item", new HashMap<>());
+    ((Map<String, Object>) map.get("item")).put("id", 1000);
+    ((Map<String, Object>) map.get("item")).put("title", "item name");
+    ((Map<String, Object>) map.get("item")).put("orderIds", Lists.newArrayList(1, 2, 3, 4, 5));
+
+
+    //定义验证规则：json-schema
+    JsonObject jsonSchema = JsonObject.required(
+        JsonObject.required("item", null,
+            JsonNumber.required("id", null).setExampleValue(1000),
+            JsonArray.required("orderIds", null,
+            JsonNumber.make().setExampleValue(1)
+        ),
+        JsonString.required("title", null).setExampleValue("item name")),
+        JsonString.required("name", null).setExampleValue("张三丰"),
+        JsonNumber.required("age", null).setExampleValue(60)
+        );
+    
+        //创建验证器
+        Validator validator = Validator.of(jsonSchema);
+        
+        try {//这里将年龄从Number类型定义，调整为非法数据结构，运行会出现参数错误
+            request.put("age", "十八岁");
+            validator.validate(request);
+            Assert.fail("未出现预期异常");
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals("`age` parameter error", e.getMessage());
+        }
+        
+        //增加忽略字段
+        request.put("ignore_field", "忽略数据");
+        //根据定义参数提取数据，自动忽略未定义的数据结构
+        Map<String, Object> response = validator.extract(request);
+        System.out.println("提取数据：" + JsonUtils.stringify(response));
+        //{"name":"张三丰","item":{"id":1000,"orderIds":[1,2,3,4,5],"title":"item name"},"age":"十八岁"}
+    
 ```
 
-客户端请求数据示例：
+##### 生成代码工具API
 
-```json
-{
-  "name": "张三",
-  "age": 30
+```java
+@Test
+public void testGenerateCode() {
+        String json = "{\"item\":{\"id\":1000,\"orderIds\":[1,2,3,4,5],\"title\":\"item name\"},\"name\":\"张三丰\",\"age\":60}";
+        System.out.println("--根据任意JSON数据化生成java代码：定义属性为必须类型--");
+        System.out.println(GeneratorCode.generateJavaCode(json, SchemaOption.REQUIRED));
+        System.out.println("--根据任意JSON数据化生成java代码：定义为缺省值--");
+        System.out.println(GeneratorCode.generateJavaCode(json, SchemaOption.OPTIONAL));
+        JsonSchema jsonSchema = GeneratorCode.generateParamFromJson(json);
+        System.out.println("-------------根据参数 schema 生成示例数据------------");
+        System.out.println(GeneratorCode.generateSampleData(jsonSchema));
+        System.out.println("-------------验证schema参数序列化和反序列------------------");
+        String paramDefine = GeneratorCode.serialization(jsonSchema);
+        JsonSchema jsonSchema1 = GeneratorCode.deserialization(paramDefine);
 }
 ```
 
-##### 服务端数据验证
 
-代码示例：
-
-```java
-    JsonSchema jsonSchema = JsonObject.required("userInfo","用户信息",
-        JsonString.required("name","姓名").setMin(2).setMax(32),
-        JsonNumber.optional("age",null).between(3,18)
-    );
-    try{
-        Validator validator=Validator.request(jsonSchema);
-        //验证请求参数
-        validator.checkRequest(request);
-        //根据验证参数要求格式，提取数据
-        Map<String, Object> extractData=validator.extractRequest(request);
-    }catch(IllegalArgumentException e){
-        Assert.assertEquals("`paramInfo.age`限制范围3(含)~18(含)",e.getMessage());
-    }
-```
-
-##### 验证完成并提取合法性数据
-
-代码示例：
-
-```java
-    JsonSchema jsonSchema = JsonObject.required("userInfo","用户信息",
-        JsonString.required("name","姓名").setMin(2).setMax(32),
-        JsonNumber.optional("age",null).between(3,18)
-    );
-    Map<String, Object> extractData = Validator.request(jsonSchema).checkRequest(request).extractRequest(request);
-```
-
-#### 代码生成
-
-##### 根据任意 JSON 数据自动生成 Param 定义
-
-```json
-{
-  "name": "张三丰",
-  "ids": [
-    100
-  ],
-  "items": [
-    {
-      "name": "手机",
-      "id": 2
-    }
-  ],
-  "age": 100.11
-}
-```
-
-生成代码工具API
-
-```java
-   String javaCode = ParamUtils.generateCode(json);
-   System.out.println("生成Param代码:"+javaCode);
-   //根据 JSON  数据生成运行时Param对象
-    Param jsonSchema=ParamUtils.fromJsonToParam(json);
-    //根据 Param 生成数据示例格式
-    String dataExample=ParamUtils.toJsonDataExample(jsonSchema);
-```
-
-生成代码如下：
-
-```java
-JsonObject.optional(
-    JsonString.optional("name",null).setExampleValue("张三丰"),
-        JsonArray.optional("ids",null,JsonNumber.ofNullable()),
-            JsonArray.optional("items",null,
-                JsonObject.optional(
-                    JsonString.optional("name",null).setExampleValue("手机"),
-                    JsonNumber.optional("id",null).setExampleValue(2)
-                )
-            ),
-    JsonNumber.optional("age",null).setExampleValue(100.11)
-);
-```
-
-##### 根据 Param 定义自动生成原生 JSON 数据，可以用来作为请求示例使用
-
-##### Param 可以支持序列化和反序列能力，用来满足动态配置验证规则场景
 
 ## License
 

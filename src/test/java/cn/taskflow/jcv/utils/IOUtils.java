@@ -34,7 +34,7 @@ public class IOUtils {
         int index = path.indexOf("/target/test-classes/");
         String baseDir = path.substring(0, index);
         File filePath = Paths.get(baseDir).resolve("src").resolve("test").resolve("resources").resolve(name)
-                .toAbsolutePath().toFile();
+            .toAbsolutePath().toFile();
         StringBuilder builder = new StringBuilder();
         try (FileReader reader = new FileReader(filePath)) {
             BufferedReader bufferedReader = new BufferedReader(reader);

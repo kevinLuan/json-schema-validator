@@ -19,12 +19,10 @@ package cn.taskflow.jcv.test;
 import cn.taskflow.jcv.core.JsonBoolean;
 import cn.taskflow.jcv.core.JsonObject;
 import cn.taskflow.jcv.utils.IOUtils;
-import cn.taskflow.jcv.utils.JsvUtils;
 import com.github.javaparser.StaticJavaParser;
 import cn.taskflow.jcv.core.JsonArray;
 import cn.taskflow.jcv.core.JsonSchema;
-import cn.taskflow.jcv.utils.CodeGenerator;
-import com.google.gson.Gson;
+import cn.taskflow.jcv.utils.GeneratorCode;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -34,21 +32,18 @@ import java.io.IOException;
  * @author SHOUSHEN.LUAN
  * @since 2024-02-04
  */
-public class CodeGeneratorTest {
+public class GeneratorCodeTest {
     @Test
     public void test() throws IOException {
         String json = IOUtils.readFile("CodeGeneratorTest_data.json");
-        String generateJavaCode = StaticJavaParser.parseStatement(CodeGenerator.generateCode(json)).toString();
-        String exampleJavaCode = StaticJavaParser.parseStatement(IOUtils.readFile("CodeGeneratorTest_data.java")).toString();
+        String generateJavaCode = StaticJavaParser.parseStatement(GeneratorCode.generateJavaCode(json)).toString();
+        String exampleJavaCode = StaticJavaParser.parseStatement(IOUtils.readFile("CodeGeneratorTest_data.java"))
+            .toString();
         Assert.assertEquals(exampleJavaCode, generateJavaCode);
-        JsonSchema jsonSchema = JsonObject.optional(
-                JsonBoolean.optional("b", null).setExampleValue("true"),
-                JsonBoolean.optional("a", null).setExampleValue("false"),
-                JsonArray.optional("bools", null,
-                        JsonBoolean.make().setExampleValue("true")
-                )
-        );
-        Assert.assertEquals(IOUtils.readJson(this.getClass(), "sample"), CodeGenerator.generateSampleData(jsonSchema));
-        Assert.assertEquals(IOUtils.readJson(getClass(), "schema"), CodeGenerator.serialization(jsonSchema));
+        JsonSchema jsonSchema = JsonObject.optional(JsonBoolean.optional("b", null).setExampleValue("true"),
+            JsonBoolean.optional("a", null).setExampleValue("false"),
+            JsonArray.optional("bools", null, JsonBoolean.make().setExampleValue("true")));
+        Assert.assertEquals(IOUtils.readJson(this.getClass(), "sample"), GeneratorCode.generateSampleData(jsonSchema));
+        Assert.assertEquals(IOUtils.readJson(getClass(), "schema"), GeneratorCode.serialization(jsonSchema));
     }
 }
