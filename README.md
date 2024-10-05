@@ -1,13 +1,17 @@
+json-schema-validator
+============
 <div align="left">
   <a href="javascript:void(0);"><img src="https://img.shields.io/badge/build-passing-brightgreen" /></a>
   <a href="javascript:void(0);" target="_blank"><img src="https://img.shields.io/badge/docs-latest-brightgreen" /></a>
-  <a href="javascript:void(0);"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+  <a href="https://central.sonatype.com/artifact/cn.taskflow.jsv/json-schema-validator?smo=true"><img src="https://img.shields.io/maven-metadata/v.svg?label=Maven%20Central&metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fcn%2Ftaskflow%2Ftaskflow-open-api%2Fmaven-metadata.xml" alt="License"></a>
 </div>
 
 English | [简体中文](./README-zh_CN.md)
 
 ## Overview
-json-schema-validator is a data validation middleware based on JSON DSL (Domain-Specific Language). It provides developers with a powerful toolkit for defining and validating JSON data structures. This framework not only supports automatic code generation for any JSON format but also enables data validation and extraction based on schemas defined using the DSL.
+A data validation middleware based on JSON DSL (Domain-Specific Language). It provides developers with a powerful toolkit for defining and validating JSON data structures. This framework not only supports automatic code generation for any JSON format but also enables data validation and extraction based on schemas defined using the DSL.
+
 ### Features
 1. Flexible DSL Definition: Allows users to describe complex JSON structures using a simple DSL syntax.
    Automatic Code Generation: Automatically generates Java classes from JSON schemas, reducing manual coding efforts.

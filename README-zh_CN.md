@@ -1,14 +1,16 @@
+json-schema-validator
+============
 <div align="left">
   <a href="javascript:void(0);"><img src="https://img.shields.io/badge/build-passing-brightgreen" /></a>
   <a href="javascript:void(0);" target="_blank"><img src="https://img.shields.io/badge/docs-latest-brightgreen" /></a>
-  <a href="javascript:void(0);"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+  <a href="https://www.apache.org/licenses/LICENSE-2.0"><img src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" alt="License"></a>
+  <a href="https://central.sonatype.com/artifact/cn.taskflow.jsv/json-schema-validator?smo=true"><img src="https://img.shields.io/maven-metadata/v.svg?label=Maven%20Central&metadataUrl=https%3A%2F%2Frepo1.maven.org%2Fmaven2%2Fcn%2Ftaskflow%2Ftaskflow-open-api%2Fmaven-metadata.xml" alt="License"></a>
 </div>
 
 [English](./README.md) | 简体中文
 
 ## 简介
-json-schema-validator
-是一个基于 JSON DSL (领域特定语言) 实现的数据验证中间件。它为开发者提供了强大的工具集，用于定义和验证 JSON 数据结构。此框架不仅支持任意 JSON 格式的自动代码生成，还能够基于 DSL 定义的 schema 来实现数据验证及数据提取。
+基于 JSON DSL (领域特定语言) 实现的数据验证中间件。它为开发者提供了强大的工具集，用于定义和验证 JSON 数据结构。此框架不仅支持任意 JSON 格式的自动代码生成，还能够基于 DSL 定义的 schema 来实现数据验证及数据提取。
 
 ### 特点
 灵活的 DSL 定义：允许用户通过简单的 DSL 语法来描述复杂的 JSON 结构。
