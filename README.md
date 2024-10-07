@@ -57,49 +57,47 @@ System.out.println(javaCode);
 ```
 The resulting code looks like this:：
 ```java
-    JsonSchema jsonSchema = JsonObject.required(
-                JsonObject.required("item",
-                        JsonNumber.required("id"),
-                        JsonArray.required("orderIds"),
-                        JsonString.required("title")
+JsonSchema jsonSchema = JsonObject.required(  
+        JsonObject.required("item",
+            JsonNumber.required("id"),
+                JsonArray.required("orderIds"),
+                    JsonString.required("title")
                 ),
-                JsonString.required("name"),
-                JsonNumber.required("age")
-        );
-    //The validity of the data is verified according to the schema definition
-    
-    //data validation
-    Validator.of(jsonSchema).validate(json)
+            JsonString.required("name"),
+            JsonNumber.required("age"));
+//The validity of the data is verified according to the schema definition
+
+//data validation
+Validator.of(jsonSchema).validate(json)
         
-    //Data Validation & Data Extraction
-    Validator.of(jsonSchema).validate(json).extract(json);
+//Data Validation & Data Extraction
+Validator.of(jsonSchema).validate(json).extract(json);
 ```
 
 ### custom validation extension
 
 ```java
-    JsonValidator jsonValidator = new JsonValidator() {
-        @Override
-        public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
-            /*Custom validation logic*/
-            return true;
-        }
-    };
+JsonValidator jsonValidator = new JsonValidator() {
+    @Override
+    public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
+        /*Custom validation logic*/
+        return true;
+    }
+};
 
-    //Add the validation policy withValidator(...) to any node in the Schema Optional
-    JsonSchema jsonSchema = JsonObject.required(
-            JsonObject.required("item",
-                JsonNumber.required("id").withValidator(jsonValidator),
-                JsonArray.required("orderIds").withValidator(jsonValidator),
-                JsonString.required("title").withValidator(jsonValidator)
-        ).withValidator(jsonValidator),
-        JsonString.required("name").withValidator(jsonValidator),
-        JsonNumber.required("age").withValidator(jsonValidator)
-        ).withValidator(jsonValidator);
+//Add the validation policy withValidator(...) to any node in the Schema Optional
+JsonSchema jsonSchema = JsonObject.required(
+    JsonObject.required("item",
+        JsonNumber.required("id").withValidator(jsonValidator),
+        JsonArray.required("orderIds").withValidator(jsonValidator),
+        JsonString.required("title").withValidator(jsonValidator)
+    ).withValidator(jsonValidator),
+    JsonString.required("name").withValidator(jsonValidator),
+    JsonNumber.required("age").withValidator(jsonValidator)
+    ).withValidator(jsonValidator);
         
-    //The data validation remains the same
-    Validator.of(jsonSchema).validate(...);
-
+//The data validation remains the same
+Validator.of(jsonSchema).validate(...);
 ```
 
 ## License

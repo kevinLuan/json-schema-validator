@@ -46,39 +46,37 @@ json-schema-validator
 } 
 ```
 ```java
-    String json =...;
-    //使用json生成JSON schema 代码
-    String javaCode = CodeGenerationUtils.generateSchemaCode(json,new GenerateOptional());
-    System.out.println(javaCode);
+String json =...;
+//使用json生成JSON schema 代码
+String javaCode = CodeGenerationUtils.generateSchemaCode(json,new GenerateOptional());
+System.out.println(javaCode);
 ```
 生成后的代码如下：
 ```java
-    JsonSchema jsonSchema = JsonObject.required(
-                JsonObject.required("item",
-                        JsonNumber.required("id"),
-                        JsonArray.required("orderIds"),
-                        JsonString.required("title")
-                ),
-                JsonString.required("name"),
-                JsonNumber.required("age")
-        );
+JsonSchema jsonSchema = JsonObject.required(
+        JsonObject.required("item",
+            JsonNumber.required("id"),
+                JsonArray.required("orderIds"),
+                JsonString.required("title")
+            ),
+        JsonString.required("name"),
+        JsonNumber.required("age"));
     
-    //数据验证
-    Validator.of(jsonSchema).validate(json)
-        
-    //数据验证&数据提取
-    Validator.of(jsonSchema).validate(json).extract(json);
+//数据验证
+Validator.of(jsonSchema).validate(json)
+//数据验证&数据提取
+Validator.of(jsonSchema).validate(json).extract(json);
 ```
 ### 自定义验证扩展
 
 ```java
-    JsonValidator jsonValidator = new JsonValidator() {
-        @Override
-        public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
-            //自定义验证逻辑
-            return true;
-        }
-    };
+JsonValidator jsonValidator = new JsonValidator() {
+    @Override
+    public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
+        //自定义验证逻辑
+        return true;
+    }
+};
 
 //在 Schema 的任意节点上增加验证策略 withValidator(...) 可选
 JsonSchema jsonSchema = JsonObject.required(
