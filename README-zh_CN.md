@@ -72,13 +72,13 @@ json-schema-validator
 ### 自定义验证扩展
 
 ```java
-JsonValidator jsonValidator = new JsonValidator() {
-            @Override
-            public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
-                //自定义验证逻辑
-                return true;
-            }
-        };
+    JsonValidator jsonValidator = new JsonValidator() {
+        @Override
+        public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
+            //自定义验证逻辑
+            return true;
+        }
+    };
 
 //在 Schema 的任意节点上增加验证策略 withValidator(...) 可选
 JsonSchema jsonSchema = JsonObject.required(

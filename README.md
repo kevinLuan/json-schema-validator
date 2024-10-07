@@ -78,26 +78,27 @@ The resulting code looks like this:：
 ### custom validation extension
 
 ```java
-        JsonValidator jsonValidator = new JsonValidator() {
-            @Override
-            public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
-                /*Custom validation logic*/
-                return true;
-            }
-        };
+    JsonValidator jsonValidator = new JsonValidator() {
+        @Override
+        public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
+            /*Custom validation logic*/
+            return true;
+        }
+    };
 
-        //Add the validation policy withValidator(...) to any node in the Schema Optional
-        JsonSchema jsonSchema = JsonObject.required(
-        JsonObject.required("item",
-        JsonNumber.required("id").withValidator(jsonValidator),
-        JsonArray.required("orderIds").withValidator(jsonValidator),
-        JsonString.required("title").withValidator(jsonValidator)
+    //Add the validation policy withValidator(...) to any node in the Schema Optional
+    JsonSchema jsonSchema = JsonObject.required(
+            JsonObject.required("item",
+                JsonNumber.required("id").withValidator(jsonValidator),
+                JsonArray.required("orderIds").withValidator(jsonValidator),
+                JsonString.required("title").withValidator(jsonValidator)
         ).withValidator(jsonValidator),
         JsonString.required("name").withValidator(jsonValidator),
         JsonNumber.required("age").withValidator(jsonValidator)
         ).withValidator(jsonValidator);
-        //The data validation remains the same
-        Validator.of(jsonSchema).validate(...);
+        
+    //The data validation remains the same
+    Validator.of(jsonSchema).validate(...);
 
 ```
 
