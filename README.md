@@ -78,7 +78,7 @@ Validator.fromSchema(jsonSchema).validate(json).extract(json);
 ### custom validation extension
 
 ```java
-JsonValidator customValidationRule = new JsonValidator() {
+CustomValidationRule customValidationRule = new CustomValidationRule() {
     @Override
     public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
         /*Custom validation logic*/
