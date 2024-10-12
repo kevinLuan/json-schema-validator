@@ -100,6 +100,105 @@ JsonSchema jsonSchema = JsonObject.required(
 Validator.fromSchema(jsonSchema).validate(...);
 ```
 
+### Example of Request Body Parameter Validation Based on Spring
+Demonstration of Creating Order API
+
+#### order Data Structure
+```json 
+  {
+  "orderId": "ORD123456",
+  "user": {
+    "userId": "USR78910",
+    "name": "Zhang Shanfeng",
+    "email": "zhangsan@example.com",
+    "phone": "13800000000"
+  },
+  "items": [
+    {
+      "productId": "PROD001",
+      "productName": "Wireless Headphones",
+      "quantity": 2,
+      "price": 199.99,
+      "total": 399.98
+    },
+    {
+      "productId": "PROD002",
+      "productName": "Bluetooth Speaker",
+      "quantity": 1,
+      "price": 299.99,
+      "total": 299.99
+    }
+  ],
+  "totalAmount": 699.97,
+  "orderDate": "2024-02-04T14:30:00Z",
+  "status": "PENDING",
+  "shippingAddress": {
+    "recipient": "Li Si",
+    "addressLine1": "Some street in Chaoyang District, Beijing",
+    "addressLine2": "Building 1, No.1小区",
+    "city": "Beijing",
+    "state": "Beijing",
+    "postalCode": "100000",
+    "country": "China"
+  },
+  "payment": {
+    "method": "CREDIT_CARD",
+    "transactionId": "TXN123456789",
+    "amount": 699.97,
+    "currency": "CNY"
+  }
+}
+```
+#### Generate Schema Code Using JSON
+```java
+
+CodeGenerationUtils.generateSchemaCode(json, new GenerateOptional());
+
+```    
+#### Register the Generated Schema Definition to Spring
+```java
+    @Bean("orderSchema")
+public JsonSchema orderSchema(){
+        return JsonObject.required(
+            JsonString.required("orderId"),
+            JsonObject.required("user",
+            JsonString.required("userId"),
+        JsonString.required("name"),
+        JsonString.required("email"),
+        JsonString.required("phone")),
+        JsonArray.required("items",
+            JsonObject.required(
+                JsonString.required("productId"),
+                JsonString.required("productName"),
+                JsonNumber.required("quantity"),
+                JsonNumber.required("price"),
+                JsonNumber.required("total"))),
+        JsonNumber.required("totalAmount"),
+        JsonString.required("orderDate"),
+        JsonString.required("status"),
+        JsonObject.required("shippingAddress",
+        JsonString.required("recipient"),
+        JsonString.required("addressLine1"),
+        JsonString.required("addressLine2"),
+        JsonString.required("city"),
+        JsonString.required("state"),
+        JsonString.required("postalCode"),
+        JsonString.required("country")),
+        JsonObject.required("payment",
+        JsonString.required("method"),
+        JsonString.required("transactionId"),
+        JsonNumber.required("amount"),
+        JsonString.required("currency")));
+        }
+```
+#### Example of Validating Request Body Parameters in Spring Controller
+```java
+    @PostMapping("/api/test")
+    public ApiResponse<T> createOrder(@RequestBody @JsonSchemaValidate("orderSchema") Order order) {
+            //省略代码...  
+    }
+```
+
 ## License
 
 json-schema-validator software is licensed under the Apache License Version 2.0. See the [LICENSE](https://www.apache.org/licenses/LICENSE-2.0) file for details.
