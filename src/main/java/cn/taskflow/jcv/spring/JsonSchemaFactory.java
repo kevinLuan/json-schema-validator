@@ -17,13 +17,10 @@
 package cn.taskflow.jcv.spring;
 
 import cn.taskflow.jcv.core.JsonSchema;
-import cn.taskflow.jcv.core.Validator;
-import org.springframework.beans.factory.annotation.Autowired;
+import cn.taskflow.jcv.validation.Validator;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,7 +49,7 @@ public class JsonSchemaFactory {
         Optional<JsonSchema> optional = getSchema(schemaValidate.value());
         if (optional.isPresent()) {
             try {
-                Validator.of(optional.get()).validate(json).extract(json);
+                Validator.fromSchema(optional.get()).validate(json).extract(json);
             } catch (Exception e) {
                 if (IllegalArgumentException.class.isAssignableFrom(e.getClass())) {
                     throw (IllegalArgumentException) e;

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import cn.taskflow.jcv.encode.NodeFactory;
+import cn.taskflow.jcv.validation.DataVerifyHandler;
+import cn.taskflow.jcv.validation.Validator;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -100,8 +102,8 @@ public class TestResponse {
     public void test_ok() {
         JsonSchema jsonSchema = getResultParam();
         JsonNode dataResult = NodeFactory.parser(getResponseData());
-        Map<String, Object> response = Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult)
-            .extract(dataResult);
+        Map<String, Object> response = Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema)
+            .validate(dataResult).extract(dataResult);
         System.out.println("提取数据：" + NodeFactory.stringify(response));
         String expected = "{'result':{'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}"
             .replace("'", "\"");
@@ -114,7 +116,7 @@ public class TestResponse {
             JsonSchema jsonSchema = getResultParam();
             JsonNode dataResult = NodeFactory.parser(getResponseData());
             System.out.println("返回原始数据：" + dataResult.toString());
-            Map<String, Object> response = Validator.of(DataVerifyHandler.getInstance(), jsonSchema)
+            Map<String, Object> response = Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema)
                 .validate(dataResult).extract(dataResult);
             System.out.println("提取需要的数据：" + NodeFactory.stringify(response));
         }
@@ -122,7 +124,7 @@ public class TestResponse {
         for (int i = 0; i < 10000; i++) {
             JsonSchema jsonSchema = getResultParam();
             JsonNode dataResult = NodeFactory.parser(getResponseData());
-            Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
+            Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema).validate(dataResult).extract(dataResult);
         }
         System.out.println("use time:" + (System.currentTimeMillis() - start));
     }

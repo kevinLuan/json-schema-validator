@@ -20,6 +20,7 @@ import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.extension.SchemaOptions;
+import cn.taskflow.jcv.validation.Validator;
 import com.google.common.collect.Lists;
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,7 +55,7 @@ public class MyTest {
 
         Map<String, Object> request = getRequest();
         //创建验证器
-        Validator validator = Validator.of(jsonSchema);
+        Validator validator = Validator.fromSchema(jsonSchema);
         request.put("age", "十八岁");
         try {
             validator.validate(request);

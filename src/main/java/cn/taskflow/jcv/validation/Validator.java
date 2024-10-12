@@ -14,8 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.core;
+package cn.taskflow.jcv.validation;
 
+import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.extension.AdjustParamInstance;
@@ -40,11 +41,11 @@ public class Validator {
         return this;
     }
 
-    public static Validator of(JsonSchema... jsonSchemas) {
-        return of(DataVerifyHandler.getInstance(), jsonSchemas);
+    public static Validator fromSchema(JsonSchema... jsonSchemas) {
+        return fromSchema(DataVerifyHandler.getInstance(), jsonSchemas);
     }
 
-    public static Validator of(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
+    public static Validator fromSchema(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
         Validator validator = new Validator();
         validator.dataValidator = AbstractDataValidator.make(verifyHandler, jsonSchemas);
         return validator;

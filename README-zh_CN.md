@@ -63,14 +63,14 @@ JsonSchema jsonSchema = JsonObject.required(
         JsonNumber.required("age"));
     
 //数据验证
-Validator.of(jsonSchema).validate(json)
+Validator.fromSchema(jsonSchema).validate(json)
 //数据验证&数据提取
-Validator.of(jsonSchema).validate(json).extract(json);
+Validator.fromSchema(jsonSchema).validate(json).extract(json);
 ```
 ### 自定义验证扩展
 
 ```java
-JsonValidator jsonValidator = new JsonValidator() {
+JsonValidator customValidationRule = new JsonValidator() {
     @Override
     public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
         //自定义验证逻辑
@@ -81,15 +81,15 @@ JsonValidator jsonValidator = new JsonValidator() {
 //在 Schema 的任意节点上增加验证策略 withValidator(...) 可选
 JsonSchema jsonSchema = JsonObject.required(
     JsonObject.required("item",
-        JsonNumber.required("id").withValidator(jsonValidator),
-        JsonArray.required("orderIds").withValidator(jsonValidator),
-        JsonString.required("title").withValidator(jsonValidator)
-    ).withValidator(jsonValidator),
-        JsonString.required("name").withValidator(jsonValidator),
-        JsonNumber.required("age").withValidator(jsonValidator)
-    ).withValidator(jsonValidator);
+        JsonNumber.required("id").withValidator(customValidationRule),
+        JsonArray.required("orderIds").withValidator(customValidationRule),
+        JsonString.required("title").withValidator(customValidationRule)
+    ).withValidator(customValidationRule),
+        JsonString.required("name").withValidator(customValidationRule),
+        JsonNumber.required("age").withValidator(customValidationRule)
+    ).withValidator(customValidationRule);
     //数据验证保持不变
-    Validator.of(jsonSchema).validate(...);
+    Validator.fromSchema(jsonSchema).validate(...);
 
 ```
 

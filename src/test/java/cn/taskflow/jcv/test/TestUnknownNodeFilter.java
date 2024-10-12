@@ -22,6 +22,9 @@ import cn.taskflow.jcv.extension.DefaultUnknownNodeFilter;
 
 import java.util.Map;
 
+import cn.taskflow.jcv.validation.ArgumentVerifyHandler;
+import cn.taskflow.jcv.validation.DataVerifyHandler;
+import cn.taskflow.jcv.validation.Validator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -56,13 +59,13 @@ public class TestUnknownNodeFilter {
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("result",
                 "{\"name\":true,\"error\":true,\"remark\":\"remark\",\"extendProps\":[\"不符合邀请类型的属性\"],\"age\":1,\"items\":[{\"id\":1,\"name\":true,\"remark\":true,\"ERROR\":true,\"extendProps\":{\"abc\":12.2423}}],\"ids\":[1]}");
-        Map<String, Object> map = Validator.of(ArgumentVerifyHandler.getInstance(), jsonSchema).setUnknownNodeFilter(DefaultUnknownNodeFilter.INSTANCE)
+        Map<String, Object> map = Validator.fromSchema(ArgumentVerifyHandler.getInstance(), jsonSchema).setUnknownNodeFilter(DefaultUnknownNodeFilter.INSTANCE)
                 .validate(request::getParameter).extract(request::getParameter);
         System.out.println(map);
         String expected = "{result={\"name\":true,\"remark\":\"remark\",\"age\":1,\"items\":[{\"id\":1,\"name\":true,\"extendProps\":{\"abc\":12.2423}}],\"ids\":[1]}}";
         Assert.assertEquals(expected, map.toString());
         JsonNode jsonNode = NodeFactory.parser(request.getParameter("result"));
-        map = Validator.of(DataVerifyHandler.getInstance(), jsonSchema).setUnknownNodeFilter(DefaultUnknownNodeFilter.INSTANCE).validate(jsonNode)
+        map = Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema).setUnknownNodeFilter(DefaultUnknownNodeFilter.INSTANCE).validate(jsonNode)
                 .extract(jsonNode);
         System.out.println(map);
         expected = "{name=true, ids=[1], remark=\"remark\", items=[{\"id\":1,\"name\":true,\"extendProps\":{\"abc\":12.2423}}], age=1}";
