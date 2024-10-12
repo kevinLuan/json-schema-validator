@@ -92,6 +92,104 @@ JsonSchema jsonSchema = JsonObject.required(
     Validator.fromSchema(jsonSchema).validate(...);
 
 ```
+### 基于 Spring 请求 body 参数验证示例
+演示创建订单接口
+
+#### 订单数据结构
+```json 
+  {
+  "orderId": "ORD123456",
+  "user": {
+    "userId": "USR78910",
+    "name": "张三",
+    "email": "zhangsan@example.com",
+    "phone": "13800000000"
+  },
+  "items": [
+    {
+      "productId": "PROD001",
+      "productName": "无线耳机",
+      "quantity": 2,
+      "price": 199.99,
+      "total": 399.98
+    },
+    {
+      "productId": "PROD002",
+      "productName": "蓝牙音箱",
+      "quantity": 1,
+      "price": 299.99,
+      "total": 299.99
+    }
+  ],
+  "totalAmount": 699.97,
+  "orderDate": "2024-02-04T14:30:00Z",
+  "status": "PENDING",
+  "shippingAddress": {
+    "recipient": "李四",
+    "addressLine1": "北京市朝阳区某街道",
+    "addressLine2": "小区1号楼",
+    "city": "北京",
+    "state": "北京市",
+    "postalCode": "100000",
+    "country": "中国"
+  },
+  "payment": {
+    "method": "CREDIT_CARD",
+    "transactionId": "TXN123456789",
+    "amount": 699.97,
+    "currency": "CNY"
+  }
+}
+```
+#### 使用 Json 生成 Schema 代码
+```java
+
+CodeGenerationUtils.generateSchemaCode(json, new GenerateOptional());
+
+```    
+#### 将生成的 Schema 定义注册到 Spring
+```java
+    @Bean("orderSchema")
+public JsonSchema orderSchema(){
+        return JsonObject.required(
+            JsonString.required("orderId"),
+            JsonObject.required("user",
+            JsonString.required("userId"),
+        JsonString.required("name"),
+        JsonString.required("email"),
+        JsonString.required("phone")),
+        JsonArray.required("items",
+            JsonObject.required(
+                JsonString.required("productId"),
+                JsonString.required("productName"),
+                JsonNumber.required("quantity"),
+                JsonNumber.required("price"),
+                JsonNumber.required("total"))),
+        JsonNumber.required("totalAmount"),
+        JsonString.required("orderDate"),
+        JsonString.required("status"),
+        JsonObject.required("shippingAddress",
+        JsonString.required("recipient"),
+        JsonString.required("addressLine1"),
+        JsonString.required("addressLine2"),
+        JsonString.required("city"),
+        JsonString.required("state"),
+        JsonString.required("postalCode"),
+        JsonString.required("country")),
+        JsonObject.required("payment",
+        JsonString.required("method"),
+        JsonString.required("transactionId"),
+        JsonNumber.required("amount"),
+        JsonString.required("currency")));
+        }
+```
+#### 对 spring controller 请求 body 参数进行验证示例
+```java
+    @PostMapping("/api/test")
+    public ApiResponse<T> createOrder(@RequestBody @JsonSchemaValidate("orderSchema") Order order) {
+            //省略代码...  
+    }
+```
 
 ## 许可证
 
