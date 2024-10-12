@@ -70,7 +70,7 @@ Validator.fromSchema(jsonSchema).validate(json).extract(json);
 ### 自定义验证扩展
 
 ```java
-JsonValidator customValidationRule = new JsonValidator() {
+CustomValidationRule customValidationRule = new CustomValidationRule() {
     @Override
     public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
         //自定义验证逻辑
