@@ -22,6 +22,8 @@ import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.utils.CodeGenerationUtils;
 import cn.taskflow.jcv.utils.JsonParser;
 import cn.taskflow.jcv.utils.JsonSchemaCodec;
+import cn.taskflow.jcv.validation.DataVerifyHandler;
+import cn.taskflow.jcv.validation.Validator;
 import com.github.javaparser.StaticJavaParser;
 import org.junit.Assert;
 import org.junit.Test;
@@ -38,7 +40,7 @@ public class ResponseValidatorTest {
         jsonSchema.asObject().getChildren()[0].asPrimitive().between(10, 20);
         try {
             JsonNode node = NodeFactory.parser(json);
-            Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
+            Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
             Assert.assertEquals("`name` between character size [ 10~20 ]", e.getMessage());
@@ -49,7 +51,7 @@ public class ResponseValidatorTest {
         jsonSchema.asObject().getChildren()[1].asArray().getSchemaForFirstChildren().asPrimitive().between(1, 50);
         try {
             JsonNode node = NodeFactory.parser(json);
-            Validator.of(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
+            Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
             Assert.fail("没有出现预期的错误");
         } catch (Exception e) {
             Assert.assertEquals("`ids` between [1 ~ 50]", e.getMessage());

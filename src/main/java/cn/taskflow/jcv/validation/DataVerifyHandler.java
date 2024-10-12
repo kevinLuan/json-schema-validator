@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.core;
+package cn.taskflow.jcv.validation;
 
 import cn.taskflow.jcv.utils.JsvUtils;
 

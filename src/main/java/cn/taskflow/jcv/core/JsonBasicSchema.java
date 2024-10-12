@@ -20,6 +20,7 @@ import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
 import cn.taskflow.jcv.utils.StringUtils;
+import cn.taskflow.jcv.validation.CustomValidationRule;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import cn.taskflow.jcv.utils.NodeHelper;
 import cn.taskflow.jcv.encode.GsonEncoder;
@@ -28,25 +29,25 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Optional;
 
 public class JsonBasicSchema implements JsonSchema {
-    private String                             name;
-    private boolean                            required;
-    private DataType                           dataType;
-    private String                             description;
+    private String                                    name;
+    private boolean                                   required;
+    private DataType                                  dataType;
+    private String                                    description;
     // 父亲节点
-    public transient JsonSchema                parentNode;
+    public transient JsonSchema                       parentNode;
 
     // 子节点(ParamArray,ParamObject)
-    JsonBasicSchema[]                          children      = new JsonBasicSchema[0];
+    JsonBasicSchema[]                                 children               = new JsonBasicSchema[0];
     // 限制最小输入值(Primitive)
-    Number                                     min;
+    Number                                            min;
     // 限制最大输入值(Primitive)
-    Number                                     max;
+    Number                                            max;
     /**
      * 示例值(只有Primitive类型节点才会有效)
      */
-    String                                     exampleValue;
+    String                                            exampleValue;
     @JsonIgnore
-    transient volatile Optional<JsonValidator> jsonValidator = Optional.empty();
+    transient volatile Optional<CustomValidationRule> validationRuleOptional = Optional.empty();
 
     public JsonBasicSchema() {
     }
@@ -64,8 +65,8 @@ public class JsonBasicSchema implements JsonSchema {
         this.dataType = dataType;
     }
 
-    public <T extends JsonBasicSchema> T withValidator(JsonValidator jsonValidator) {
-        this.jsonValidator = Optional.of(jsonValidator);
+    public <T extends JsonBasicSchema> T withValidator(CustomValidationRule customValidationRule) {
+        this.validationRuleOptional = Optional.of(customValidationRule);
         return (T) this;
     }
 
@@ -194,7 +195,7 @@ public class JsonBasicSchema implements JsonSchema {
 
     @Override
     public void verify(JsonNode jsonNode) {
-        jsonValidator.ifPresent((func) -> {
+        validationRuleOptional.ifPresent((func) -> {
             if (!func.validate(this, jsonNode)) {
                 throw new ValidationException("Invalid parameter `" + getPath() + "`", getPath());
             }

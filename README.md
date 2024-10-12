@@ -68,16 +68,17 @@ JsonSchema jsonSchema = JsonObject.required(
 //The validity of the data is verified according to the schema definition
 
 //data validation
-Validator.of(jsonSchema).validate(json)
+Validator.fromSchema(jsonSchema).validate(json)
         
 //Data Validation & Data Extraction
-Validator.of(jsonSchema).validate(json).extract(json);
+Validator.fromSchema(jsonSchema).validate(json).extract(json);
+
 ```
 
 ### custom validation extension
 
 ```java
-JsonValidator jsonValidator = new JsonValidator() {
+JsonValidator customValidationRule = new JsonValidator() {
     @Override
     public boolean validate(JsonSchema schema, JsonNode node) throws ValidationException {
         /*Custom validation logic*/
@@ -88,16 +89,16 @@ JsonValidator jsonValidator = new JsonValidator() {
 //Add the validation policy withValidator(...) to any node in the Schema Optional
 JsonSchema jsonSchema = JsonObject.required(
     JsonObject.required("item",
-        JsonNumber.required("id").withValidator(jsonValidator),
-        JsonArray.required("orderIds").withValidator(jsonValidator),
-        JsonString.required("title").withValidator(jsonValidator)
-    ).withValidator(jsonValidator),
-    JsonString.required("name").withValidator(jsonValidator),
-    JsonNumber.required("age").withValidator(jsonValidator)
-    ).withValidator(jsonValidator);
+        JsonNumber.required("id").withValidator(customValidationRule),
+        JsonArray.required("orderIds").withValidator(customValidationRule),
+        JsonString.required("title").withValidator(customValidationRule)
+    ).withValidator(customValidationRule),
+    JsonString.required("name").withValidator(customValidationRule),
+    JsonNumber.required("age").withValidator(customValidationRule)
+    ).withValidator(customValidationRule);
         
 //The data validation remains the same
-Validator.of(jsonSchema).validate(...);
+Validator.fromSchema(jsonSchema).validate(...);
 ```
 
 ## License

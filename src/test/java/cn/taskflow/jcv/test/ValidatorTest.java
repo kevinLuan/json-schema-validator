@@ -26,6 +26,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import cn.taskflow.jcv.encode.NodeFactory;
+import cn.taskflow.jcv.validation.ArgumentVerifyHandler;
+import cn.taskflow.jcv.validation.DataVerifyHandler;
+import cn.taskflow.jcv.validation.Validator;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -102,8 +105,8 @@ public class ValidatorTest {
         String json = getResponseData();
         System.out.println(json);
         JsonNode jsonNode = NodeFactory.parser(json);
-        Map<String, Object> map = Validator.of(DataVerifyHandler.getInstance(), getResultParam()).validate(jsonNode)
-            .extract(jsonNode);
+        Map<String, Object> map = Validator.fromSchema(DataVerifyHandler.getInstance(), getResultParam())
+            .validate(jsonNode).extract(jsonNode);
         System.out.println(NodeFactory.stringify(map));
         String expected = "{'result':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}";
         expected = expected.replace("'", "\"");
@@ -158,7 +161,7 @@ public class ValidatorTest {
     @Test
     public void testRequestValidate() {
         HttpServletRequest request = buildHttpRequest();
-        Map<String, Object> map = Validator.of(ArgumentVerifyHandler.getInstance(), buildParam()).validate(request::getParameter).extract(request::getParameter);
+        Map<String, Object> map = Validator.fromSchema(ArgumentVerifyHandler.getInstance(), buildParam()).validate(request::getParameter).extract(request::getParameter);
         System.out.println("提取数据：" + NodeFactory.stringify(map));
         String expected = "{'objParam':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'}}";
         String actual = NodeFactory.stringify(map);

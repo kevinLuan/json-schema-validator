@@ -14,26 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.core;
+package cn.taskflow.jcv.validation;
 
-import cn.taskflow.jcv.utils.JsvUtils;
+import cn.taskflow.jcv.core.JsonSchema;
+import cn.taskflow.jcv.exception.ValidationException;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
+ * 自定义验证规则
+ *
  * @author SHOUSHEN.LUAN
- * @since 2024-02-04
+ * @since 2024-10-05
  */
-public class ArgumentVerifyHandler implements VerifyHandler {
-    public static VerifyHandler getInstance() {
-        return new ArgumentVerifyHandler();
-    }
-
-    @Override
-    public String getTipError(String path) {
-        return JsvUtils.formatParamError(path);
-    }
-
-    @Override
-    public String getTipMissing(String path) {
-        return JsvUtils.formatParamMissing(path);
-    }
+@FunctionalInterface
+public interface CustomValidationRule {
+    /**
+     * 自定义验证
+     *
+     * @param schema 验证的节点
+     * @param node   验证的数据节点
+     * @return 验证成功返回 true,失败返回 false
+     */
+    boolean validate(JsonSchema schema, JsonNode node) throws ValidationException;
 }
