@@ -10,14 +10,13 @@ json-schema-validator
 English | [简体中文](./README-zh_CN.md)
 
 ## Overview
-A data validation middleware based on JSON DSL (Domain-Specific Language). It provides developers with a powerful toolkit for defining and validating JSON data structures. This framework not only supports automatic code generation for any JSON format but also enables data validation and extraction based on schemas defined using the DSL.
+Data validation middleware based on JSON DSL implementation. It provides developers with a powerful set of tools for defining and validating data structures.
 
 ### Features
-1. Flexible DSL Definition: Allows users to describe complex JSON structures using a simple DSL syntax.
-   Automatic Code Generation: Automatically generates Java classes from JSON schemas, reducing manual coding efforts.
-   Data Validation: Incorporates a rich set of built-in validation rules to ensure data conforms to expected formats.
-4. Data Extraction: Supports extracting specified fields from JSON documents, simplifying data processing workflows.
-   This translation maintains the structure of the original list while accurately conveying the meaning of each feature in English. The technical terms and concepts are preserved to ensure clarity for an English-speaking technical audience.
+* Flexible DSL definition: Allows users to describe complex JSON structures with simple DSL syntax. 
+* Automatic code generation: Automatically generate Java classes from JSON schema, reducing manual coding effort. 
+* Data Validation: Rich built-in validation rules ensure data is in the expected format. 
+* Data extraction: Supports the extraction of specified fields from JSON documents, simplifying the data processing flow.
 
 ### Installation
 To integrate TaskFlow into your Java project.
