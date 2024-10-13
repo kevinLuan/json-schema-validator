@@ -26,7 +26,7 @@ json-schema-validator
 <dependency>
     <groupId>cn.taskflow.jsv</groupId>
     <artifactId>json-schema-validator</artifactId>
-    <version>0.1.1</version>
+    <version>0.1.5</version>
 </dependency>
 ```
 
