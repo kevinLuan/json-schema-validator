@@ -17,10 +17,26 @@
 package cn.taskflow.jcv.exception;
 
 /**
+ * This class represents an exception that is thrown when a requested operation
+ * is not supported. It extends the RuntimeException, indicating that it is an
+ * unchecked exception. This exception can be used to signal that a particular
+ * method or operation is not implemented or not available in the current context.
+ * 
+ * Example usage:
+ * <pre>
+ *     throw new NotSupportedException("This operation is not supported.");
+ * </pre>
+ * 
  * @author SHOUSHEN.LUAN
  * @since 2024-02-03
  */
 public class NotSupportedException extends RuntimeException {
+    /**
+     * Constructs a new NotSupportedException with the specified detail message.
+     *
+     * @param msg the detail message, which is saved for later retrieval by the
+     *            {@link Throwable#getMessage()} method.
+     */
     public NotSupportedException(String msg) {
         super(msg);
     }

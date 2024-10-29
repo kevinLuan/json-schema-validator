@@ -18,16 +18,41 @@ package cn.taskflow.jcv.encode;
 
 import com.google.gson.Gson;
 
+/**
+ * The {@code GsonEncoder} class provides methods to encode objects into JSON strings
+ * and decode JSON strings back into objects using the Gson library.
+ * It implements the {@code Encoder} interface.
+ */
 public class GsonEncoder implements Encoder {
 
+    /**
+     * Singleton instance of {@code GsonEncoder}.
+     */
     public static GsonEncoder INSTANCE = new GsonEncoder();
 
+    /**
+     * Gson instance used for JSON serialization and deserialization.
+     */
     private static Gson       gson     = new Gson();
 
+    /**
+     * Encodes an object into its JSON representation.
+     *
+     * @param t the object to be encoded
+     * @return a JSON string representing the object
+     */
     public String encode(Object t) {
         return gson.toJson(t);
     }
 
+    /**
+     * Decodes a JSON string into an object of the specified class.
+     *
+     * @param json  the JSON string to be decoded
+     * @param clazz the class of T
+     * @param <T>   the type of the desired object
+     * @return an object of type T from the JSON string
+     */
     public <T> T decode(String json, Class<T> clazz) {
         return (T) gson.fromJson(json, clazz);
     }

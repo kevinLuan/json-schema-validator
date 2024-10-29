@@ -20,16 +20,36 @@ import cn.taskflow.jcv.core.Primitive;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
 
+/**
+ * The NumberParser class is responsible for parsing a string representation of a number
+ * into either a Double or Long type, and provides validation against specified constraints.
+ */
 public class NumberParser {
 
+    // Indicates if the parsed number is of type Double
     public boolean isDouble;
+    // Indicates if the parsed number is of type Long
     public boolean isLong;
+    // Holds the parsed number value
     public Number  value;
 
+    /**
+     * Checks if the parsed number value is null.
+     * 
+     * @return true if the value is null, false otherwise.
+     */
     public boolean isNull() {
         return this.value == null;
     }
 
+    /**
+     * Parses the given string into a NumberParser object. Determines if the number
+     * is a Double or Long based on the presence of a decimal point.
+     * 
+     * @param value   the string representation of the number to parse.
+     * @param require a boolean flag indicating if the value is required.
+     * @return a NumberParser object containing the parsed number.
+     */
     public static NumberParser parse(String value, boolean require) {
         NumberParser numberParser = new NumberParser();
         if (value != null) {
@@ -44,6 +64,13 @@ public class NumberParser {
         return numberParser;
     }
 
+    /**
+     * Validates the parsed number against the constraints defined in the given
+     * Primitive object. Throws a ValidationException if the value does not meet
+     * the required constraints.
+     * 
+     * @param primitive the Primitive object containing validation constraints.
+     */
     public void check(Primitive primitive) {
         if (primitive.isRequired()) {
             if (value == null) {

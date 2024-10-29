@@ -28,24 +28,32 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Optional;
 
+/**
+ * Represents a basic JSON schema with properties and validation capabilities.
+ */
 public class JsonBasicSchema implements JsonSchema {
-    private String                                    name;
-    private boolean                                   required;
-    private DataType                                  dataType;
-    private String                                    description;
-    // 父亲节点
+    private String                                    name;                                           // The name of the schema element
+    private boolean                                   required;                                       // Indicates if the element is required
+    private DataType                                  dataType;                                       // The data type of the element
+    private String                                    description;                                    // A description of the schema element
+
+    // Parent node in the schema hierarchy
     public transient JsonSchema                       parentNode;
 
-    // 子节点(ParamArray,ParamObject)
+    // Child nodes (for ParamArray, ParamObject)
     JsonBasicSchema[]                                 children               = new JsonBasicSchema[0];
-    // 限制最小输入值(Primitive)
+
+    // Minimum value constraint (for Primitive types)
     Number                                            min;
-    // 限制最大输入值(Primitive)
+
+    // Maximum value constraint (for Primitive types)
     Number                                            max;
+
     /**
-     * 示例值(只有Primitive类型节点才会有效)
+     * Example value (only effective for Primitive type nodes)
      */
     String                                            exampleValue;
+
     @JsonIgnore
     transient volatile Optional<CustomValidationRule> validationRuleOptional = Optional.empty();
 
@@ -65,6 +73,12 @@ public class JsonBasicSchema implements JsonSchema {
         this.dataType = dataType;
     }
 
+    /**
+     * Associates a custom validation rule with this schema.
+     *
+     * @param customValidationRule the custom validation rule to apply
+     * @return the current schema instance with the validator applied
+     */
     public <T extends JsonBasicSchema> T withValidator(CustomValidationRule customValidationRule) {
         this.validationRuleOptional = Optional.of(customValidationRule);
         return (T) this;
@@ -114,6 +128,11 @@ public class JsonBasicSchema implements JsonSchema {
         return parentNode;
     }
 
+    /**
+     * Retrieves the path of this schema node within the hierarchy.
+     *
+     * @return the path as a string
+     */
     public final String getPath() {
         return NodeHelper.parser(this).getPath();
     }
@@ -140,11 +159,7 @@ public class JsonBasicSchema implements JsonSchema {
 
     @Override
     public boolean isObjectValue() {
-        if (isObject() && StringUtils.isBlank(getName())) {
-            return true;
-        } else {
-            return false;
-        }
+        return isObject() && StringUtils.isBlank(getName());
     }
 
     @Override
@@ -183,10 +198,10 @@ public class JsonBasicSchema implements JsonSchema {
     }
 
     /**
-     * 设置示例值
+     * Sets an example value for this schema.
      *
-     * @param exampleValue
-     * @return
+     * @param exampleValue the example value to set
+     * @return the current schema instance with the example value set
      */
     public JsonBasicSchema setExampleValue(Object exampleValue) {
         this.exampleValue = NodeFactory.stringify(exampleValue);
@@ -197,7 +212,12 @@ public class JsonBasicSchema implements JsonSchema {
     public void verify(JsonNode jsonNode) {
         validationRuleOptional.ifPresent((func) -> {
             if (!func.validate(this, jsonNode)) {
-                throw new ValidationException("Invalid parameter `" + getPath() + "`", getPath());
+                String path = getPath();
+                if (StringUtils.isNotBlank(path)) {
+                    throw new ValidationException("Invalid parameter `" + path + "`", path);
+                } else {
+                    throw new IllegalArgumentException("Parameter validation failure");
+                }
             }
         });
     }

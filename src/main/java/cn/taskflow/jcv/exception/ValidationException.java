@@ -17,17 +17,36 @@
 package cn.taskflow.jcv.exception;
 
 /**
+ * ValidationException is a custom exception that extends IllegalArgumentException.
+ * It is used to indicate that a validation error has occurred, providing a message
+ * and the path where the error was found.
+ * 
+ * This exception is particularly useful in scenarios where input validation is
+ * critical, and the path information helps in pinpointing the exact location
+ * of the validation failure within a data structure or configuration.
+ * 
  * @author SHOUSHEN.LUAN
  * @since 2024-09-25
  */
 public class ValidationException extends IllegalArgumentException {
-    private String path;
+    private String path; // The path where the validation error occurred
 
+    /**
+     * Constructs a new ValidationException with the specified detail message and path.
+     *
+     * @param msg  the detail message, saved for later retrieval by the getMessage() method.
+     * @param path the path where the validation error occurred, saved for later retrieval by the getPath() method.
+     */
     public ValidationException(String msg, String path) {
         super(msg);
         this.path = path;
     }
 
+    /**
+     * Returns the path where the validation error occurred.
+     *
+     * @return the path as a String.
+     */
     public String getPath() {
         return this.path;
     }

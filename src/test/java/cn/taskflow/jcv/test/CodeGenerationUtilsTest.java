@@ -16,12 +16,10 @@
  */
 package cn.taskflow.jcv.test;
 
-import cn.taskflow.jcv.core.JsonBoolean;
-import cn.taskflow.jcv.core.JsonObject;
+import cn.taskflow.jcv.core.*;
+import cn.taskflow.jcv.utils.GenerateOptional;
 import cn.taskflow.jcv.utils.IOUtils;
 import com.github.javaparser.StaticJavaParser;
-import cn.taskflow.jcv.core.JsonArray;
-import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.utils.CodeGenerationUtils;
 import org.junit.Test;
 
@@ -41,8 +39,14 @@ public class CodeGenerationUtilsTest {
         StaticJavaParser.parseStatement(generateJavaCode);
         JsonSchema jsonSchema = JsonObject.optional(JsonBoolean.optional("b", null).setExampleValue("true"),
             JsonBoolean.optional("a", null).setExampleValue("false"),
-            JsonArray.optional("bools", null, JsonBoolean.make().setExampleValue("true")));
+            JsonArray.optional("bools", null, JsonBoolean.ofNonNull().setExampleValue("true")));
         CodeGenerationUtils.generateSampleData(jsonSchema);
         System.out.println(CodeGenerationUtils.serialization(jsonSchema));
+    }
+
+    @Test
+    public void testSimple() {
+        String json = "{\"name\":\"x\",\"description\":\"x\",\"paused\":false,\"runCatchupScheduleInstances\":false,\"startTime\":1729935819148,\"endTime\":0,\"timeZone\":\"Asia/Shanghai\",\"triggerType\":\"SCHEDULE\",\"timerTaskTrigger\":{\"dayOfWeeks\":[],\"dayOfMonths\":[],\"skipWeekends\":false,\"skipHolidays\":false},\"cronTrigger\":{},\"startWorkflowRequest\":{\"version\":1,\"input\":{},\"taskToDomain\":{},\"priority\":0,\"idempotencyStrategy\":\"FAIL\"},\"overwrite\":false}";
+        System.out.println(CodeGenerationUtils.generateSchemaCode(json, new GenerateOptional()));
     }
 }

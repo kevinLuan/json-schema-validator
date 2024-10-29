@@ -17,6 +17,7 @@
 package cn.taskflow.jcv.extension;
 
 import java.util.List;
+import java.util.Optional;
 
 import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.core.JsonArray;
@@ -25,13 +26,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 对象父级节点引用设置
+ * This class is responsible for setting parent node references for JSON schema objects.
+ * It provides methods to refresh parent references for both lists and arrays of JSON schemas.
  * 
+ * 对象父级节点引用设置
+ *
  * @author KEVIN LUAN
  */
 public class ParentReference {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParentReference.class);
 
+    /**
+     * Refreshes the parent references for a list of JSON schemas.
+     * It iterates over each schema and determines if it is an array or an object,
+     * then calls the appropriate method to set the parent reference.
+     *
+     * @param jsonSchemas List of JSON schemas to refresh parent references for.
+     */
     public static void refreshParentReference(List<JsonSchema> jsonSchemas) {
         for (JsonSchema pm : jsonSchemas) {
             if (pm.isArray()) {
@@ -43,7 +54,12 @@ public class ParentReference {
     }
 
     /**
+     * Refreshes the parent references for a variable number of JSON schemas.
+     * Similar to the list version, it checks each schema type and sets the parent reference accordingly.
+     *
      * 设置Param父级节点引用
+     *
+     * @param jsonSchemas Varargs of JSON schemas to refresh parent references for.
      */
     public static void refreshParentReference(JsonSchema... jsonSchemas) {
         for (JsonSchema pm : jsonSchemas) {
@@ -55,22 +71,39 @@ public class ParentReference {
         }
     }
 
+    /**
+     * Sets the parent node for a JSON array and recursively sets parent nodes for its children.
+     * It checks if the array has children and processes the first child schema to set its parent.
+     *
+     * @param array  The JSON array whose parent node is to be set.
+     * @param parent The parent JSON schema to be set as the parent node.
+     */
     private static void arrayParam(JsonArray array, JsonSchema parent) {
         array.setParentNode(parent);
         if (array.existsChildren()) {
-            JsonSchema pm = array.getSchemaForFirstChildren();
-            if (pm.isObject()) {
-                objectParam(pm.asObject(), array);
-            } else if (pm.isPrimitive()) {
-                pm.setParentNode(array);
-            } else if (pm.isArray()) {
-                arrayParam(pm.asArray(), array);
-            } else {
-                LOGGER.warn("There is no parent reference type -> " + pm);
+            Optional<JsonSchema> optional = array.getSchemaForFirstChildren();
+            if (optional.isPresent()) {
+                JsonSchema jsonSchema = optional.get();
+                if (jsonSchema.isObject()) {
+                    objectParam(jsonSchema.asObject(), array);
+                } else if (jsonSchema.isPrimitive()) {
+                    jsonSchema.setParentNode(array);
+                } else if (jsonSchema.isArray()) {
+                    arrayParam(jsonSchema.asArray(), array);
+                } else {
+                    LOGGER.warn("There is no parent reference type -> " + jsonSchema);
+                }
             }
         }
     }
 
+    /**
+     * Sets the parent node for a JSON object and recursively sets parent nodes for its children.
+     * It iterates over each child schema and sets the parent node based on its type.
+     *
+     * @param object The JSON object whose parent node is to be set.
+     * @param parent The parent JSON schema to be set as the parent node.
+     */
     private static void objectParam(JsonObject object, JsonSchema parent) {
         object.setParentNode(parent);
         if (object.existsChildren()) {

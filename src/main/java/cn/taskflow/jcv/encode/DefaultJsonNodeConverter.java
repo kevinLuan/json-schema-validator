@@ -29,13 +29,29 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * DefaultJsonNodeConverter is a utility class for converting between Java objects and JsonNode objects.
+ * It provides methods to parse JSON strings, convert Java objects to JsonNode, and handle various JSON node types.
+ */
 public class DefaultJsonNodeConverter implements JsonNodeConverter {
+    // ObjectMapper instance used for JSON processing
     public final ObjectMapper mapper;
 
+    /**
+     * Constructor to initialize DefaultJsonNodeConverter with a given ObjectMapper.
+     * 
+     * @param mapper the ObjectMapper to be used for JSON operations
+     */
     public DefaultJsonNodeConverter(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
+    /**
+     * Checks if a given JsonNode is null, missing, or explicitly set to null.
+     * 
+     * @param jsonNode the JsonNode to check
+     * @return true if the node is null, missing, or explicitly null; false otherwise
+     */
     public boolean isNull(JsonNode jsonNode) {
         if (jsonNode == null || jsonNode.isNull() || jsonNode.isMissingNode()) {
             return true;
@@ -43,6 +59,13 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return false;
     }
 
+    /**
+     * Converts an object to its string representation. If the object is a JsonNode,
+     * it handles arrays and objects differently from value nodes.
+     * 
+     * @param value the object to convert
+     * @return the string representation of the object
+     */
     public String toString(Object value) {
         if (value != null) {
             if (JsonNode.class.isAssignableFrom(value.getClass())) {
@@ -59,6 +82,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return null;
     }
 
+    /**
+     * Converts a JsonNode to its string representation, handling different node types.
+     * 
+     * @param node the JsonNode to convert
+     * @return the string representation of the JsonNode
+     */
     public String toString(JsonNode node) {
         if (node == null || node.isNull()) {
             return null;
@@ -83,6 +112,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return node.toString();
     }
 
+    /**
+     * Parses a JsonNode and returns its corresponding Java object representation.
+     * 
+     * @param node the JsonNode to parse
+     * @return the Java object representation of the JsonNode
+     */
     public Object parserValue(JsonNode node) {
         if (node == null || node.isNull()) {
             return null;
@@ -102,12 +137,18 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
                 return node.asBoolean();
             } else if (node.isTextual()) {
                 return node.asText();
-            } else {// 其他类型
+            } else { // Other types
                 return node.textValue();
             }
         }
     }
 
+    /**
+     * Parses an ObjectNode and returns a map representation of its fields.
+     * 
+     * @param node the ObjectNode to parse
+     * @return a map containing the fields of the ObjectNode
+     */
     public Map<String, Object> parserMap(ObjectNode node) {
         Map<String, Object> map = new HashMap<String, Object>();
         Iterator<String> iterable = node.fieldNames();
@@ -125,6 +166,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return map;
     }
 
+    /**
+     * Parses an ArrayNode and returns a list representation of its elements.
+     * 
+     * @param arrayNode the ArrayNode to parse
+     * @return a list containing the elements of the ArrayNode
+     */
     public List<Object> parserArrayNode(ArrayNode arrayNode) {
         List<Object> list = new ArrayList<Object>();
         for (int i = 0; i < arrayNode.size(); i++) {
@@ -138,6 +185,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return list;
     }
 
+    /**
+     * Parses a JSON string and returns the corresponding JsonNode.
+     * 
+     * @param json the JSON string to parse
+     * @return the JsonNode representation of the JSON string
+     */
     public JsonNode parser(String json) {
         try {
             return mapper.readTree(json);
@@ -147,7 +200,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * 将Java对象转化到JsonNode
+     * Converts a Java object to a JsonNode.
+     * 
+     * @param value the Java object to convert
+     * @return the JsonNode representation of the Java object
      */
     public JsonNode convert(Object value) {
         if (value == null) {
@@ -160,6 +216,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return NodeFactory.parser(valueStr);
     }
 
+    /**
+     * Converts a Java object to its JSON string representation.
+     * 
+     * @param pojo the Java object to convert
+     * @return the JSON string representation of the object
+     */
     public String stringify(Object pojo) {
         try {
             return mapper.writeValueAsString(pojo);
@@ -168,6 +230,14 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         }
     }
 
+    /**
+     * Parses a JSON string into a Java object of the specified class type.
+     * 
+     * @param <T> the type of the desired object
+     * @param json the JSON string to parse
+     * @param a the class of T
+     * @return the parsed Java object
+     */
     public <T> T parse(String json, Class<T> a) {
         T result = null;
         try {
@@ -178,6 +248,14 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return result;
     }
 
+    /**
+     * Parses a JSON string into a Java object of the specified type reference.
+     * 
+     * @param <T> the type of the desired object
+     * @param json the JSON string to parse
+     * @param a the type reference of T
+     * @return the parsed Java object
+     */
     public <T> T parse(String json, TypeReference<T> a) {
         T result = null;
         try {
@@ -188,6 +266,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
         return result;
     }
 
+    /**
+     * Converts a JsonNode to a pretty-printed JSON string.
+     * 
+     * @param jsonNode the JsonNode to convert
+     * @return the pretty-printed JSON string
+     */
     @Override
     public String prettyPrinter(JsonNode jsonNode) {
         try {

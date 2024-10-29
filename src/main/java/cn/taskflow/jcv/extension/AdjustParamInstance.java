@@ -24,12 +24,23 @@ import cn.taskflow.jcv.core.JsonObject;
 import cn.taskflow.jcv.exception.ValidationException;
 
 /**
- * 调整参数实例对象，在通过反序列化框架序列化出来的对象统一是ParamBase类型，调整后会改为原始类型
+ * Adjusts parameter instance objects. When objects are deserialized using a framework,
+ * they are uniformly of type ParamBase. After adjustment, they are converted to their original types.
+ * This class provides methods to adjust JsonSchema objects to their specific types.
  *
  * @author KEVIN LUAN
  */
 public class AdjustParamInstance {
 
+    /**
+     * Adjusts a list of JsonSchema objects to their specific types.
+     * If a JsonSchema is an array, it is converted to a JsonArray.
+     * If it is an object, it is converted to a JsonObject.
+     * If it is a primitive, it remains as a primitive.
+     * Throws a ValidationException if the type is unsupported.
+     *
+     * @param jsonSchemaList the list of JsonSchema objects to adjust
+     */
     public static void adjust(List<JsonSchema> jsonSchemaList) {
         for (int i = 0; i < jsonSchemaList.size(); i++) {
             JsonSchema jsonSchema = jsonSchemaList.get(i);
@@ -49,6 +60,14 @@ public class AdjustParamInstance {
         }
     }
 
+    /**
+     * Adjusts a single JsonSchema object to its specific type.
+     * Converts the JsonSchema to a JsonArray, JsonObject, or primitive based on its type.
+     * Throws a ValidationException if the type is unsupported.
+     *
+     * @param jsonSchema the JsonSchema object to adjust
+     * @return the adjusted JsonSchema object
+     */
     public static JsonSchema adjust(JsonSchema jsonSchema) {
         JsonSchema refJsonSchema = jsonSchema;
         if (jsonSchema.isArray()) {
@@ -65,6 +84,12 @@ public class AdjustParamInstance {
         return refJsonSchema;
     }
 
+    /**
+     * Recursively refreshes the children of a JsonSchema object.
+     * If the children are arrays or objects, it continues to refresh their children.
+     *
+     * @param children the JsonSchema object whose children need to be refreshed
+     */
     private static void refreshChildrens(JsonSchema children) {
         if (children.isArray()) {
             JsonArray array = children.asArray();
@@ -75,6 +100,13 @@ public class AdjustParamInstance {
         }
     }
 
+    /**
+     * Recursively refreshes an array of JsonSchema objects.
+     * Converts each JsonSchema to its specific type and refreshes its children if necessary.
+     * Throws a ValidationException if a type is unsupported.
+     *
+     * @param childrens the array of JsonSchema objects to refresh
+     */
     private static void refreshChildrens(JsonSchema[] childrens) {
         if (childrens != null) {
             for (int i = 0; i < childrens.length; i++) {

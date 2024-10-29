@@ -21,6 +21,10 @@ import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.CodeGenerationUtils;
 import cn.taskflow.jcv.utils.JsvUtils;
 
+/**
+ * Enum representing different data types that can be used in JSON schema validation.
+ * Each data type provides specific methods to check and validate values according to its type.
+ */
 public enum DataType {
     String {
         @Override
@@ -28,6 +32,13 @@ public enum DataType {
             return true;
         }
 
+        /**
+         * Validates a string value against the constraints defined in the Primitive object.
+         * Checks for null values, minimum and maximum length constraints.
+         *
+         * @param primitive the primitive schema containing validation constraints
+         * @param value     the string value to validate
+         */
         @Override
         public void check(Primitive primitive, String value) {
             if (primitive.isRequired()) {
@@ -63,6 +74,13 @@ public enum DataType {
             return true;
         }
 
+        /**
+         * Validates a boolean value represented as a string.
+         * Accepts "true", "false", "1", and "0" as valid boolean representations.
+         *
+         * @param primitive the primitive schema containing validation constraints
+         * @param value     the string value to validate
+         */
         @Override
         public void check(Primitive primitive, String value) {
             if (primitive.isRequired()) {
@@ -82,9 +100,10 @@ public enum DataType {
     Array, Object, Any;
 
     /**
-     * 断言基本数据类型 (String,Number)
+     * Determines if the given data type is a primitive type (String, Number, or Boolean).
      *
-     * @param dataType
+     * @param dataType the data type to check
+     * @return true if the data type is primitive, false otherwise
      */
     public static boolean isPrimitive(DataType dataType) {
         if (dataType != null && (DataType.String == dataType || DataType.Number == dataType)
@@ -106,10 +125,23 @@ public enum DataType {
         return false;
     }
 
+    /**
+     * Placeholder method for subclasses to implement specific validation logic.
+     *
+     * @param p     the primitive schema containing validation constraints
+     * @param value the value to validate
+     */
     public void check(Primitive p, String value) {
         // TODO 子类实现
     }
 
+    /**
+     * Parses a string representation of a data type and returns the corresponding DataType enum.
+     *
+     * @param dataType the string representation of the data type
+     * @return the corresponding DataType enum
+     * @throws IllegalArgumentException if the data type is invalid
+     */
     public static DataType parser(String dataType) {
         for (DataType type : values()) {
             if (type.name().equals(dataType)) {
@@ -119,6 +151,12 @@ public enum DataType {
         throw new IllegalArgumentException("Invalid type: " + dataType);
     }
 
+    /**
+     * Generates code for creating a primitive JSON schema element based on the data type and requirement.
+     *
+     * @param required whether the element is required
+     * @return the generated code as a string
+     */
     public String generatePrimitiveCode(boolean required) {
         switch (this) {
             case Number:
@@ -144,6 +182,14 @@ public enum DataType {
         }
     }
 
+    /**
+     * Generates code for creating a primitive JSON schema element with additional metadata.
+     *
+     * @param required whether the element is required
+     * @param name     the name of the element
+     * @param desc     the description of the element
+     * @return the generated code as a string
+     */
     public String generatePrimitiveCode(boolean required, String name, String desc) {
         final String code;
         switch (this) {

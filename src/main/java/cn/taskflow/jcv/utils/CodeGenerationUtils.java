@@ -23,14 +23,23 @@ import cn.taskflow.jcv.extension.SchemaOptions;
 import cn.taskflow.jcv.extension.SchemaProcess;
 
 /**
- * 代码自动生成
- *
+ * Code generation utility class for generating Java code from JSON schemas.
+ * This class provides methods to convert JSON data into Java code representations
+ * and to handle serialization and deserialization of JSON schemas.
+ * 
  * @author SHOUSHEN.LUAN
  * @since 2023-04-16
  */
 public class CodeGenerationUtils {
+    // ThreadLocal to store GenerateOptional instances for thread-safe operations
     static ThreadLocal<GenerateOptional> THREAD_LOCAL = new ThreadLocal<>();
 
+    /**
+     * Retrieves the current GenerateOptional instance from the ThreadLocal storage.
+     * If no instance is present, a default instance is returned.
+     *
+     * @return the current GenerateOptional instance or a default one if none is set
+     */
     public static GenerateOptional getOptional() {
         if (THREAD_LOCAL.get() != null) {
             return THREAD_LOCAL.get();
@@ -40,16 +49,23 @@ public class CodeGenerationUtils {
     }
 
     /**
-     * 生成Schema Java代码
+     * Generates Java code for a JSON schema.
      *
-     * @param json
-     * @return
+     * @param json the JSON string representing the schema
+     * @return the generated Java code as a String
      */
     public static String generateSchemaCode(String json) {
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
+    /**
+     * Generates Java code for a JSON schema with specific options.
+     *
+     * @param json the JSON string representing the schema
+     * @param option the GenerateOptional instance specifying generation options
+     * @return the generated Java code as a String
+     */
     public static String generateSchemaCode(String json, GenerateOptional option) {
         try {
             THREAD_LOCAL.set(option);
@@ -60,63 +76,84 @@ public class CodeGenerationUtils {
         }
     }
 
+    /**
+     * Generates Java code for a JSON schema using a SchemaProcess option.
+     *
+     * @param json the JSON string representing the schema
+     * @param option the SchemaProcess instance specifying processing options
+     * @return the generated Java code as a String
+     */
     public static String generateSchemaCode(String json, SchemaProcess option) {
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json, option);
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
+    /**
+     * Generates Java code for a JSON schema using SchemaOptions.
+     *
+     * @param json the JSON string representing the schema
+     * @param option the SchemaOptions instance specifying options
+     * @return the generated Java code as a String
+     */
     public static String generateSchemaCode(String json, SchemaOptions option) {
         return generateSchemaCode(json, option.getSchemaProcess());
     }
 
+    /**
+     * Generates Java code from a JsonSchema object.
+     *
+     * @param jsonSchema the JsonSchema object
+     * @return the generated Java code as a String
+     */
     public static String generateSchemaCode(JsonSchema jsonSchema) {
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
     /**
-     * 生成json示例数据
+     * Generates a JSON example data string from a JsonSchema object.
      *
-     * @return
+     * @param jsonSchema the JsonSchema object
+     * @return the JSON example data as a String
      */
     public static String generateSampleData(JsonSchema jsonSchema) {
         return JsonSchemaCodec.toJsonDataExample(jsonSchema);
     }
 
     /**
-     * 生成参数定义
+     * Generates a JsonSchema object from JSON data.
      *
-     * @param jsonData
-     * @return
+     * @param jsonData the JSON string representing the data
+     * @return the generated JsonSchema object
      */
     public static JsonSchema generateParamFromJson(String jsonData) {
         return JsonParser.parseJsonSchema(jsonData);
     }
 
     /**
-     * 生成代码
+     * Generates Java code from a JsonSchema object.
      *
-     * @param jsonSchema 根据参数定义生成代码
-     * @return
+     * @param jsonSchema the JsonSchema object used to generate code
+     * @return the generated Java code as a String
      */
     public static String generateCodeFromParam(JsonSchema jsonSchema) {
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
     /**
-     * 序列化参数定义
+     * Serializes a JsonSchema object into a JSON string.
      *
-     * @param product
-     * @return
+     * @param product the JsonSchema object to serialize
+     * @return the serialized JSON string
      */
     public static String serialization(JsonSchema product) {
         return GsonEncoder.INSTANCE.encode(product);
     }
 
     /**
-     * 根据参数定义反序列化
+     * Deserializes a JSON string into a JsonSchema object.
      *
-     * @param paramDefine
-     * @return
+     * @param paramDefine the JSON string representing the schema definition
+     * @return the deserialized JsonSchema object
      */
     public static JsonSchema deserialization(String paramDefine) {
         return GsonEncoder.INSTANCE.decode(paramDefine, JsonBasicSchema.class);

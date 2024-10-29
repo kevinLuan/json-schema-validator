@@ -18,19 +18,25 @@ package cn.taskflow.jcv.encode;
 
 public interface Encoder {
     /**
-     * 序列化API
+     * Serialization API
+     * 
+     * This method is responsible for converting an object into a string representation.
+     * It is typically used to prepare data for storage or transmission.
      *
-     * @param t
-     * @return
+     * @param t the object to be serialized
+     * @return a string representation of the object
      */
     String encode(Object t);
 
     /**
-     * 反序列化API
+     * Deserialization API
+     * 
+     * This method is responsible for converting a string back into an object of the specified type.
+     * It is used to reconstruct the original object from its string representation.
      *
-     * @param data
-     * @param type
-     * @return
+     * @param data the string representation of the object
+     * @param type the class type of the object to be deserialized
+     * @return an instance of the specified type
      */
     <T> T decode(String data, Class<T> type);
 }

@@ -19,6 +19,8 @@ package cn.taskflow.jcv.utils;
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.exception.ValidationException;
 
+import java.util.Optional;
+
 /**
  * 将Param转换到JavaCode
  *
@@ -42,47 +44,60 @@ class SchemaCodeGenerator {
     private static void parserArray(JsonArray array, StringBuilder builder) {
         String name = array.getName();
         String description = array.getDescription();
-        JsonBasicSchema children = (JsonBasicSchema) array.getSchemaForFirstChildren();
-        if (!children.isObject() && !children.isPrimitive()) {
-            throw new ValidationException("Unsupported type: " + children, children.getPath());
-        }
-        builder.append("JsonArray.");
-        builder
-            .append(children.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required" : "optional");
-        builder.append("(").append(formatParam(name));
-
-        boolean hasAdditionalParams = false;
-
-        if (CodeGenerationUtils.getOptional().isGenerateDesc() && description != null && !description.isEmpty()) {
-            builder.append(",").append(formatParam(description));
-            hasAdditionalParams = true;
-        }
-
-        if (children.isObject()) {
-            StringBuilder stringBuilder = new StringBuilder();
-            parserObject(children.asObject(), stringBuilder);
-            if (hasAdditionalParams || !stringBuilder.toString().trim().isEmpty()) {
-                builder.append(",");
+        Optional<JsonSchema> optional = array.getSchemaForFirstChildren();
+        boolean includeDesc = CodeGenerationUtils.getOptional().isGenerateDesc() && description != null
+                              && !description.isEmpty();
+        if (!optional.isPresent()) {
+            builder.append("JsonArray.");
+            builder.append(array.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
+                : "optional");
+            builder.append("(").append(formatParam(name));
+            if (includeDesc) {
+                builder.append(",").append(formatParam(description));
             }
-            builder.append(NEW_LINE);
-            builder.append(stringBuilder);
-        } else if (CodeGenerationUtils.getOptional().isGenerateExample() && children.isPrimitive()) {
-            String example = children.asPrimitive().getExampleValue();
-            if (example != null && example.trim().length() > 0) {
-                if (hasAdditionalParams) {
+            builder.append(")");
+        } else {
+            JsonBasicSchema children = (JsonBasicSchema) optional.get();
+            if (!children.isObject() && !children.isPrimitive()) {
+                throw new ValidationException("Unsupported type: " + children, children.getPath());
+            }
+            builder.append("JsonArray.");
+            builder.append(children.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
+                : "optional");
+            builder.append("(").append(formatParam(name));
+
+            boolean hasAdditionalParams = false;
+
+            if (CodeGenerationUtils.getOptional().isGenerateDesc() && description != null && !description.isEmpty()) {
+                builder.append(",").append(formatParam(description));
+                hasAdditionalParams = true;
+            }
+
+            if (children.isObject()) {
+                StringBuilder stringBuilder = new StringBuilder();
+                parserObject(children.asObject(), stringBuilder);
+                if (hasAdditionalParams || !stringBuilder.toString().trim().isEmpty()) {
                     builder.append(",");
                 }
-                String childrenCode = children.getDataType().generatePrimitiveCode(children.isRequired());
-                if (children.getDataType().isNumber() || children.getDataType().isBoolean()) {
-                    childrenCode += ".setExampleValue(" + example + ")";
-                } else {
-                    childrenCode += ".setExampleValue(\"" + example + "\")";
+                builder.append(NEW_LINE);
+                builder.append(stringBuilder);
+            } else if (CodeGenerationUtils.getOptional().isGenerateExample() && children.isPrimitive()) {
+                String example = children.asPrimitive().getExampleValue();
+                if (example != null && example.trim().length() > 0) {
+                    if (hasAdditionalParams) {
+                        builder.append(",");
+                    }
+                    String childrenCode = children.getDataType().generatePrimitiveCode(children.isRequired());
+                    if (children.getDataType().isNumber() || children.getDataType().isBoolean()) {
+                        childrenCode += ".setExampleValue(" + example + ")";
+                    } else {
+                        childrenCode += ".setExampleValue(\"" + example + "\")";
+                    }
+                    builder.append(NEW_LINE).append(childrenCode);
                 }
-                builder.append(NEW_LINE).append(childrenCode);
             }
+            builder.append(")");
         }
-
-        builder.append(")");
     }
 
     private static void parserObject(JsonObject object, StringBuilder builder) {
@@ -123,7 +138,15 @@ class SchemaCodeGenerator {
         if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
             builder.append(formatParam(description)).append(",");
         }
-        builder.append(remoteLastComma(newLine(nodeBuilder)) + NEW_LINE + ")");
+        if (StringUtils.isNotBlank(nodeBuilder.toString())) {
+            builder.append(remoteLastComma(newLine(nodeBuilder)) + NEW_LINE + ")");
+        } else {//Object对象下没有任何属性的情况下，删除多余的逗号
+            int index = builder.lastIndexOf(",");
+            if (index != -1) {//删除最后逗号及以后得元素
+                builder.delete(index, builder.length());
+            }
+            builder.append(NEW_LINE).append(")");
+        }
         newLine(builder);
     }
 

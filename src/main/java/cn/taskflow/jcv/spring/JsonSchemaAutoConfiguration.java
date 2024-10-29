@@ -33,27 +33,60 @@ import java.util.Optional;
 import static cn.taskflow.jcv.utils.JsvUtils.f;
 
 /**
+ * This class is responsible for the auto-configuration of JSON Schema validation components
+ * within a Spring application context. It defines beans for JSON Schema validation and 
+ * ensures that all required JSON Schemas are defined at application startup.
+ * 
  * @author SHOUSHEN.LUAN
  * @since 2024-09-28
  */
 public class JsonSchemaAutoConfiguration {
+    // Logger for logging error messages related to JSON Schema validation
     final static Logger log = LoggerFactory.getLogger(JsonSchemaValidate.class);
 
+    /**
+     * Defines a bean named "empty" that provides a required JSON object schema.
+     * 
+     * @return a JsonSchema object representing a required JSON object.
+     */
     @Bean("empty")
     public JsonSchema partner() {
         return JsonObject.required();
     }
 
+    /**
+     * Defines a bean for JsonSchemaRequestBodyValidator which is responsible for validating
+     * request bodies against JSON Schemas.
+     * 
+     * @param jsonSchemaFactory the factory used to create JSON Schema instances.
+     * @return a JsonSchemaRequestBodyValidator instance.
+     */
     @Bean
     public JsonSchemaRequestBodyValidator jsonSchemaRequestBodyValidator(JsonSchemaFactory jsonSchemaFactory) {
         return new JsonSchemaRequestBodyValidator(jsonSchemaFactory);
     }
 
+    /**
+     * Defines a bean for JsonSchemaFactory which is responsible for creating and managing
+     * JSON Schema instances within the application context.
+     * 
+     * @param context the application context used to access other beans and resources.
+     * @return a JsonSchemaFactory instance.
+     */
     @Bean
     public JsonSchemaFactory jsonSchemaFactory(ApplicationContext context) {
         return new JsonSchemaFactory(context);
     }
 
+    /**
+     * Defines an application listener that verifies the presence of JSON Schema definitions
+     * for all request mappings when the application context is refreshed. It logs an error
+     * and throws an exception if any required JSON Schema is missing.
+     * 
+     * @param requestBodyValidator the validator used to find JSON Schema validations.
+     * @param jsonSchemaFactory the factory used to retrieve JSON Schema instances.
+     * @return an ApplicationListener for ContextRefreshedEvent.
+     */
     @Bean
     public ApplicationListener<ContextRefreshedEvent> verifySchemaDefinition(JsonSchemaRequestBodyValidator requestBodyValidator, JsonSchemaFactory jsonSchemaFactory) {
         return (event) -> {

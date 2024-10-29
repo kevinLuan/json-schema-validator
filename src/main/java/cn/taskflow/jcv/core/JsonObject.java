@@ -19,16 +19,31 @@ package cn.taskflow.jcv.core;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**
- * 对象ObjectNode参数
- *
+ * Represents a JSON object node parameter.
+ * This class extends JsonBasicSchema to provide additional functionality specific to JSON objects.
+ * It allows for the creation of required or optional JSON objects with specified child schemas.
+ * 
  * @author KEVIN LUAN
  */
 public class JsonObject extends JsonBasicSchema {
 
+    /**
+     * Default constructor for JsonObject.
+     * Initializes a new instance of the JsonObject class.
+     */
     JsonObject() {
         super();
     }
 
+    /**
+     * Constructs a JsonObject with specified parameters.
+     * 
+     * @param name        The name of the JSON object.
+     * @param required    Indicates if the JSON object is required.
+     * @param description A description of the JSON object.
+     * @param children    An array of child JsonSchema objects.
+     * @throws IllegalArgumentException if any child schema is an object value.
+     */
     public JsonObject(String name, boolean required, String description, JsonSchema[] children) {
         super(name, required, DataType.Object, description);
         if (children != null) {
@@ -43,43 +58,105 @@ public class JsonObject extends JsonBasicSchema {
         }
     }
 
+    /**
+     * Creates a required JsonObject with a name, description, and child schemas.
+     * 
+     * @param name        The name of the JSON object.
+     * @param description A description of the JSON object.
+     * @param children    An array of child JsonSchema objects.
+     * @return A new instance of JsonObject.
+     */
     public static JsonObject required(String name, String description, JsonSchema... children) {
         return new JsonObject(name, true, description, children);
     }
 
+    /**
+     * Creates a required JsonObject with a name and child schemas.
+     * 
+     * @param name     The name of the JSON object.
+     * @param children An array of child JsonSchema objects.
+     * @return A new instance of JsonObject.
+     */
     public static JsonObject required(String name, JsonSchema... children) {
         return new JsonObject(name, true, null, children);
     }
 
+    /**
+     * Creates a required JsonObject with child schemas.
+     * 
+     * @param children An array of child JsonSchema objects.
+     * @return A new instance of JsonObject.
+     */
     public static JsonObject required(JsonSchema... children) {
         return new JsonObject("", true, null, children);
     }
 
+    /**
+     * Creates an optional JsonObject with child schemas.
+     * 
+     * @param children An array of child JsonSchema objects.
+     * @return A new instance of JsonObject.
+     */
     public static JsonObject optional(JsonSchema... children) {
         return new JsonObject("", false, null, children);
     }
 
+    /**
+     * Creates an optional JsonObject with a name, description, and child schemas.
+     * 
+     * @param name        The name of the JSON object.
+     * @param description A description of the JSON object.
+     * @param children    An array of child JsonSchema objects.
+     * @return A new instance of JsonObject.
+     */
     public static JsonObject optional(String name, String description, JsonSchema... children) {
         return new JsonObject(name, false, description, children);
     }
 
+    /**
+     * Creates an optional JsonObject with a name and child schemas.
+     * 
+     * @param name     The name of the JSON object.
+     * @param children An array of child JsonSchema objects.
+     * @return A new instance of JsonObject.
+     */
     public static JsonObject optional(String name, JsonSchema... children) {
         return new JsonObject(name, false, null, children);
     }
 
+    /**
+     * Checks if this schema represents a JSON object.
+     * 
+     * @return true, as this is a JsonObject.
+     */
     public boolean isObject() {
         return true;
     }
 
+    /**
+     * Returns this JsonObject instance.
+     * 
+     * @return This JsonObject instance.
+     */
     @Override
     public JsonObject asObject() {
         return this;
     }
 
+    /**
+     * Checks if this JsonObject has any child schemas.
+     * 
+     * @return true if there are child schemas, false otherwise.
+     */
     public final boolean existsChildren() {
         return this.children != null && children.length > 0;
     }
 
+    /**
+     * Gets the child schemas of this JsonObject.
+     * 
+     * @return An array of child JsonSchema objects.
+     */
     public JsonSchema[] getChildren() {
         return children;
     }

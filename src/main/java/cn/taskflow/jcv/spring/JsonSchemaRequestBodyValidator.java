@@ -32,18 +32,31 @@ import java.util.stream.Collectors;
 import static org.springframework.web.servlet.HandlerMapping.BEST_MATCHING_HANDLER_ATTRIBUTE;
 
 /**
- * 根据预定义的JsonSchema对REST 请求body参数验证处理
- *
+ * Validates REST request body parameters against a predefined JsonSchema.
+ * This class is responsible for ensuring that incoming JSON data adheres to the specified schema.
+ * It utilizes annotations to determine which methods or parameters require validation.
+ * 
  * @author SHOUSHEN.LUAN
  * @since 2024-09-26
  */
 public class JsonSchemaRequestBodyValidator {
     private final JsonSchemaFactory jsonSchemaFactory;
 
+    /**
+     * Constructor for JsonSchemaRequestBodyValidator.
+     * 
+     * @param jsonSchemaFactory The factory used to create JsonSchema instances for validation.
+     */
     public JsonSchemaRequestBodyValidator(JsonSchemaFactory jsonSchemaFactory) {
         this.jsonSchemaFactory = jsonSchemaFactory;
     }
 
+    /**
+     * Finds the JsonSchemaValidate annotation for a given type.
+     * 
+     * @param type The type to check for the JsonSchemaValidate annotation.
+     * @return An Optional containing the JsonSchemaValidate annotation if present.
+     */
     private Optional<JsonSchemaValidate> findJsonSchemaValidate(Type type) {
         ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HandlerMethod handlerMethod = (HandlerMethod) sra.getRequest().getAttribute(BEST_MATCHING_HANDLER_ATTRIBUTE);
@@ -60,6 +73,12 @@ public class JsonSchemaRequestBodyValidator {
         return Optional.empty();
     }
 
+    /**
+     * Finds the JsonSchemaValidate annotation for a given handler method.
+     * 
+     * @param handlerMethod The handler method to check for the JsonSchemaValidate annotation.
+     * @return An Optional containing the JsonSchemaValidate annotation if present.
+     */
     public Optional<JsonSchemaValidate> findJsonSchemaValidate(HandlerMethod handlerMethod) {
         if (handlerMethod.hasMethodAnnotation(JsonSchemaValidate.class)) {
             return Optional.of(handlerMethod.getMethodAnnotation(JsonSchemaValidate.class));
@@ -72,6 +91,15 @@ public class JsonSchemaRequestBodyValidator {
         return Optional.empty();
     }
 
+    /**
+     * Processes the HTTP input message by validating it against the JsonSchema if applicable.
+     * 
+     * @param type The type of the request body.
+     * @param contextClass The context class for the request.
+     * @param inputMessage The HTTP input message containing the request body.
+     * @return A new HttpInputMessage if validation is performed, otherwise the original input message.
+     * @throws IOException If an I/O error occurs during processing.
+     */
     public HttpInputMessage process(Type type, Class<?> contextClass, HttpInputMessage inputMessage) throws IOException {
         Optional<JsonSchemaValidate> optional = findJsonSchemaValidate(type);
         if (optional.isPresent()) {
@@ -83,6 +111,13 @@ public class JsonSchemaRequestBodyValidator {
         }
     }
 
+    /**
+     * Creates a new HttpInputMessage with the specified JSON content.
+     * 
+     * @param httpInputMessage The original HTTP input message.
+     * @param value The JSON content to include in the new input message.
+     * @return A new HttpInputMessage containing the specified JSON content.
+     */
     private HttpInputMessage createHttpInputMessage(HttpInputMessage httpInputMessage, String value) {
         return new HttpInputMessage() {
             @Override
@@ -97,6 +132,13 @@ public class JsonSchemaRequestBodyValidator {
         };
     }
 
+    /**
+     * Reads the content of the HTTP input message as a string.
+     * 
+     * @param inputMessage The HTTP input message to read.
+     * @return The content of the input message as a string.
+     * @throws IOException If an I/O error occurs during reading.
+     */
     private String readInputMessage(HttpInputMessage inputMessage) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputMessage.getBody(),
             StandardCharsets.UTF_8))) {
