@@ -133,7 +133,7 @@ public class JsonParser {
                 if (option.isOptional(name, DataType.Number)) {
                     return JsonNumber.ofNullable().setExampleValue(element.getAsNumber());
                 } else {
-                    return JsonNumber.make().setExampleValue(element.getAsNumber());
+                    return JsonNumber.ofNonNull().setExampleValue(element.getAsNumber());
                 }
             } else {
                 if (option.isOptional(name, DataType.Number)) {
@@ -147,7 +147,7 @@ public class JsonParser {
                 if (option.isOptional(name, DataType.Boolean)) {
                     return JsonBoolean.ofNullable().setExampleValue(element.getAsBoolean());
                 } else {
-                    return JsonBoolean.make().setExampleValue(element.getAsBoolean());
+                    return JsonBoolean.ofNonNull().setExampleValue(element.getAsBoolean());
                 }
             } else {
                 if (option.isOptional(name, DataType.Boolean)) {
@@ -161,7 +161,7 @@ public class JsonParser {
                 if (option.isOptional(name, DataType.String)) {
                     return JsonString.ofNullable().setExampleValue(element.getAsString());
                 } else {
-                    return JsonString.make().setExampleValue(element.getAsString());
+                    return JsonString.ofNonNull().setExampleValue(element.getAsString());
                 }
             } else {
                 if (option.isOptional(name, DataType.String)) {

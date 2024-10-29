@@ -46,7 +46,7 @@ public class JsonNumber extends Primitive {
      *
      * @return
      */
-    public static JsonNumber make() {
+    public static JsonNumber ofNonNull() {
         return new JsonNumber("", true, DataType.Number, null, null, null);
     }
 

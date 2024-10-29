@@ -46,7 +46,7 @@ public class JsonBoolean extends Primitive {
      *
      * @return
      */
-    public static JsonBoolean make() {
+    public static JsonBoolean ofNonNull() {
         return new JsonBoolean("", true, DataType.Boolean, null, null, null);
     }
 

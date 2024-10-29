@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.taskflow.jcv.spring.JsonSchemaAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=cn.taskflow.jcv.spring.JsonSchemaAutoConfiguration,\
+  cn.taskflow.jcv.spring.RestMvcConfigurer

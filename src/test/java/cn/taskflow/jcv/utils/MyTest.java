@@ -49,7 +49,7 @@ public class MyTest {
         String json = "{\"item\":{\"id\":1000,\"orderIds\":[1,2,3,4,5],\"title\":\"item name\"},\"name\":\"张三丰\",\"age\":60}";
         System.out.println("JSON: " + json);
         JsonObject jsonSchema = JsonObject.required(JsonObject.required("item", JsonNumber.required("id", null)
-            .setExampleValue(1000), JsonArray.required("orderIds", null, JsonNumber.make().setExampleValue(1)),
+            .setExampleValue(1000), JsonArray.required("orderIds", null, JsonNumber.ofNonNull().setExampleValue(1)),
             JsonString.required("title", null).setExampleValue("item name")), JsonString.required("name", null)
             .setExampleValue("张三丰"), JsonNumber.required("age", null).setExampleValue(60));
 

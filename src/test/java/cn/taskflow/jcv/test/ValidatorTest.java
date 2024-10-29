@@ -53,7 +53,7 @@ public class ValidatorTest {
                     )//
                 ), //
             JsonArray.required("ids", "id列表", //
-                JsonNumber.make().setMax(100) //
+                JsonNumber.ofNonNull().setMax(100) //
                 ), //
             JsonObject.optional("extendMap", "扩展字段"), //
             JsonArray.optional("array_any", "任意数组节点"), //
@@ -125,7 +125,7 @@ public class ValidatorTest {
                     )//
                 ), //
             JsonArray.required("ids", "id列表", //
-                JsonNumber.make().setMax(100) //
+                JsonNumber.ofNonNull().setMax(100) //
                 ), //
             JsonObject.optional("extendMap", "扩展Map(任意子节点)"), JsonArray.optional("array_any", "任意数组类型"),
             JsonArray.optional("array_any_simple", "任意数组类型"));

@@ -21,22 +21,50 @@ import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.core.Primitive;
 
 /**
- * @author SHOUSHEN.LUAN
+ * Interface for processing schema requirements and options.
+ * Provides methods to determine if a schema element is required or optional.
+ * 
+ * @autor SHOUSHEN.LUAN
  * @since 2024-05-04
  */
 public interface SchemaProcess {
 
     /**
-     * 是否必须
+     * Determines if a schema element is required.
      *
-     * @param name
-     * @return
+     * @param name the name of the schema element
+     * @param type the data type of the schema element
+     * @param valueSchema the JSON schema associated with the element
+     * @return true if the element is required, false otherwise
      */
     boolean isRequired(String name, DataType type, JsonSchema valueSchema);
 
+    /**
+     * Determines if a schema element is required for multiple JSON schemas.
+     *
+     * @param name the name of the schema element
+     * @param type the data type of the schema element
+     * @param valueSchemas the array of JSON schemas associated with the element
+     * @return true if the element is required in any of the provided schemas, false otherwise
+     */
     boolean isRequired(String name, DataType type, JsonSchema... valueSchemas);
 
+    /**
+     * Determines if a schema element is required for a primitive value.
+     *
+     * @param name the name of the schema element
+     * @param type the data type of the schema element
+     * @param valueSchema the primitive schema associated with the element
+     * @return true if the element is required, false otherwise
+     */
     boolean isRequired(String name, DataType type, Primitive valueSchema);
 
+    /**
+     * Determines if a schema element is optional.
+     *
+     * @param name the name of the schema element
+     * @param dataType the data type of the schema element
+     * @return true if the element is optional, false otherwise
+     */
     boolean isOptional(String name, DataType dataType);
 }

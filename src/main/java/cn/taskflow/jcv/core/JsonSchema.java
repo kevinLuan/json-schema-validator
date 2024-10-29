@@ -22,110 +22,119 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 参数定义
- *
- * @author KEVIN LUAN
+ * Interface for defining JSON schema parameters.
+ * This interface provides methods to interact with and validate JSON schema elements.
+ * It supports operations for checking types, converting types, and setting or getting parent nodes.
+ * It also includes methods for custom validation of JSON nodes.
+ * 
+ * Author: KEVIN LUAN
  */
 public interface JsonSchema {
     Logger LOG = LoggerFactory.getLogger(JsonSchema.class);
 
     /**
-     * 获取参数名称
+     * Retrieves the name of the parameter.
      *
-     * @return
+     * @return the name of the parameter
      */
     String getName();
 
     /**
-     * 基础原子参数类型
+     * Checks if the parameter is of a primitive type.
      *
-     * @return
+     * @return true if the parameter is primitive, false otherwise
      */
     boolean isPrimitive();
 
     /**
-     * 类型转化
+     * Converts the parameter to a Primitive type.
      *
-     * @return
+     * @return the parameter as a Primitive
      */
     Primitive asPrimitive();
 
     /**
-     * 验证是否是{@link JsonArray}类型实现
+     * Checks if the parameter is implemented as a {@link JsonArray}.
      *
-     * @return
+     * @return true if the parameter is a JsonArray, false otherwise
      */
     boolean isArray();
 
     /**
-     * 验证是否是ObjectParam类型实现
+     * Checks if the parameter is implemented as an ObjectParam.
      *
-     * @return
+     * @return true if the parameter is an ObjectParam, false otherwise
      */
     boolean isObject();
 
     /**
-     * 类型转化
+     * Converts the parameter to a JsonArray type.
      *
-     * @return
+     * @return the parameter as a JsonArray
      */
     JsonArray asArray();
 
     /**
-     * 类型转化
+     * Converts the parameter to a JsonObject type.
      *
-     * @return
+     * @return the parameter as a JsonObject
      */
     JsonObject asObject();
 
     /**
-     * 设置当前节点的父亲节点
+     * Sets the parent node for the current node.
      *
-     * @param parentNode
+     * @param parentNode the parent node to set
      */
     void setParentNode(JsonSchema parentNode);
 
     /**
-     * 获取父亲节点
+     * Retrieves the parent node of the current node.
      *
-     * @return
+     * @return the parent node
      */
-    public JsonSchema getParentNode();
+    JsonSchema getParentNode();
 
     /**
-     * 跟节点
+     * Checks if the current node is the root node.
      *
-     * @return
+     * @return true if it is the root node, false otherwise
      */
-    public boolean isRootNode();
+    boolean isRootNode();
 
     /**
-     * 是ObjectNode值类型(如：Array[{ObjectNode},{ObjectNode}])
+     * Checks if the parameter is an ObjectNode value type (e.g., Array[{ObjectNode},{ObjectNode}]).
      *
-     * @return
+     * @return true if it is an ObjectNode value type, false otherwise
      */
     boolean isObjectValue();
 
     /**
-     * 获取数据类型
+     * Retrieves the data type of the parameter.
      *
-     * @return
+     * @return the data type
      */
     DataType getDataType();
 
     /**
-     * 参数是否为必须的
+     * Checks if the parameter is required.
      *
-     * @return
+     * @return true if the parameter is required, false otherwise
      */
     boolean isRequired();
 
+    /**
+     * Retrieves the path of the parameter.
+     *
+     * @return the path as a String
+     */
     String getPath();
 
     /**
-     * 自定义验证
+     * Performs custom validation on the given JSON node.
      *
-     * @param jsonNode
+     * @param jsonNode the JSON node to validate
+     * @throws ValidationException if validation fails
      */
     void verify(JsonNode jsonNode) throws ValidationException;
 }

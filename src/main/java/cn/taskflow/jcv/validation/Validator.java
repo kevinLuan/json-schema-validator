@@ -33,66 +33,132 @@ import java.util.function.Function;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+/**
+ * Main validator class for JSON schema validation
+ */
 public class Validator {
     private AbstractDataValidator dataValidator;
 
+    /**
+     * Sets a filter for handling unknown nodes during validation
+     * @param filter The filter to handle unknown nodes
+     * @return This validator instance
+     */
     public Validator setUnknownNodeFilter(UnknownNodeFilter filter) {
         this.dataValidator.setUnknownNodeFilter(filter);
         return this;
     }
 
+    /**
+     * Creates a validator from JSON schemas using default verify handler
+     * @param jsonSchemas The JSON schemas to validate against
+     * @return A new validator instance
+     */
     public static Validator fromSchema(JsonSchema... jsonSchemas) {
         return fromSchema(DataVerifyHandler.getInstance(), jsonSchemas);
     }
 
+    /**
+     * Creates a validator from JSON schemas with custom verify handler
+     * @param verifyHandler Custom verify handler
+     * @param jsonSchemas The JSON schemas to validate against
+     * @return A new validator instance
+     */
     public static Validator fromSchema(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
         Validator validator = new Validator();
         validator.dataValidator = AbstractDataValidator.make(verifyHandler, jsonSchemas);
         return validator;
     }
 
+    /**
+     * Validates data supplied by a function
+     * @param dataSupplier Function that supplies data as strings
+     * @return This validator instance
+     */
     public Validator validate(Function<String, String> dataSupplier) {
         dataValidator.validate(dataSupplier);
         return this;
     }
 
+    /**
+     * Extracts data supplied by a function into a map
+     * @param dataSupplier Function that supplies data as strings
+     * @return Map of extracted data
+     */
     public Map<String, Object> extract(Function<String, String> dataSupplier) {
         return dataValidator.extract(dataSupplier);
     }
 
+    /**
+     * Validates a JsonNode against the schema
+     * @param jsonNode The node to validate
+     * @return This validator instance
+     */
     public Validator validate(JsonNode jsonNode) {
         dataValidator.validate(jsonNode);
         return this;
     }
 
+    /**
+     * Validates a JSON string against the schema
+     * @param json The JSON string to validate
+     * @return This validator instance
+     */
     public Validator validate(String json) {
         dataValidator.validate(NodeFactory.parser(json));
         return this;
     }
 
+    /**
+     * Validates an object by converting it to JSON first
+     * @param obj The object to validate
+     * @return This validator instance
+     */
     public Validator validate(Object obj) {
         dataValidator.validate(NodeFactory.convert(obj));
         return this;
     }
 
+    /**
+     * Extracts data from a JsonNode into a map
+     * @param json The JsonNode to extract from
+     * @return Map of extracted data
+     */
     public Map<String, Object> extract(JsonNode json) {
         return dataValidator.extract(json);
     }
 
+    /**
+     * Extracts data from an object by converting it to JSON first
+     * @param obj The object to extract from
+     * @return Map of extracted data
+     */
     public Map<String, Object> extract(Object obj) {
         JsonNode json = NodeFactory.convert(obj);
         return dataValidator.extract(json);
     }
 
+    /**
+     * Extracts data from a JSON string into a map
+     * @param json The JSON string to extract from
+     * @return Map of extracted data
+     */
     public Map<String, Object> extract(String json) {
         JsonNode jsonNode = NodeFactory.parser(json);
         return dataValidator.extract(jsonNode);
     }
 
+    /**
+     * Abstract class for data validation implementation
+     */
     public static class AbstractDataValidator {
         private UnknownNodeFilter filter;
         private VerifyHandler     verifyHandler;
 
+        /**
+         * Sets the filter for handling unknown nodes
+         * @param filter The filter to use
+         */
         public void setUnknownNodeFilter(UnknownNodeFilter filter) {
             this.filter = filter;
         }
@@ -100,6 +166,11 @@ public class Validator {
         public List<JsonSchema>     jsonSchemas;
         private DataStructValidator dataStructValidator = DataStructValidator.getInstance(this);
 
+        /**
+         * Constructor for AbstractDataValidator
+         * @param jsonSchemas List of JSON schemas to validate against
+         * @param verifyHandler Handler for verification
+         */
         public AbstractDataValidator(List<JsonSchema> jsonSchemas, VerifyHandler verifyHandler) {
             this.jsonSchemas = jsonSchemas;
             AdjustParamInstance.adjust(jsonSchemas);
@@ -107,11 +178,21 @@ public class Validator {
             this.verifyHandler = verifyHandler;
         }
 
+        /**
+         * Validates a JsonNode against the first schema
+         * @param jsonNode Node to validate
+         * @return This validator instance
+         */
         public AbstractDataValidator validate(JsonNode jsonNode) {
             dataStructValidator.validate(jsonSchemas.get(0), jsonNode);
             return this;
         }
 
+        /**
+         * Extracts data from a JsonNode according to schema
+         * @param jsonNode Node to extract from
+         * @return Map of extracted data
+         */
         public Map<String, Object> extract(JsonNode jsonNode) {
             JsonSchema jsonSchema = jsonSchemas.get(0);
             object(jsonNode, jsonSchema);
@@ -124,15 +205,20 @@ public class Validator {
             return data;
         }
 
+        /**
+         * Validates data from a supplier function
+         * @param dataSupplier Function supplying data
+         * @return This validator instance
+         */
         public AbstractDataValidator validate(Function<String, String> dataSupplier) {
             dataStructValidator.validate(dataSupplier, jsonSchemas.toArray(new JsonSchema[0]));
             return this;
         }
 
         /**
-         * 根据参数定义extract参数(只会拷贝定义的参数)
-         *
-         * @return
+         * Extracts data from a supplier function according to schema
+         * @param dataSupplier Function supplying data
+         * @return Map of extracted data
          */
         public Map<String, Object> extract(Function<String, String> dataSupplier) {
             Map<String, Object> data = new HashMap<>(jsonSchemas.size());
@@ -162,10 +248,21 @@ public class Validator {
             return data;
         }
 
+        /**
+         * Creates a new AbstractDataValidator instance
+         * @param verifyHandler Handler for verification
+         * @param jsonSchemas Schemas to validate against
+         * @return New AbstractDataValidator instance
+         */
         public static AbstractDataValidator make(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
             return new AbstractDataValidator(Arrays.asList(jsonSchemas), verifyHandler);
         }
 
+        /**
+         * Validates and processes an object node
+         * @param node Node to validate
+         * @param jsonSchema Schema to validate against
+         */
         protected void object(JsonNode node, JsonSchema jsonSchema) {
             if (!node.isObject() || !jsonSchema.isObject()) {
                 verifyHandler.throwError(jsonSchema.getPath());
@@ -173,7 +270,7 @@ public class Validator {
             ObjectNode objectNode = (ObjectNode) node;
             JsonObject paramObject = jsonSchema.asObject();
             if (!paramObject.existsChildren()) {
-                return;// 没有配置子节点的话，当前节点下的任意子节点均保留
+                return;// If no child nodes configured, preserve all child nodes under current node
             }
             JsonSchema[] children = paramObject.getChildren();
             delete(objectNode, children);
@@ -191,10 +288,9 @@ public class Validator {
         }
 
         /**
-         * 删除不存在的Node
-         *
-         * @param objectNode
-         * @param children
+         * Deletes nodes that don't exist in schema
+         * @param objectNode Node to clean
+         * @param children Schema children to check against
          */
         void delete(ObjectNode objectNode, JsonSchema[] children) {
             Iterator<String> iterator = objectNode.fieldNames();
@@ -216,6 +312,12 @@ public class Validator {
             }
         }
 
+        /**
+         * Checks if a field name exists in schema children
+         * @param children Schema children to check
+         * @param name Field name to look for
+         * @return true if exists, false otherwise
+         */
         boolean exists(JsonSchema[] children, String name) {
             for (JsonSchema p : children) {
                 if (name.equals(p.getName())) {
@@ -225,6 +327,11 @@ public class Validator {
             return false;
         }
 
+        /**
+         * Validates and processes an array node
+         * @param jsonNode Node to validate
+         * @param jsonSchema Schema to validate against
+         */
         void array(JsonNode jsonNode, JsonSchema jsonSchema) {
             if (!jsonNode.isArray() || !jsonSchema.isArray()) {
                 verifyHandler.throwError(jsonSchema.getPath());
@@ -234,15 +341,22 @@ public class Validator {
             if (!array.existsChildren()) {
                 return;
             }
-            JsonSchema children = array.getSchemaForFirstChildren();
-            for (int i = 0; i < arrayNode.size(); i++) {
-                JsonNode node = arrayNode.get(i);
-                if (node.isObject()) {
-                    object(node, children);
+            Optional<JsonSchema> optional = array.getSchemaForFirstChildren();
+            if (optional.isPresent()) {
+                for (int i = 0; i < arrayNode.size(); i++) {
+                    JsonNode node = arrayNode.get(i);
+                    if (node.isObject()) {
+                        object(node, optional.get());
+                    }
                 }
             }
         }
 
+        /**
+         * Checks if a node is empty or null
+         * @param node Node to check
+         * @return true if empty, false otherwise
+         */
         public boolean isEmptyNode(JsonNode node) {
             if (node == null || node.isNull() || node.isMissingNode()) {
                 return true;
@@ -251,6 +365,9 @@ public class Validator {
         }
     }
 
+    /**
+     * Validator for data structure validation
+     */
     public static class DataStructValidator {
         private AbstractDataValidator dataValidator;
 
@@ -258,10 +375,20 @@ public class Validator {
             this.dataValidator = dataValidator;
         }
 
+        /**
+         * Creates a new DataStructValidator instance
+         * @param dataValidator The abstract validator to use
+         * @return New DataStructValidator instance
+         */
         public static DataStructValidator getInstance(AbstractDataValidator dataValidator) {
             return new DataStructValidator(dataValidator);
         }
 
+        /**
+         * Validates a JsonNode against a schema
+         * @param jsonSchema Schema to validate against
+         * @param jsonNode Node to validate
+         */
         public void validate(JsonSchema jsonSchema, JsonNode jsonNode) {
             if (jsonSchema == null) {
                 throw new IllegalArgumentException("param must be not null");
@@ -287,6 +414,11 @@ public class Validator {
             }
         }
 
+        /**
+         * Validates data from a supplier against schemas
+         * @param dataSupplier Function supplying data
+         * @param jsonSchemas Schemas to validate against
+         */
         public void validate(Function<String, String> dataSupplier, JsonSchema... jsonSchemas) {
             if (dataSupplier == null) {
                 throw new IllegalArgumentException("request must be not null");
@@ -323,6 +455,11 @@ public class Validator {
             }
         }
 
+        /**
+         * Validates an array node against schema
+         * @param jsonSchema Schema to validate against
+         * @param value Node to validate
+         */
         void checkArray(JsonSchema jsonSchema, JsonNode value) {
             if (jsonSchema.isArray() && value.isArray()) {
                 JsonArray array = jsonSchema.asArray();
@@ -330,21 +467,25 @@ public class Validator {
                     jsonSchema.verify(value);
                     return;
                 }
-                JsonSchema children = array.getSchemaForFirstChildren();
+
                 if (array.isRequired()) {
                     if (value.size() == 0) {
                         throw JsvUtils.throwParamException(jsonSchema.getPath());
                     }
                 }
                 jsonSchema.verify(value);
-                for (int i = 0; i < value.size(); i++) {
-                    JsonNode node = value.get(i);
-                    if (children.isObjectValue()) {
-                        checkObject(children, (ObjectNode) node);
-                    } else if (children.isPrimitive()) {
-                        checkSimple(children.asPrimitive(), node);
-                    } else {
-                        throw new ValidationException("Unsupported type: " + children, children.getPath());
+                Optional<JsonSchema> optional = array.getSchemaForFirstChildren();
+                if (optional.isPresent()) {
+                    JsonSchema children = optional.get();
+                    for (int i = 0; i < value.size(); i++) {
+                        JsonNode node = value.get(i);
+                        if (children.isObjectValue()) {
+                            checkObject(children, (ObjectNode) node);
+                        } else if (children.isPrimitive()) {
+                            checkSimple(children.asPrimitive(), node);
+                        } else {
+                            throw new ValidationException("Unsupported type: " + children, children.getPath());
+                        }
                     }
                 }
             } else {
@@ -352,6 +493,11 @@ public class Validator {
             }
         }
 
+        /**
+         * Validates a simple (primitive) value against schema
+         * @param jsonSchema Schema to validate against
+         * @param node Node to validate
+         */
         void checkSimple(JsonSchema jsonSchema, JsonNode node) {
             if (jsonSchema.isPrimitive()) {
                 if (node.isObject() || node.isArray()) {
@@ -392,6 +538,11 @@ public class Validator {
             }
         }
 
+        /**
+         * Validates an object node against schema
+         * @param jsonSchema Schema to validate against
+         * @param jsonNode Node to validate
+         */
         void checkObject(JsonSchema jsonSchema, JsonNode jsonNode) {
             if (!jsonSchema.isObject() || !jsonNode.isObject()) {
                 dataValidator.verifyHandler.throwError(jsonSchema.getPath());

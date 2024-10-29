@@ -21,7 +21,33 @@ import org.springframework.stereotype.Indexed;
 import java.lang.annotation.*;
 
 /**
- * @author SHOUSHEN.LUAN
+ * Annotation for specifying JSON schema validation on method parameters or methods.
+ * This annotation is used to indicate that the annotated element should be validated
+ * against a specified JSON schema. The schema is identified by its name, which is
+ * provided as the value of this annotation.
+ * 
+ * This annotation can be applied to method parameters and methods, and it is retained
+ * at runtime to allow for reflection-based processing.
+ * 
+ * The annotation is also indexed for better performance in Spring applications.
+ * 
+ * Usage example:
+ * 
+ * <pre>
+ * {@code
+ * @JsonSchemaValidate("userSchema")
+ * public void createUser(@JsonSchemaValidate("userSchema") User user) {
+ *     // method implementation
+ * }
+ * }
+ * </pre>
+ * 
+ * In the example above, both the method and the parameter are validated against the
+ * "userSchema" JSON schema.
+ * 
+ * @see JsonSchemaFactory
+ * @see JsonSchemaRequestBodyValidator
+ * 
  * @since 2024-09-28
  */
 @Target({ ElementType.PARAMETER, ElementType.METHOD })
@@ -30,9 +56,9 @@ import java.lang.annotation.*;
 @Indexed
 public @interface JsonSchemaValidate {
     /**
-     * schema名称
-     *
-     * @return
+     * The name of the JSON schema to validate against.
+     * 
+     * @return the schema name
      */
     String value();
 }

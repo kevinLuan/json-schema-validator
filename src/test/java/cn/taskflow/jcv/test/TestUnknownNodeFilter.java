@@ -48,7 +48,7 @@ public class TestUnknownNodeFilter {
                     )//
                 ), //
             JsonArray.required("ids", "id列表", //
-                JsonNumber.make().setMax(100) //
+                JsonNumber.ofNonNull().setMax(100) //
                 )//
             );
     }

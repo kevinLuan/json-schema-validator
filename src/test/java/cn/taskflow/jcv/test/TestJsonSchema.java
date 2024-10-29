@@ -53,7 +53,7 @@ public class TestJsonSchema {
                     )//
                 ), //
             JsonArray.required("ids", "id列表", //
-                JsonNumber.make().setMax(100) //
+                JsonNumber.ofNonNull().setMax(100) //
                 )//
             );
     }
@@ -415,7 +415,7 @@ public class TestJsonSchema {
                             )//
                     ), //
                     JsonArray.required("ids", "id列表", //
-                            JsonNumber.make().setMax(100) //
+                            JsonNumber.ofNonNull().setMax(100) //
                     )//
             );
             MockHttpServletRequest request = new MockHttpServletRequest();
@@ -440,7 +440,7 @@ public class TestJsonSchema {
                                 )//
                         ), //
                         JsonArray.required("ids", "id列表", //
-                                JsonNumber.make().setMax(100) //
+                                JsonNumber.ofNonNull().setMax(100) //
                         )//
                 );
                 MockHttpServletRequest request = new MockHttpServletRequest();
@@ -464,7 +464,7 @@ public class TestJsonSchema {
                                         JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                         JsonString.required("name", "商品名称").setMax(50), //
                                         JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMax(100) //
+                                                JsonNumber.ofNonNull().setMax(100) //
                                         )//
                                 )//
                         ) //
@@ -489,7 +489,7 @@ public class TestJsonSchema {
                                     JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                     JsonString.required("name", "商品名称").setMax(50), //
                                     JsonArray.required("ids", "id列表", //
-                                            JsonNumber.make().setMax(100) //
+                                            JsonNumber.ofNonNull().setMax(100) //
                                     )//
                             )//
                     ) //
@@ -510,7 +510,7 @@ public class TestJsonSchema {
                                     JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                     JsonString.required("name", "商品名称").setMax(50), //
                                     JsonArray.required("ids", "id列表", //
-                                            JsonNumber.make().setMax(100) //
+                                            JsonNumber.ofNonNull().setMax(100) //
                                     )//
                             )//
                     ) //
@@ -534,7 +534,7 @@ public class TestJsonSchema {
                                     JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                     JsonString.required("name", "商品名称").setMax(50), //
                                     JsonArray.required("ids", "id列表", //
-                                            JsonNumber.make().setMin(10).setMax(100) //
+                                            JsonNumber.ofNonNull().setMin(10).setMax(100) //
                                     )//
                             )//
                     ) //
@@ -557,7 +557,7 @@ public class TestJsonSchema {
                                     JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                     JsonString.required("name", "商品名称").setMax(50), //
                                     JsonArray.required("ids", "id列表", //
-                                            JsonNumber.make().setMin(10).setMax(100) //
+                                            JsonNumber.ofNonNull().setMin(10).setMax(100) //
                                     )//
                             )//
                     ) //
@@ -582,7 +582,7 @@ public class TestJsonSchema {
                                         JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                         JsonString.required("name", "商品名称").setMax(50), //
                                         JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMin(10).setMax(100) //
+                                                JsonNumber.ofNonNull().setMin(10).setMax(100) //
                                         )//
                                 )//
                         ) //
@@ -608,7 +608,7 @@ public class TestJsonSchema {
                                         JsonNumber.required("id", "商品ID").setMin(1).setMax(10), //
                                         JsonString.required("name", "商品名称").setMax(50), //
                                         JsonArray.required("ids", "id列表", //
-                                                JsonNumber.make().setMin(10).setMax(100) //
+                                                JsonNumber.ofNonNull().setMin(10).setMax(100) //
                                         ), //
                                         JsonArray.required("array", "x", //
                                                 JsonObject.required( //

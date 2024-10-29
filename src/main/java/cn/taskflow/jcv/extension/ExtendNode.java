@@ -18,7 +18,16 @@ package cn.taskflow.jcv.extension;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+/**
+ * The ExtendNode enum represents different types of nodes that can be extended.
+ * Each enum constant provides a specific implementation of the matchesType method
+ * to determine if a given JsonNode matches the expected type.
+ */
 public enum ExtendNode {
+    /**
+     * Represents a remark node, which is expected to be a textual JsonNode
+     * with a maximum length of 500 characters.
+     */
     remark("remark") {
         @Override
         public boolean matchesType(JsonNode jsonNode) {
@@ -28,22 +37,46 @@ public enum ExtendNode {
             return false;
         }
     },
+    /**
+     * Represents an extendProps node, which is expected to be a JsonNode
+     * of object type.
+     */
     extendProps("extendProps") {
         @Override
         public boolean matchesType(JsonNode jsonNode) {
             return jsonNode != null && jsonNode.isObject();
         }
     };
+
+    /**
+     * The name of the node type.
+     */
     private String name;
 
+    /**
+     * Constructor for the ExtendNode enum.
+     *
+     * @param name The name of the node type.
+     */
     private ExtendNode(String name) {
         this.name = name();
     }
 
+    /**
+     * Gets the name of the node type.
+     *
+     * @return The name of the node type.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Checks if a given name corresponds to a defined ExtendNode.
+     *
+     * @param name The name to check.
+     * @return True if the name corresponds to a defined ExtendNode, false otherwise.
+     */
     public static boolean isDefinition(String name) {
         for (ExtendNode node : values()) {
             if (node.getName().equals(name)) {
@@ -53,6 +86,12 @@ public enum ExtendNode {
         return false;
     }
 
+    /**
+     * Retrieves the ExtendNode corresponding to a given name.
+     *
+     * @param name The name of the node type.
+     * @return The ExtendNode corresponding to the name, or null if not found.
+     */
     public static ExtendNode getDefinition(String name) {
         for (ExtendNode node : values()) {
             if (node.getName().equals(name)) {
@@ -62,5 +101,12 @@ public enum ExtendNode {
         return null;
     }
 
+    /**
+     * Abstract method to be implemented by each enum constant to determine
+     * if a given JsonNode matches the expected type.
+     *
+     * @param jsonNode The JsonNode to check.
+     * @return True if the JsonNode matches the expected type, false otherwise.
+     */
     public abstract boolean matchesType(JsonNode jsonNode);
 }

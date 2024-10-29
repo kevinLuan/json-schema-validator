@@ -30,6 +30,8 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
+import java.util.Optional;
+
 public class ResponseValidatorTest {
 
     @Test
@@ -48,7 +50,10 @@ public class ResponseValidatorTest {
         // 重置验证逻辑
         jsonSchema.asObject().getChildren()[0].asPrimitive().between(1, 10);
         // 验证数据范围
-        jsonSchema.asObject().getChildren()[1].asArray().getSchemaForFirstChildren().asPrimitive().between(1, 50);
+        Optional<JsonSchema> optional = jsonSchema.asObject().getChildren()[1].asArray().getSchemaForFirstChildren();
+        if (optional.isPresent()) {
+            optional.get().asPrimitive().between(1, 50);
+        }
         try {
             JsonNode node = NodeFactory.parser(json);
             Validator.fromSchema(DataVerifyHandler.getInstance(), jsonSchema).validate(node);
@@ -118,4 +123,5 @@ public class ResponseValidatorTest {
         String actual = CodeGenerationUtils.generateSchemaCode(jsonSchema);
         System.out.println(StaticJavaParser.parseStatement(actual).toString());
     }
+
 }

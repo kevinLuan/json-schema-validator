@@ -22,6 +22,9 @@ import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.extension.AdjustParamInstance;
 import cn.taskflow.jcv.extension.ParentReference;
 
+import java.util.Objects;
+import java.util.Optional;
+
 public class JsonSchemaProcessor {
     public JsonSchema[] jsonSchemas;
 
@@ -68,11 +71,14 @@ public class JsonSchemaProcessor {
 
     private void array(NodeProcessor nodeProcessor, JsonArray array) {
         nodeProcessor.process(array);
-        JsonSchema jsonSchema = array.getSchemaForFirstChildren();
-        if (jsonSchema.isObject()) {
-            object(nodeProcessor, jsonSchema.asObject());
-        } else {
-            nodeProcessor.process(jsonSchema);
+        Optional<JsonSchema> optional = array.getSchemaForFirstChildren();
+        if (optional.isPresent()) {
+            JsonSchema jsonSchema = optional.get();
+            if (jsonSchema.isObject()) {
+                object(nodeProcessor, jsonSchema.asObject());
+            } else {
+                nodeProcessor.process(jsonSchema);
+            }
         }
     }
 }

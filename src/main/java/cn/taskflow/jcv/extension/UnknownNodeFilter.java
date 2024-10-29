@@ -18,12 +18,18 @@ package cn.taskflow.jcv.extension;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * This interface defines a contract for processing unknown JSON nodes.
+ * Implementations of this interface should provide logic to handle nodes
+ * that are not recognized or expected in a given JSON structure.
+ */
 public interface UnknownNodeFilter {
     /**
-     * 处理未知的Node节点
+     * Processes an unknown node within a JSON structure.
      *
-     * @param name   未知的node name
-     * @param parent
+     * @param name   The name of the unknown node. This is the key associated with the node in the JSON object.
+     * @param parent The parent ObjectNode that contains the unknown node. This allows access to the entire JSON structure
+     *               for context or modification.
      */
     void process(String name, ObjectNode parent);
 }
