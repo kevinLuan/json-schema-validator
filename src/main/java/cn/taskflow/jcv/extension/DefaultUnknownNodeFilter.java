@@ -58,8 +58,8 @@ public class DefaultUnknownNodeFilter implements UnknownNodeFilter {
     @Override
     public void process(String name, ObjectNode parent) {
         if (parent != null && name != null) {
-            if (ExtendNode.isDefinition(name)) {
-                if (ExtendNode.getDefinition(name).matchesType(parent.get(name))) {
+            if (JsonNodeExtension.isDefinition(name)) {
+                if (JsonNodeExtension.getDefinition(name).matchesType(parent.get(name))) {
                     return;
                 }
             }

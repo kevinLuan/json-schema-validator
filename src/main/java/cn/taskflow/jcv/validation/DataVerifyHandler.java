@@ -19,26 +19,25 @@ package cn.taskflow.jcv.validation;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**
- * Default implementation of VerifyHandler interface that provides validation error handling.
- * This handler formats error messages for validation failures and missing required fields
- * using utility methods from JsvUtils.
+ * VerifyHandler接口的默认实现，提供验证错误处理。
+ * 该处理程序使用JsvUtils中的实用方法格式化验证失败和缺少必需字段的错误消息。
  *
  * @author SHOUSHEN.LUAN
  * @since 2024-02-04
  */
 public class DataVerifyHandler implements VerifyHandler {
     /**
-     * Factory method to get a singleton instance of the DataVerifyHandler
-     * @return A new instance of VerifyHandler
+     * 获取DataVerifyHandler单例实例的工厂方法
+     * @return VerifyHandler的新实例
      */
     public static VerifyHandler getInstance() {
         return new DataVerifyHandler();
     }
 
     /**
-     * Formats an error message for validation failures at the specified JSON path
-     * @param path The JSON path where validation failed
-     * @return Formatted error message for validation failure
+     * 格式化指定JSON路径的验证失败错误消息
+     * @param path 验证失败的JSON路径
+     * @return 验证失败的格式化错误消息
      */
     @Override
     public String getTipError(String path) {
@@ -46,9 +45,9 @@ public class DataVerifyHandler implements VerifyHandler {
     }
 
     /**
-     * Formats an error message for missing required fields at the specified JSON path
-     * @param path The JSON path of the missing required field
-     * @return Formatted error message for missing field
+     * 格式化指定JSON路径的缺少必需字段的错误消息
+     * @param path 缺少必需字段的JSON路径
+     * @return 缺少字段的格式化错误消息
      */
     @Override
     public String getTipMissing(String path) {

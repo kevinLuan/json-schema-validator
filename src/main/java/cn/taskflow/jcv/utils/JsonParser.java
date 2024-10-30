@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.extension.SchemaOptions;
-import cn.taskflow.jcv.extension.SchemaProcess;
+import cn.taskflow.jcv.extension.SchemaRequirementEvaluator;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class JsonParser {
         return parseJsonSchema(json, SchemaOptions.OPTIONAL.getSchemaProcess());
     }
 
-    public static JsonSchema parseJsonSchema(String json, SchemaProcess option) {
+    public static JsonSchema parseJsonSchema(String json, SchemaRequirementEvaluator option) {
         JsonElement element = com.google.gson.JsonParser.parseString(json);
         JsonSchema jsonSchema = null;
         if (element.isJsonArray()) {
@@ -62,7 +62,8 @@ public class JsonParser {
         return jsonSchema;
     }
 
-    private static JsonBasicSchema parserObject(String name, com.google.gson.JsonObject jsonObject, SchemaProcess option) {
+    private static JsonBasicSchema parserObject(String name, com.google.gson.JsonObject jsonObject,
+                                                SchemaRequirementEvaluator option) {
         JsonSchema values[] = new JsonSchema[jsonObject.size()];
         Iterator<Map.Entry<String, JsonElement>> iterator = jsonObject.entrySet().iterator();
         int index = 0;
@@ -98,7 +99,7 @@ public class JsonParser {
         }
     }
 
-    private static JsonArray parserArray(String name, com.google.gson.JsonArray array, SchemaProcess option) {
+    private static JsonArray parserArray(String name, com.google.gson.JsonArray array, SchemaRequirementEvaluator option) {
         if (array.size() > 0) {
             JsonElement element = array.get(0);
             if (element.isJsonObject()) {
@@ -127,7 +128,7 @@ public class JsonParser {
         }
     }
 
-    private static Primitive parserPrimitive(String name, JsonPrimitive element, SchemaProcess option) {
+    private static Primitive parserPrimitive(String name, JsonPrimitive element, SchemaRequirementEvaluator option) {
         if (element.isNumber()) {
             if (name.length() == 0) {
                 if (option.isOptional(name, DataType.Number)) {

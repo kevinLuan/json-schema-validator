@@ -17,8 +17,8 @@
 package cn.taskflow.jcv.core;
 
 /**
- * @author SHOUSHEN.LUAN
- * @since 2024-02-03
+ * @作者 SHOUSHEN.LUAN
+ * @自 2024-02-03
  */
 public class JsonBoolean extends Primitive {
     public JsonBoolean(String name, boolean require, DataType dataType, String description, Number min, Number max) {
@@ -28,8 +28,8 @@ public class JsonBoolean extends Primitive {
     /**
      * 创建一个必须参数
      *
-     * @param name
-     * @return
+     * @param name 参数名称
+     * @return JsonBoolean对象
      */
     public static JsonBoolean required(String name) {
         return new JsonBoolean(name, true, DataType.Boolean, null, null, null);
@@ -44,7 +44,7 @@ public class JsonBoolean extends Primitive {
      * <p>
      * 当前基本类型只能用在父节点是Array的情况例如：array[0,1,2]
      *
-     * @return
+     * @return JsonBoolean对象
      */
     public static JsonBoolean ofNonNull() {
         return new JsonBoolean("", true, DataType.Boolean, null, null, null);

@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * Each enum constant provides a specific implementation of the matchesType method
  * to determine if a given JsonNode matches the expected type.
  */
-public enum ExtendNode {
+public enum JsonNodeExtension {
     /**
      * Represents a remark node, which is expected to be a textual JsonNode
      * with a maximum length of 500 characters.
@@ -58,7 +58,7 @@ public enum ExtendNode {
      *
      * @param name The name of the node type.
      */
-    private ExtendNode(String name) {
+    private JsonNodeExtension(String name) {
         this.name = name();
     }
 
@@ -78,7 +78,7 @@ public enum ExtendNode {
      * @return True if the name corresponds to a defined ExtendNode, false otherwise.
      */
     public static boolean isDefinition(String name) {
-        for (ExtendNode node : values()) {
+        for (JsonNodeExtension node : values()) {
             if (node.getName().equals(name)) {
                 return true;
             }
@@ -92,8 +92,8 @@ public enum ExtendNode {
      * @param name The name of the node type.
      * @return The ExtendNode corresponding to the name, or null if not found.
      */
-    public static ExtendNode getDefinition(String name) {
-        for (ExtendNode node : values()) {
+    public static JsonNodeExtension getDefinition(String name) {
+        for (JsonNodeExtension node : values()) {
             if (node.getName().equals(name)) {
                 return node;
             }

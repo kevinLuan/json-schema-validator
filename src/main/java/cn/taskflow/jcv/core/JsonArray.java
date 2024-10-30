@@ -19,31 +19,30 @@ package cn.taskflow.jcv.core;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.StringUtils;
 
-import java.util.Objects;
 import java.util.Optional;
 
 /**
- * Represents an array parameter type in JSON schema.
- * This class is used to define the structure and validation rules for JSON arrays.
- * It extends the JsonBasicSchema class to inherit common schema properties.
+ * 表示JSON模式中的数组参数类型。
+ * 此类用于定义JSON数组的结构和验证规则。
+ * 它扩展了JsonBasicSchema类以继承通用模式属性。
  * 
- * @author KEVIN LUAN
+ * 作者：KEVIN LUAN
  */
 public class JsonArray extends JsonBasicSchema {
 
     /**
-     * Default constructor for JsonArray.
+     * JsonArray的默认构造函数。
      */
     public JsonArray() {
     }
 
     /**
-     * Constructs a JsonArray with specified properties.
+     * 构造具有指定属性的JsonArray。
      *
-     * @param name        the name of the array
-     * @param required    whether the array is required
-     * @param description a description of the array
-     * @param child       the schema of the child element
+     * @param name        数组的名称
+     * @param required    数组是否是必需的
+     * @param description 数组的描述
+     * @param child       子元素的模式
      */
     public JsonArray(String name, boolean required, String description, JsonBasicSchema child) {
         super(name, required, DataType.Array, description);
@@ -54,11 +53,11 @@ public class JsonArray extends JsonBasicSchema {
     }
 
     /**
-     * Validates the child schema.
-     * Ensures that the child schema is not an array and does not have a name.
+     * 验证子模式。
+     * 确保子模式不是数组并且没有名称。
      *
-     * @param childrens the child schema to validate
-     * @throws ValidationException if the child schema is invalid
+     * @param childrens 要验证的子模式
+     * @throws ValidationException 如果子模式无效
      */
     private void check(JsonSchema childrens) {
         if (childrens != null) {
@@ -73,99 +72,99 @@ public class JsonArray extends JsonBasicSchema {
     }
 
     /**
-     * Creates a required JsonArray with a specified name, description, and child schema.
+     * 创建具有指定名称、描述和子模式的必需JsonArray。
      *
-     * @param name        the name of the array
-     * @param description a description of the array
-     * @param childrens   the schema of the child element
-     * @return a new instance of JsonArray
+     * @param name        数组的名称
+     * @param description 数组的描述
+     * @param childrens   子元素的模式
+     * @return JsonArray的新实例
      */
     public static JsonArray required(String name, String description, JsonBasicSchema childrens) {
         return new JsonArray(name, true, description, childrens);
     }
 
     /**
-     * Creates a required JsonArray with a specified name and child schema.
+     * 创建具有指定名称和子模式的必需JsonArray。
      *
-     * @param name  the name of the array
-     * @param child the schema of the child element
-     * @return a new instance of JsonArray
+     * @param name  数组的名称
+     * @param child 子元素的模式
+     * @return JsonArray的新实例
      */
     public static JsonArray required(String name, JsonBasicSchema child) {
         return new JsonArray(name, true, null, child);
     }
 
     /**
-     * Creates a required JsonArray with a specified name.
-     * The array can have any type of child node.
+     * 创建具有指定名称的必需JsonArray。
+     * 数组可以具有任何类型的子节点。
      *
-     * @param name the name of the array
-     * @return a new instance of JsonArray
+     * @param name 数组的名称
+     * @return JsonArray的新实例
      */
     public static JsonArray required(String name) {
         return new JsonArray(name, true, null, null);
     }
 
     /**
-     * Creates a required JsonArray with a specified name and description.
+     * 创建具有指定名称和描述的必需JsonArray。
      *
-     * @param name        the name of the array
-     * @param description a description of the array
-     * @return a new instance of JsonArray
+     * @param name        数组的名称
+     * @param description 数组的描述
+     * @return JsonArray的新实例
      */
     public static JsonArray required(String name, String description) {
         return new JsonArray(name, true, description, null);
     }
 
     /**
-     * Creates an optional JsonArray with a specified name, description, and child schema.
+     * 创建具有指定名称、描述和子模式的可选JsonArray。
      *
-     * @param name        the name of the array
-     * @param description a description of the array
-     * @param child       the schema of the child element
-     * @return a new instance of JsonArray
+     * @param name        数组的名称
+     * @param description 数组的描述
+     * @param child       子元素的模式
+     * @return JsonArray的新实例
      */
     public static JsonArray optional(String name, String description, JsonBasicSchema child) {
         return new JsonArray(name, false, description, child);
     }
 
     /**
-     * Creates an optional JsonArray with a specified name and child schema.
+     * 创建具有指定名称和子模式的可选JsonArray。
      *
-     * @param name  the name of the array
-     * @param child the schema of the child element
-     * @return a new instance of JsonArray
+     * @param name  数组的名称
+     * @param child 子元素的模式
+     * @return JsonArray的新实例
      */
     public static JsonArray optional(String name, JsonBasicSchema child) {
         return new JsonArray(name, false, null, child);
     }
 
     /**
-     * Creates an optional JsonArray with a specified name.
-     * The array can have any type of child node.
+     * 创建具有指定名称的可选JsonArray。
+     * 数组可以具有任何类型的子节点。
      *
-     * @param name the name of the array
-     * @return a new instance of JsonArray
+     * @param name 数组的名称
+     * @return JsonArray的新实例
      */
     public static JsonArray optional(String name) {
         return new JsonArray(name, false, null, null);
     }
 
     /**
-     * Creates an optional JsonArray with a specified name and description.
+     * 创建具有指定名称和描述的可选JsonArray。
      *
-     * @param name        the name of the array
-     * @param description a description of the array
-     * @return a new instance of JsonArray
+     * @param name        数组的名称
+     * @param description 数组的描述
+     * @return JsonArray的新实例
      */
     public static JsonArray optional(String name, String description) {
         return new JsonArray(name, false, description, null);
     }
 
     /**
-     * Returns this instance as a JsonArray.
+     * 将此实例作为JsonArray返回。
      *
-     * @return this JsonArray instance
+     * @return 此JsonArray实例
      */
     @Override
     public JsonArray asArray() {
@@ -173,18 +172,18 @@ public class JsonArray extends JsonBasicSchema {
     }
 
     /**
-     * Retrieves the child schemas of this JsonArray.
+     * 获取此JsonArray的子模式。
      *
-     * @return an array of child schemas
+     * @return 子模式数组
      */
     public JsonSchema[] getChildren() {
         return children;
     }
 
     /**
-     * Retrieves the schema for the first child, if it exists.
+     * 获取第一个子元素的模式（如果存在）。
      *
-     * @return an Optional containing the first child schema, or empty if no children exist
+     * @return 包含第一个子模式的Optional，如果不存在子元素则为空
      */
     public final Optional<JsonSchema> getSchemaForFirstChildren() {
         if (existsChildren()) {

@@ -22,119 +22,119 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Interface for defining JSON schema parameters.
- * This interface provides methods to interact with and validate JSON schema elements.
- * It supports operations for checking types, converting types, and setting or getting parent nodes.
- * It also includes methods for custom validation of JSON nodes.
+ * 定义JSON模式参数的接口。
+ * 该接口提供了与JSON模式元素交互和验证的方法。
+ * 它支持检查类型、转换类型以及设置或获取父节点的操作。
+ * 还包括对JSON节点进行自定义验证的方法。
  * 
- * Author: KEVIN LUAN
+ * 作者: KEVIN LUAN
  */
 public interface JsonSchema {
     Logger LOG = LoggerFactory.getLogger(JsonSchema.class);
 
     /**
-     * Retrieves the name of the parameter.
+     * 获取参数的名称。
      *
-     * @return the name of the parameter
+     * @return 参数的名称
      */
     String getName();
 
     /**
-     * Checks if the parameter is of a primitive type.
+     * 检查参数是否为原始类型。
      *
-     * @return true if the parameter is primitive, false otherwise
+     * @return 如果参数是原始类型则返回true，否则返回false
      */
     boolean isPrimitive();
 
     /**
-     * Converts the parameter to a Primitive type.
+     * 将参数转换为原始类型。
      *
-     * @return the parameter as a Primitive
+     * @return 作为原始类型的参数
      */
     Primitive asPrimitive();
 
     /**
-     * Checks if the parameter is implemented as a {@link JsonArray}.
+     * 检查参数是否实现为{@link JsonArray}。
      *
-     * @return true if the parameter is a JsonArray, false otherwise
+     * @return 如果参数是JsonArray则返回true，否则返回false
      */
     boolean isArray();
 
     /**
-     * Checks if the parameter is implemented as an ObjectParam.
+     * 检查参数是否实现为ObjectParam。
      *
-     * @return true if the parameter is an ObjectParam, false otherwise
+     * @return 如果参数是ObjectParam则返回true，否则返回false
      */
     boolean isObject();
 
     /**
-     * Converts the parameter to a JsonArray type.
+     * 将参数转换为JsonArray类型。
      *
-     * @return the parameter as a JsonArray
+     * @return 作为JsonArray的参数
      */
     JsonArray asArray();
 
     /**
-     * Converts the parameter to a JsonObject type.
+     * 将参数转换为JsonObject类型。
      *
-     * @return the parameter as a JsonObject
+     * @return 作为JsonObject的参数
      */
     JsonObject asObject();
 
     /**
-     * Sets the parent node for the current node.
+     * 设置当前节点的父节点。
      *
-     * @param parentNode the parent node to set
+     * @param parentNode 要设置的父节点
      */
     void setParentNode(JsonSchema parentNode);
 
     /**
-     * Retrieves the parent node of the current node.
+     * 获取当前节点的父节点。
      *
-     * @return the parent node
+     * @return 父节点
      */
     JsonSchema getParentNode();
 
     /**
-     * Checks if the current node is the root node.
+     * 检查当前节点是否为根节点。
      *
-     * @return true if it is the root node, false otherwise
+     * @return 如果是根节点则返回true，否则返回false
      */
     boolean isRootNode();
 
     /**
-     * Checks if the parameter is an ObjectNode value type (e.g., Array[{ObjectNode},{ObjectNode}]).
+     * 检查参数是否为ObjectNode值类型（例如，Array[{ObjectNode},{ObjectNode}]）。
      *
-     * @return true if it is an ObjectNode value type, false otherwise
+     * @return 如果是ObjectNode值类型则返回true，否则返回false
      */
     boolean isObjectValue();
 
     /**
-     * Retrieves the data type of the parameter.
+     * 获取参数的数据类型。
      *
-     * @return the data type
+     * @return 数据类型
      */
     DataType getDataType();
 
     /**
-     * Checks if the parameter is required.
+     * 检查参数是否为必需的。
      *
-     * @return true if the parameter is required, false otherwise
+     * @return 如果参数是必需的则返回true，否则返回false
      */
     boolean isRequired();
 
     /**
-     * Retrieves the path of the parameter.
+     * 获取参数的路径。
      *
-     * @return the path as a String
+     * @return 路径作为字符串
      */
     String getPath();
 
     /**
-     * Performs custom validation on the given JSON node.
+     * 对给定的JSON节点执行自定义验证。
      *
-     * @param jsonNode the JSON node to validate
-     * @throws ValidationException if validation fails
+     * @param jsonNode 要验证的JSON节点
+     * @throws ValidationException 如果验证失败
      */
     void verify(JsonNode jsonNode) throws ValidationException;
 }

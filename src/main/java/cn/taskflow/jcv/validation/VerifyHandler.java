@@ -22,6 +22,8 @@ import cn.taskflow.jcv.exception.ValidationException;
  * Interface for handling validation error messages and exceptions.
  * Provides methods to generate error messages and throw validation exceptions
  * for both validation errors and missing required fields.
+ * 接口用于处理验证错误消息和异常。
+ * 提供方法以生成错误消息并抛出验证异常，适用于验证错误和缺少必需字段的情况。
  *
  * @author SHOUSHEN.LUAN
  * @since 2024-02-04
@@ -29,16 +31,23 @@ import cn.taskflow.jcv.exception.ValidationException;
 public interface VerifyHandler {
     /**
      * Gets the error message for a validation failure at the specified path
+     * 获取指定路径的验证失败错误消息
      * @param path The JSON path where validation failed
+     *             验证失败的JSON路径
      * @return Error message describing the validation failure
+     *         描述验证失败的错误消息
      */
     String getTipError(String path);
 
     /**
      * Throws a ValidationException with the error message for the specified path
+     * 抛出包含指定路径错误消息的ValidationException
      * @param path The JSON path where validation failed
+     *             验证失败的JSON路径
      * @return Never returns, always throws ValidationException
+     *         永不返回，总是抛出ValidationException
      * @throws ValidationException with error message and path
+     *         包含错误消息和路径的ValidationException
      */
     default ValidationException throwError(String path) {
         throw new ValidationException(getTipError(path), path);
@@ -46,16 +55,23 @@ public interface VerifyHandler {
 
     /**
      * Gets the error message for a missing required field at the specified path
+     * 获取指定路径缺少必需字段的错误消息
      * @param path The JSON path of the missing required field
+     *             缺少必需字段的JSON路径
      * @return Error message describing the missing field
+     *         描述缺少字段的错误消息
      */
     String getTipMissing(String path);
 
     /**
      * Throws a ValidationException for a missing required field at the specified path
+     * 为指定路径缺少的必需字段抛出ValidationException
      * @param path The JSON path of the missing required field
+     *             缺少必需字段的JSON路径
      * @return Never returns, always throws ValidationException
+     *         永不返回，总是抛出ValidationException
      * @throws ValidationException with missing field message and path
+     *         包含缺少字段消息和路径的ValidationException
      */
     default ValidationException throwMissing(String path) {
         throw new ValidationException(getTipMissing(path), path);
