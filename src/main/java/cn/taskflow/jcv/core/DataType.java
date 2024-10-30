@@ -14,18 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * 根据一个或多个贡献者许可协议，授权给Apache软件基金会（ASF）。
- * 请参阅随本作品分发的NOTICE文件，以获取有关版权归属的其他信息。
- * 根据Apache许可证2.0版（“许可证”），ASF授权您使用此文件；
- * 除非符合许可证，否则您不得使用此文件。您可以在以下位置获取许可证副本：
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * 除非适用法律要求或书面同意，否则根据许可证分发的软件按“原样”分发，
- * 不提供任何明示或暗示的担保或条件。
- * 请参阅许可证以了解管理权限和限制的特定语言。
- */
 package cn.taskflow.jcv.core;
 
 import cn.taskflow.jcv.exception.NotSupportedException;

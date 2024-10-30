@@ -16,10 +16,7 @@
  */
 package cn.taskflow.jcv.core;
 
-import cn.taskflow.jcv.utils.JsvUtils;
 import cn.taskflow.jcv.validation.EnumValidation;
-
-import java.util.Objects;
 
 /**
  * 表示验证框架中的JSON字符串类型。
