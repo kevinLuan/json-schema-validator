@@ -25,9 +25,9 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * JsonSchemaFactory is responsible for managing and providing access to JSON schema definitions.
- * It retrieves JSON schema beans from the Spring application context and provides methods to
- * validate JSON data against these schemas.
+ * JsonSchemaFactory 负责管理和提供对 JSON 模式定义的访问。
+ * 它从 Spring 应用程序上下文中检索 JSON 模式 bean，并提供方法来
+ * 验证 JSON 数据是否符合这些模式。
  * 
  * @author SHOUSHEN.LUAN
  * @since 2024-09-28
@@ -36,33 +36,33 @@ public class JsonSchemaFactory {
     private final Map<String, JsonSchema> schemaMap;
 
     /**
-     * Constructs a JsonSchemaFactory with schemas retrieved from the given application context.
-     * The schemas are stored in an unmodifiable map to ensure immutability.
+     * 使用从给定应用程序上下文中检索到的模式构造 JsonSchemaFactory。
+     * 模式存储在不可修改的映射中以确保不可变性。
      *
-     * @param context the Spring application context from which JSON schema beans are retrieved
+     * @param context 从中检索 JSON 模式 bean 的 Spring 应用程序上下文
      */
     public JsonSchemaFactory(ApplicationContext context) {
         schemaMap = Collections.unmodifiableMap(context.getBeansOfType(JsonSchema.class));
     }
 
     /**
-     * Retrieves an Optional containing the JsonSchema associated with the given schema name.
-     * If no schema is found, an empty Optional is returned.
+     * 检索与给定模式名称关联的 JsonSchema 的 Optional。
+     * 如果未找到模式，则返回一个空的 Optional。
      *
-     * @param schemaName the name of the schema to retrieve
-     * @return an Optional containing the JsonSchema if found, otherwise an empty Optional
+     * @param schemaName 要检索的模式的名称
+     * @return 如果找到则包含 JsonSchema 的 Optional，否则为空的 Optional
      */
     public Optional<JsonSchema> getSchema(String schemaName) {
         return Optional.ofNullable(schemaMap.get(schemaName));
     }
 
     /**
-     * Validates the provided JSON data against the schema specified by the JsonSchemaValidate annotation.
-     * If the schema is not found or validation fails, an IllegalArgumentException is thrown.
+     * 根据 JsonSchemaValidate 注解指定的模式验证提供的 JSON 数据。
+     * 如果未找到模式或验证失败，则抛出 IllegalArgumentException。
      *
-     * @param schemaValidate the annotation containing the name of the schema to validate against
-     * @param json the JSON data to be validated
-     * @throws IllegalArgumentException if the schema is not found or validation fails
+     * @param schemaValidate 包含要验证的模式名称的注解
+     * @param json 要验证的 JSON 数据
+     * @throws IllegalArgumentException 如果未找到模式或验证失败
      */
     public void validate(JsonSchemaValidate schemaValidate, String json) {
         Optional<JsonSchema> optional = getSchema(schemaValidate.value());

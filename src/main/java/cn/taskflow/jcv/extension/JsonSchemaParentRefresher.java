@@ -33,8 +33,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author KEVIN LUAN
  */
-public class ParentReference {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ParentReference.class);
+public class JsonSchemaParentRefresher {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonSchemaParentRefresher.class);
 
     /**
      * Refreshes the parent references for a list of JSON schemas.

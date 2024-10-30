@@ -19,10 +19,9 @@ package cn.taskflow.jcv.utils;
 import cn.taskflow.jcv.core.JsonArray;
 import cn.taskflow.jcv.core.JsonObject;
 import cn.taskflow.jcv.core.JsonSchema;
-import cn.taskflow.jcv.extension.AdjustParamInstance;
-import cn.taskflow.jcv.extension.ParentReference;
+import cn.taskflow.jcv.extension.JsonSchemaTypeAdjuster;
+import cn.taskflow.jcv.extension.JsonSchemaParentRefresher;
 
-import java.util.Objects;
 import java.util.Optional;
 
 public class JsonSchemaProcessor {
@@ -32,8 +31,8 @@ public class JsonSchemaProcessor {
         this.jsonSchemas = jsonSchemas;
         for (int i = 0; i < this.jsonSchemas.length; i++) {
             JsonSchema p = this.jsonSchemas[i];
-            this.jsonSchemas[i] = AdjustParamInstance.adjust(p);
-            ParentReference.refreshParentReference(this.jsonSchemas);
+            this.jsonSchemas[i] = JsonSchemaTypeAdjuster.adjust(p);
+            JsonSchemaParentRefresher.refreshParentReference(this.jsonSchemas);
         }
     }
 

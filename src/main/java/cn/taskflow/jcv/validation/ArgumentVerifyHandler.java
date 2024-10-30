@@ -19,17 +19,17 @@ package cn.taskflow.jcv.validation;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**
- * ArgumentVerifyHandler is an implementation of the VerifyHandler interface.
- * It provides methods to generate error messages for validation failures and missing required fields.
- * This class uses utility methods from JsvUtils to format these error messages.
- * It follows the singleton pattern to ensure only one instance is used throughout the application.
+ * ArgumentVerifyHandler 是 VerifyHandler 接口的实现。
+ * 它提供了生成验证失败和缺少必需字段的错误消息的方法。
+ * 该类使用 JsvUtils 的实用方法来格式化这些错误消息。
+ * 它遵循单例模式，以确保在整个应用程序中只使用一个实例。
  * 
- * Usage:
- * - Use getInstance() to obtain the singleton instance of ArgumentVerifyHandler.
- * - Call getTipError() to get a formatted error message for validation failures.
- * - Call getTipMissing() to get a formatted error message for missing required fields.
+ * 用法：
+ * - 使用 getInstance() 获取 ArgumentVerifyHandler 的单例实例。
+ * - 调用 getTipError() 获取格式化的验证失败错误消息。
+ * - 调用 getTipMissing() 获取格式化的缺少必需字段的错误消息。
  * 
- * Example:
+ * 示例：
  * <pre>
  *     VerifyHandler handler = ArgumentVerifyHandler.getInstance();
  *     String error = handler.getTipError("$.name");
@@ -43,19 +43,19 @@ import cn.taskflow.jcv.utils.JsvUtils;
  */
 public class ArgumentVerifyHandler implements VerifyHandler {
     /**
-     * Factory method to get a singleton instance of the ArgumentVerifyHandler.
+     * 获取 ArgumentVerifyHandler 单例实例的工厂方法。
      * 
-     * @return A singleton instance of VerifyHandler.
+     * @return VerifyHandler 的单例实例。
      */
     public static VerifyHandler getInstance() {
         return new ArgumentVerifyHandler();
     }
 
     /**
-     * Formats an error message for validation failures at the specified JSON path.
+     * 格式化指定 JSON 路径的验证失败错误消息。
      * 
-     * @param path The JSON path where validation failed.
-     * @return Formatted error message for validation failure.
+     * @param path 验证失败的 JSON 路径。
+     * @return 格式化的验证失败错误消息。
      */
     @Override
     public String getTipError(String path) {
@@ -63,10 +63,10 @@ public class ArgumentVerifyHandler implements VerifyHandler {
     }
 
     /**
-     * Formats an error message for missing required fields at the specified JSON path.
+     * 格式化指定 JSON 路径的缺少必需字段的错误消息。
      * 
-     * @param path The JSON path of the missing required field.
-     * @return Formatted error message for missing field.
+     * @param path 缺少必需字段的 JSON 路径。
+     * @return 格式化的缺少字段错误消息。
      */
     @Override
     public String getTipMissing(String path) {

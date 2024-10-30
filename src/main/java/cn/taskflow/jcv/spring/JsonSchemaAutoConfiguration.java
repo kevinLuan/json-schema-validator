@@ -33,21 +33,20 @@ import java.util.Optional;
 import static cn.taskflow.jcv.utils.JsvUtils.f;
 
 /**
- * This class is responsible for the auto-configuration of JSON Schema validation components
- * within a Spring application context. It defines beans for JSON Schema validation and 
- * ensures that all required JSON Schemas are defined at application startup.
+ * 该类负责在Spring应用程序上下文中自动配置JSON Schema验证组件。
+ * 它定义了用于JSON Schema验证的bean，并确保在应用程序启动时定义所有必需的JSON Schema。
  * 
  * @author SHOUSHEN.LUAN
  * @since 2024-09-28
  */
 public class JsonSchemaAutoConfiguration {
-    // Logger for logging error messages related to JSON Schema validation
+    // 用于记录与JSON Schema验证相关的错误消息的日志记录器
     final static Logger log = LoggerFactory.getLogger(JsonSchemaValidate.class);
 
     /**
-     * Defines a bean named "empty" that provides a required JSON object schema.
+     * 定义一个名为"empty"的bean，提供一个必需的JSON对象模式。
      * 
-     * @return a JsonSchema object representing a required JSON object.
+     * @return 一个表示必需JSON对象的JsonSchema对象。
      */
     @Bean("empty")
     public JsonSchema partner() {
@@ -55,11 +54,10 @@ public class JsonSchemaAutoConfiguration {
     }
 
     /**
-     * Defines a bean for JsonSchemaRequestBodyValidator which is responsible for validating
-     * request bodies against JSON Schemas.
+     * 定义一个用于JsonSchemaRequestBodyValidator的bean，该bean负责根据JSON Schema验证请求体。
      * 
-     * @param jsonSchemaFactory the factory used to create JSON Schema instances.
-     * @return a JsonSchemaRequestBodyValidator instance.
+     * @param jsonSchemaFactory 用于创建JSON Schema实例的工厂。
+     * @return 一个JsonSchemaRequestBodyValidator实例。
      */
     @Bean
     public JsonSchemaRequestBodyValidator jsonSchemaRequestBodyValidator(JsonSchemaFactory jsonSchemaFactory) {
@@ -67,11 +65,10 @@ public class JsonSchemaAutoConfiguration {
     }
 
     /**
-     * Defines a bean for JsonSchemaFactory which is responsible for creating and managing
-     * JSON Schema instances within the application context.
+     * 定义一个用于JsonSchemaFactory的bean，该bean负责在应用程序上下文中创建和管理JSON Schema实例。
      * 
-     * @param context the application context used to access other beans and resources.
-     * @return a JsonSchemaFactory instance.
+     * @param context 用于访问其他bean和资源的应用程序上下文。
+     * @return 一个JsonSchemaFactory实例。
      */
     @Bean
     public JsonSchemaFactory jsonSchemaFactory(ApplicationContext context) {
@@ -79,13 +76,12 @@ public class JsonSchemaAutoConfiguration {
     }
 
     /**
-     * Defines an application listener that verifies the presence of JSON Schema definitions
-     * for all request mappings when the application context is refreshed. It logs an error
-     * and throws an exception if any required JSON Schema is missing.
+     * 定义一个应用程序监听器，当应用程序上下文刷新时，验证所有请求映射的JSON Schema定义的存在。
+     * 如果缺少任何必需的JSON Schema，它会记录错误并抛出异常。
      * 
-     * @param requestBodyValidator the validator used to find JSON Schema validations.
-     * @param jsonSchemaFactory the factory used to retrieve JSON Schema instances.
-     * @return an ApplicationListener for ContextRefreshedEvent.
+     * @param requestBodyValidator 用于查找JSON Schema验证的验证器。
+     * @param jsonSchemaFactory 用于检索JSON Schema实例的工厂。
+     * @return 一个用于ContextRefreshedEvent的ApplicationListener。
      */
     @Bean
     public ApplicationListener<ContextRefreshedEvent> verifySchemaDefinition(JsonSchemaRequestBodyValidator requestBodyValidator, JsonSchemaFactory jsonSchemaFactory) {

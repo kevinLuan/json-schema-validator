@@ -20,25 +20,24 @@ import cn.taskflow.jcv.core.JsonBasicSchema;
 import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import cn.taskflow.jcv.extension.SchemaOptions;
-import cn.taskflow.jcv.extension.SchemaProcess;
+import cn.taskflow.jcv.extension.SchemaRequirementEvaluator;
 
 /**
- * Code generation utility class for generating Java code from JSON schemas.
- * This class provides methods to convert JSON data into Java code representations
- * and to handle serialization and deserialization of JSON schemas.
+ * 用于从JSON模式生成Java代码的代码生成实用程序类。
+ * 该类提供了将JSON数据转换为Java代码表示的方法，并处理JSON模式的序列化和反序列化。
  * 
- * @author SHOUSHEN.LUAN
- * @since 2023-04-16
+ * @作者 SHOUSHEN.LUAN
+ * @自 2023-04-16
  */
 public class CodeGenerationUtils {
-    // ThreadLocal to store GenerateOptional instances for thread-safe operations
+    // 使用ThreadLocal存储GenerateOptional实例以进行线程安全操作
     static ThreadLocal<GenerateOptional> THREAD_LOCAL = new ThreadLocal<>();
 
     /**
-     * Retrieves the current GenerateOptional instance from the ThreadLocal storage.
-     * If no instance is present, a default instance is returned.
+     * 从ThreadLocal存储中检索当前的GenerateOptional实例。
+     * 如果没有实例存在，则返回一个默认实例。
      *
-     * @return the current GenerateOptional instance or a default one if none is set
+     * @return 当前的GenerateOptional实例，如果没有设置则返回默认实例
      */
     public static GenerateOptional getOptional() {
         if (THREAD_LOCAL.get() != null) {
@@ -49,10 +48,10 @@ public class CodeGenerationUtils {
     }
 
     /**
-     * Generates Java code for a JSON schema.
+     * 为JSON模式生成Java代码。
      *
-     * @param json the JSON string representing the schema
-     * @return the generated Java code as a String
+     * @param json 表示模式的JSON字符串
+     * @return 生成的Java代码作为字符串
      */
     public static String generateSchemaCode(String json) {
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
@@ -60,11 +59,11 @@ public class CodeGenerationUtils {
     }
 
     /**
-     * Generates Java code for a JSON schema with specific options.
+     * 使用特定选项为JSON模式生成Java代码。
      *
-     * @param json the JSON string representing the schema
-     * @param option the GenerateOptional instance specifying generation options
-     * @return the generated Java code as a String
+     * @param json 表示模式的JSON字符串
+     * @param option 指定生成选项的GenerateOptional实例
+     * @return 生成的Java代码作为字符串
      */
     public static String generateSchemaCode(String json, GenerateOptional option) {
         try {
@@ -77,83 +76,83 @@ public class CodeGenerationUtils {
     }
 
     /**
-     * Generates Java code for a JSON schema using a SchemaProcess option.
+     * 使用SchemaProcess选项为JSON模式生成Java代码。
      *
-     * @param json the JSON string representing the schema
-     * @param option the SchemaProcess instance specifying processing options
-     * @return the generated Java code as a String
+     * @param json 表示模式的JSON字符串
+     * @param option 指定处理选项的SchemaProcess实例
+     * @return 生成的Java代码作为字符串
      */
-    public static String generateSchemaCode(String json, SchemaProcess option) {
+    public static String generateSchemaCode(String json, SchemaRequirementEvaluator option) {
         JsonSchema jsonSchema = JsonParser.parseJsonSchema(json, option);
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
     /**
-     * Generates Java code for a JSON schema using SchemaOptions.
+     * 使用SchemaOptions为JSON模式生成Java代码。
      *
-     * @param json the JSON string representing the schema
-     * @param option the SchemaOptions instance specifying options
-     * @return the generated Java code as a String
+     * @param json 表示模式的JSON字符串
+     * @param option 指定选项的SchemaOptions实例
+     * @return 生成的Java代码作为字符串
      */
     public static String generateSchemaCode(String json, SchemaOptions option) {
         return generateSchemaCode(json, option.getSchemaProcess());
     }
 
     /**
-     * Generates Java code from a JsonSchema object.
+     * 从JsonSchema对象生成Java代码。
      *
-     * @param jsonSchema the JsonSchema object
-     * @return the generated Java code as a String
+     * @param jsonSchema JsonSchema对象
+     * @return 生成的Java代码作为字符串
      */
     public static String generateSchemaCode(JsonSchema jsonSchema) {
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
     /**
-     * Generates a JSON example data string from a JsonSchema object.
+     * 从JsonSchema对象生成JSON示例数据字符串。
      *
-     * @param jsonSchema the JsonSchema object
-     * @return the JSON example data as a String
+     * @param jsonSchema JsonSchema对象
+     * @return JSON示例数据作为字符串
      */
     public static String generateSampleData(JsonSchema jsonSchema) {
         return JsonSchemaCodec.toJsonDataExample(jsonSchema);
     }
 
     /**
-     * Generates a JsonSchema object from JSON data.
+     * 从JSON数据生成JsonSchema对象。
      *
-     * @param jsonData the JSON string representing the data
-     * @return the generated JsonSchema object
+     * @param jsonData 表示数据的JSON字符串
+     * @return 生成的JsonSchema对象
      */
     public static JsonSchema generateParamFromJson(String jsonData) {
         return JsonParser.parseJsonSchema(jsonData);
     }
 
     /**
-     * Generates Java code from a JsonSchema object.
+     * 从JsonSchema对象生成Java代码。
      *
-     * @param jsonSchema the JsonSchema object used to generate code
-     * @return the generated Java code as a String
+     * @param jsonSchema 用于生成代码的JsonSchema对象
+     * @return 生成的Java代码作为字符串
      */
     public static String generateCodeFromParam(JsonSchema jsonSchema) {
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
     /**
-     * Serializes a JsonSchema object into a JSON string.
+     * 将JsonSchema对象序列化为JSON字符串。
      *
-     * @param product the JsonSchema object to serialize
-     * @return the serialized JSON string
+     * @param product 要序列化的JsonSchema对象
+     * @return 序列化的JSON字符串
      */
     public static String serialization(JsonSchema product) {
         return GsonEncoder.INSTANCE.encode(product);
     }
 
     /**
-     * Deserializes a JSON string into a JsonSchema object.
+     * 将JSON字符串反序列化为JsonSchema对象。
      *
-     * @param paramDefine the JSON string representing the schema definition
-     * @return the deserialized JsonSchema object
+     * @param paramDefine 表示模式定义的JSON字符串
+     * @return 反序列化的JsonSchema对象
      */
     public static JsonSchema deserialization(String paramDefine) {
         return GsonEncoder.INSTANCE.decode(paramDefine, JsonBasicSchema.class);

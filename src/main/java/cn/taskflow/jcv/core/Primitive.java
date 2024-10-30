@@ -20,24 +20,23 @@ import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**
- * Represents a primitive parameter, which is the smallest unit of a parameter.
- * This class extends the JsonBasicSchema and provides additional functionality
- * for handling primitive data types with optional range validation.
+ * 表示一个基本参数，这是参数的最小单位。
+ * 该类扩展了JsonBasicSchema，并提供了处理具有可选范围验证的基本数据类型的附加功能。
  *
- * @author KEVIN LUAN
+ * @作者 KEVIN LUAN
  */
 public class Primitive extends JsonBasicSchema {
 
     /**
-     * Constructs a new Primitive instance with the specified attributes.
+     * 使用指定的属性构造一个新的Primitive实例。
      *
-     * @param name        the name of the primitive
-     * @param require     whether the primitive is required
-     * @param dataType    the data type of the primitive
-     * @param description a description of the primitive
-     * @param min         the minimum value for validation
-     * @param max         the maximum value for validation
-     * @throws IllegalArgumentException if the dataType is not a primitive type
+     * @param name        基本参数的名称
+     * @param require     基本参数是否必需
+     * @param dataType    基本参数的数据类型
+     * @param description 基本参数的描述
+     * @param min         验证的最小值
+     * @param max         验证的最大值
+     * @throws IllegalArgumentException 如果dataType不是基本类型
      */
     public Primitive(String name, boolean require, DataType dataType, String description, Number min, Number max) {
         super(name, require, dataType, description);
@@ -59,28 +58,28 @@ public class Primitive extends JsonBasicSchema {
     }
 
     /**
-     * Gets the minimum value for validation.
+     * 获取验证的最小值。
      *
-     * @return the minimum value
+     * @return 最小值
      */
     public Number getMin() {
         return min;
     }
 
     /**
-     * Gets the maximum value for validation.
+     * 获取验证的最大值。
      *
-     * @return the maximum value
+     * @return 最大值
      */
     public Number getMax() {
         return max;
     }
 
     /**
-     * Sets the minimum value for validation and performs a check.
+     * 设置验证的最小值并执行检查。
      *
-     * @param min the minimum value to set
-     * @return the current Primitive instance
+     * @param min 要设置的最小值
+     * @return 当前的Primitive实例
      */
     public Primitive setMin(Number min) {
         this.min = min;
@@ -89,8 +88,8 @@ public class Primitive extends JsonBasicSchema {
     }
 
     /**
-     * Validates the min and max values to ensure they are in a valid range.
-     * Throws a ValidationException if the range is invalid.
+     * 验证min和max值以确保它们在有效范围内。
+     * 如果范围无效，则抛出ValidationException。
      */
     private void check() {
         if (min != null && max != null) {
@@ -109,11 +108,11 @@ public class Primitive extends JsonBasicSchema {
     }
 
     /**
-     * Sets both the minimum and maximum values for validation.
+     * 设置验证的最小值和最大值。
      *
-     * @param min the minimum value to set
-     * @param max the maximum value to set
-     * @return the current Primitive instance
+     * @param min 要设置的最小值
+     * @param max 要设置的最大值
+     * @return 当前的Primitive实例
      */
     public Primitive between(Number min, Number max) {
         this.setMin(min);
@@ -122,10 +121,10 @@ public class Primitive extends JsonBasicSchema {
     }
 
     /**
-     * Sets the maximum value for validation and performs a check.
+     * 设置验证的最大值并执行检查。
      *
-     * @param max the maximum value to set
-     * @return the current Primitive instance
+     * @param max 要设置的最大值
+     * @return 当前的Primitive实例
      */
     public Primitive setMax(Number max) {
         this.max = max;
@@ -134,19 +133,19 @@ public class Primitive extends JsonBasicSchema {
     }
 
     /**
-     * Gets a tip message for the current path.
+     * 获取当前路径的提示信息。
      *
-     * @return the tip message
+     * @return 提示信息
      */
     public String getTipMsg() {
         return this.getTipMsg(getPath());
     }
 
     /**
-     * Gets a tip message for a specified path based on the data type and range.
+     * 根据数据类型和范围获取指定路径的提示信息。
      *
-     * @param path the path to get the tip message for
-     * @return the formatted tip message
+     * @param path 要获取提示信息的路径
+     * @return 格式化的提示信息
      */
     public String getTipMsg(String path) {
         if (getDataType().isNumber()) {
@@ -172,28 +171,28 @@ public class Primitive extends JsonBasicSchema {
     }
 
     /**
-     * Checks if there is a range validation present.
+     * 检查是否存在范围验证。
      *
-     * @return true if either min or max is not null, false otherwise
+     * @return 如果min或max不为null，则返回true，否则返回false
      */
     public boolean existBetweenCheck() {
         return max != null || min != null;
     }
 
     /**
-     * Gets the example value for this primitive.
+     * 获取此基本参数的示例值。
      *
-     * @return the example value as a string
+     * @return 示例值作为字符串
      */
     public String getExampleValue() {
         return exampleValue;
     }
 
     /**
-     * Sets an example value for this primitive, which can be used for mock data.
+     * 为此基本参数设置示例值，可用于模拟数据。
      *
-     * @param exampleValue the example value to set
-     * @return the current Primitive instance
+     * @param exampleValue 要设置的示例值
+     * @return 当前的Primitive实例
      */
     public Primitive setExampleValue(Object exampleValue) {
         super.exampleValue = String.valueOf(exampleValue);

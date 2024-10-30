@@ -16,6 +16,10 @@
  */
 package cn.taskflow.jcv.spring;
 
+import cn.taskflow.jcv.encode.CamelCaseObjectMapper;
+import cn.taskflow.jcv.encode.DefaultJsonNodeConverter;
+import cn.taskflow.jcv.encode.NodeFactory;
+import cn.taskflow.jcv.encode.SnakeCaseObjectMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -26,13 +30,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.List;
 
 /**
- * Customizes Spring's message converters to include a JSON schema validator.
- * This configuration class modifies the default behavior of Spring's HTTP message converters
- * by adding a custom converter that validates request bodies against a JSON schema.
- * 
- * The configuration is activated based on a property key, allowing for dynamic enabling or disabling
- * of the request body validation feature.
- * 
+ * 自定义Spring的消息转换器以包含JSON模式验证器。
+ * 这个配置类通过添加一个自定义转换器来修改Spring的HTTP消息转换器的默认行为，
+ * 该转换器根据JSON模式验证请求体。
+ * <p>
+ * 该配置基于一个属性键激活，允许动态启用或禁用请求体验证功能。
+ *
  * @author SHOUSHEN.LUAN
  * @since 2024-10-27
  */
@@ -44,14 +47,21 @@ public class RestMvcConfigurer implements WebMvcConfigurer {
     private ObjectMapper                   objectMapper;
     @Autowired
     private Environment                    environment;
-    /* Property key to enable or disable request body validation */
+    /* 用于启用或禁用请求体验证的属性键 */
     private final String                   key = "cn.taskflow.jsv.validation.request-body.enabled";
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        // Check if request body validation is enabled via the environment property
+        // 检查是否通过环境属性启用了请求体验证
         if (environment.getProperty(key, Boolean.class, true)) {
-            // Add the custom message converter at the beginning of the converters list
+            String namingStrategy = environment.getProperty("naming.strategy", "camelCase");
+            if ("snakeCase".equals(namingStrategy)) {
+                objectMapper = new SnakeCaseObjectMapper();
+            } else if ("camelCase".equals(namingStrategy) || objectMapper == null) {
+                objectMapper = new CamelCaseObjectMapper();
+            }
+            NodeFactory.setJsonNodeConverter(new DefaultJsonNodeConverter(objectMapper));
+            // 在转换器列表的开头添加自定义消息转换器
             converters.add(0, new CustomHttpMessageConverter(jsonSchemaRequestBodyValidator, objectMapper));
         }
     }

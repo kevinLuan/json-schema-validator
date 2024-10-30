@@ -27,7 +27,7 @@ import cn.taskflow.jcv.core.Primitive;
  * @autor SHOUSHEN.LUAN
  * @since 2024-05-04
  */
-public interface SchemaProcess {
+public interface SchemaRequirementEvaluator {
 
     /**
      * Determines if a schema element is required.

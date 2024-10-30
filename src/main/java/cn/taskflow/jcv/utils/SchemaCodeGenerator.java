@@ -23,12 +23,18 @@ import java.util.Optional;
 
 /**
  * 将Param转换到JavaCode
+ * 该类用于将JsonSchema对象转换为Java代码表示
  *
  * @author KEVIN LUAN
  */
 class SchemaCodeGenerator {
-    private final static String NEW_LINE = "";
+    private final static String NEW_LINE = ""; // 定义一个常量用于表示新行
 
+    /**
+     * 根据JsonSchema生成相应的Java代码
+     * @param jsonSchema 输入的JsonSchema对象
+     * @return 生成的Java代码字符串
+     */
     public static String generate(JsonSchema jsonSchema) {
         StringBuilder builder = new StringBuilder();
         if (jsonSchema.isArray()) {
@@ -41,12 +47,17 @@ class SchemaCodeGenerator {
         return builder + ";";
     }
 
+    /**
+     * 解析JsonArray对象并生成相应的Java代码
+     * @param array 输入的JsonArray对象
+     * @param builder 用于构建Java代码的StringBuilder
+     */
     private static void parserArray(JsonArray array, StringBuilder builder) {
-        String name = array.getName();
-        String description = array.getDescription();
-        Optional<JsonSchema> optional = array.getSchemaForFirstChildren();
+        String name = array.getName(); // 获取数组名称
+        String description = array.getDescription(); // 获取数组描述
+        Optional<JsonSchema> optional = array.getSchemaForFirstChildren(); // 获取第一个子元素的Schema
         boolean includeDesc = CodeGenerationUtils.getOptional().isGenerateDesc() && description != null
-                              && !description.isEmpty();
+                              && !description.isEmpty(); // 判断是否需要生成描述
         if (!optional.isPresent()) {
             builder.append("JsonArray.");
             builder.append(array.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
@@ -100,10 +111,15 @@ class SchemaCodeGenerator {
         }
     }
 
+    /**
+     * 解析JsonObject对象并生成相应的Java代码
+     * @param object 输入的JsonObject对象
+     * @param builder 用于构建Java代码的StringBuilder
+     */
     private static void parserObject(JsonObject object, StringBuilder builder) {
-        String name = object.getName();
-        String description = object.getDescription();
-        JsonSchema[] childrens = object.getChildren();
+        String name = object.getName(); // 获取对象名称
+        String description = object.getDescription(); // 获取对象描述
+        JsonSchema[] childrens = object.getChildren(); // 获取对象的子元素
         StringBuilder nodeBuilder = new StringBuilder();
         for (int i = 0; i < childrens.length; i++) {
             JsonSchema jsonSchema = childrens[i];
@@ -150,6 +166,11 @@ class SchemaCodeGenerator {
         newLine(builder);
     }
 
+    /**
+     * 删除字符串末尾的逗号
+     * @param str 输入的字符串
+     * @return 删除逗号后的字符串
+     */
     private static String remoteLastComma(String str) {
         int lastCommaIndex = str.lastIndexOf(",");
         String endWith = str.substring(lastCommaIndex);
@@ -159,6 +180,11 @@ class SchemaCodeGenerator {
         return str;
     }
 
+    /**
+     * 在StringBuilder末尾添加新行
+     * @param builder 输入的StringBuilder
+     * @return 添加新行后的StringBuilder内容
+     */
     private static String newLine(StringBuilder builder) {
         if (!builder.toString().endsWith(NEW_LINE)) {
             builder.append(NEW_LINE);
@@ -166,10 +192,15 @@ class SchemaCodeGenerator {
         return builder.toString();
     }
 
+    /**
+     * 解析Primitive对象并生成相应的Java代码
+     * @param primitive 输入的Primitive对象
+     * @param builder 用于构建Java代码的StringBuilder
+     */
     private static void parserPrimitive(Primitive primitive, StringBuilder builder) {
-        String name = primitive.getName();
-        DataType type = primitive.getDataType();
-        String description = primitive.getDescription();
+        String name = primitive.getName(); // 获取基本类型名称
+        DataType type = primitive.getDataType(); // 获取数据类型
+        String description = primitive.getDescription(); // 获取描述
         if (name.length() > 0) {
             builder.append(type.generatePrimitiveCode(primitive.isRequired(), name, description));
         } else {
@@ -178,6 +209,11 @@ class SchemaCodeGenerator {
         builder.append(buildExampleValue(primitive));
     }
 
+    /**
+     * 构建示例值的代码
+     * @param primitive 输入的Primitive对象
+     * @return 示例值的代码字符串
+     */
     private static String buildExampleValue(Primitive primitive) {
         if (primitive.getExampleValue() != null && primitive.getExampleValue().length() > 0) {
             if (CodeGenerationUtils.getOptional().isGenerateExample()) {
@@ -191,6 +227,11 @@ class SchemaCodeGenerator {
         return "";
     }
 
+    /**
+     * 格式化参数为字符串
+     * @param description 输入的描述
+     * @return 格式化后的字符串
+     */
     private static String formatParam(String description) {
         if (description != null) {
             return "\"" + description + "\"";
@@ -198,6 +239,11 @@ class SchemaCodeGenerator {
         return description;
     }
 
+    /**
+     * 获取数据类型的字符串表示
+     * @param type 输入的数据类型
+     * @return 数据类型的字符串表示
+     */
     public static String getType(DataType type) {
         return "DataType." + type;
     }

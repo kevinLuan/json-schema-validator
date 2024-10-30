@@ -19,8 +19,8 @@ package cn.taskflow.jcv.validation;
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.exception.ValidationException;
-import cn.taskflow.jcv.extension.AdjustParamInstance;
-import cn.taskflow.jcv.extension.ParentReference;
+import cn.taskflow.jcv.extension.JsonSchemaTypeAdjuster;
+import cn.taskflow.jcv.extension.JsonSchemaParentRefresher;
 import cn.taskflow.jcv.extension.UnknownNodeFilter;
 import cn.taskflow.jcv.utils.JsvUtils;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -173,8 +173,8 @@ public class Validator {
          */
         public AbstractDataValidator(List<JsonSchema> jsonSchemas, VerifyHandler verifyHandler) {
             this.jsonSchemas = jsonSchemas;
-            AdjustParamInstance.adjust(jsonSchemas);
-            ParentReference.refreshParentReference(jsonSchemas);
+            JsonSchemaTypeAdjuster.adjust(jsonSchemas);
+            JsonSchemaParentRefresher.refreshParentReference(jsonSchemas);
             this.verifyHandler = verifyHandler;
         }
 

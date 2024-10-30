@@ -14,6 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * 根据一个或多个贡献者许可协议，授权给Apache软件基金会（ASF）。请参阅NOTICE文件以获取有关版权归属的其他信息。
+ * ASF根据Apache许可证2.0版（“许可证”）授权您使用此文件；除非符合许可证，否则您不得使用此文件。您可以在以下位置获取许可证副本：
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * 除非适用法律要求或书面同意，软件按“原样”分发，不附带任何明示或暗示的担保或条件。
+ * 请参阅许可证以了解管理权限和限制的特定语言。
+ */
 package cn.taskflow.jcv.core;
 
 import cn.taskflow.jcv.encode.NodeFactory;
@@ -29,7 +38,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.Optional;
 
 /**
- * Represents a basic JSON schema with properties and validation capabilities.
+ * 表示具有属性和验证功能的基本JSON模式。
  */
 public class JsonBasicSchema implements JsonSchema {
     private String                                    name;                                           // The name of the schema element
@@ -50,7 +59,7 @@ public class JsonBasicSchema implements JsonSchema {
     Number                                            max;
 
     /**
-     * Example value (only effective for Primitive type nodes)
+     * 示例值（仅对原始类型节点有效）
      */
     String                                            exampleValue;
 
@@ -74,10 +83,10 @@ public class JsonBasicSchema implements JsonSchema {
     }
 
     /**
-     * Associates a custom validation rule with this schema.
+     * 将自定义验证规则与此模式关联。
      *
-     * @param customValidationRule the custom validation rule to apply
-     * @return the current schema instance with the validator applied
+     * @param customValidationRule 要应用的自定义验证规则
+     * @return 应用验证器的当前模式实例
      */
     public <T extends JsonBasicSchema> T withValidator(CustomValidationRule customValidationRule) {
         this.validationRuleOptional = Optional.of(customValidationRule);
@@ -129,9 +138,9 @@ public class JsonBasicSchema implements JsonSchema {
     }
 
     /**
-     * Retrieves the path of this schema node within the hierarchy.
+     * 检索此模式节点在层次结构中的路径。
      *
-     * @return the path as a string
+     * @return 路径作为字符串
      */
     public final String getPath() {
         return NodeHelper.parser(this).getPath();
@@ -198,10 +207,10 @@ public class JsonBasicSchema implements JsonSchema {
     }
 
     /**
-     * Sets an example value for this schema.
+     * 为此模式设置示例值。
      *
-     * @param exampleValue the example value to set
-     * @return the current schema instance with the example value set
+     * @param exampleValue 要设置的示例值
+     * @return 设置了示例值的当前模式实例
      */
     public JsonBasicSchema setExampleValue(Object exampleValue) {
         this.exampleValue = NodeFactory.stringify(exampleValue);

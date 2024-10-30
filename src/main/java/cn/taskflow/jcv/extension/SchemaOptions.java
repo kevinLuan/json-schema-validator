@@ -57,8 +57,8 @@ public enum SchemaOptions {
      * 
      * @return a SchemaProcess instance with methods to check if elements are required or optional.
      */
-    public SchemaProcess getSchemaProcess() {
-        return new SchemaProcess() {
+    public SchemaRequirementEvaluator getSchemaProcess() {
+        return new SchemaRequirementEvaluator() {
             /**
              * Determines if a schema element is required based on the current option.
              * 

@@ -30,7 +30,7 @@ import cn.taskflow.jcv.exception.ValidationException;
  *
  * @author KEVIN LUAN
  */
-public class AdjustParamInstance {
+public class JsonSchemaTypeAdjuster {
 
     /**
      * Adjusts a list of JsonSchema objects to their specific types.

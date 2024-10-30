@@ -14,6 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/*
+ * 根据一个或多个贡献者许可协议，授权给Apache软件基金会（ASF）。
+ * 请参阅随本作品分发的NOTICE文件，以获取有关版权归属的其他信息。
+ * 根据Apache许可证2.0版（“许可证”），ASF授权您使用此文件；
+ * 除非符合许可证，否则您不得使用此文件。您可以在以下位置获取许可证副本：
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * 除非适用法律要求或书面同意，否则根据许可证分发的软件按“原样”分发，
+ * 不提供任何明示或暗示的担保或条件。
+ * 请参阅许可证以了解管理权限和限制的特定语言。
+ */
 package cn.taskflow.jcv.core;
 
 import cn.taskflow.jcv.exception.NotSupportedException;
@@ -22,8 +34,8 @@ import cn.taskflow.jcv.utils.CodeGenerationUtils;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**
- * Enum representing different data types that can be used in JSON schema validation.
- * Each data type provides specific methods to check and validate values according to its type.
+ * 枚举表示可用于JSON模式验证的不同数据类型。
+ * 每种数据类型都提供特定的方法来根据其类型检查和验证值。
  */
 public enum DataType {
     String {
@@ -33,11 +45,11 @@ public enum DataType {
         }
 
         /**
-         * Validates a string value against the constraints defined in the Primitive object.
-         * Checks for null values, minimum and maximum length constraints.
+         * 根据Primitive对象中定义的约束验证字符串值。
+         * 检查空值、最小和最大长度约束。
          *
-         * @param primitive the primitive schema containing validation constraints
-         * @param value     the string value to validate
+         * @param primitive 包含验证约束的原始模式
+         * @param value     要验证的字符串值
          */
         @Override
         public void check(Primitive primitive, String value) {
@@ -75,11 +87,11 @@ public enum DataType {
         }
 
         /**
-         * Validates a boolean value represented as a string.
-         * Accepts "true", "false", "1", and "0" as valid boolean representations.
+         * 验证表示为字符串的布尔值。
+         * 接受“true”、“false”、“1”和“0”作为有效的布尔表示。
          *
-         * @param primitive the primitive schema containing validation constraints
-         * @param value     the string value to validate
+         * @param primitive 包含验证约束的原始模式
+         * @param value     要验证的字符串值
          */
         @Override
         public void check(Primitive primitive, String value) {
@@ -100,10 +112,10 @@ public enum DataType {
     Array, Object, Any;
 
     /**
-     * Determines if the given data type is a primitive type (String, Number, or Boolean).
+     * 确定给定的数据类型是否为原始类型（String、Number或Boolean）。
      *
-     * @param dataType the data type to check
-     * @return true if the data type is primitive, false otherwise
+     * @param dataType 要检查的数据类型
+     * @return 如果数据类型是原始类型，则返回true，否则返回false
      */
     public static boolean isPrimitive(DataType dataType) {
         if (dataType != null && (DataType.String == dataType || DataType.Number == dataType)
@@ -126,21 +138,21 @@ public enum DataType {
     }
 
     /**
-     * Placeholder method for subclasses to implement specific validation logic.
+     * 子类实现特定验证逻辑的占位符方法。
      *
-     * @param p     the primitive schema containing validation constraints
-     * @param value the value to validate
+     * @param p     包含验证约束的原始模式
+     * @param value 要验证的值
      */
     public void check(Primitive p, String value) {
         // TODO 子类实现
     }
 
     /**
-     * Parses a string representation of a data type and returns the corresponding DataType enum.
+     * 解析数据类型的字符串表示并返回相应的DataType枚举。
      *
-     * @param dataType the string representation of the data type
-     * @return the corresponding DataType enum
-     * @throws IllegalArgumentException if the data type is invalid
+     * @param dataType 数据类型的字符串表示
+     * @return 相应的DataType枚举
+     * @throws IllegalArgumentException 如果数据类型无效
      */
     public static DataType parser(String dataType) {
         for (DataType type : values()) {
@@ -152,10 +164,10 @@ public enum DataType {
     }
 
     /**
-     * Generates code for creating a primitive JSON schema element based on the data type and requirement.
+     * 生成用于创建基于数据类型和需求的原始JSON模式元素的代码。
      *
-     * @param required whether the element is required
-     * @return the generated code as a string
+     * @param required 元素是否是必需的
+     * @return 生成的代码作为字符串
      */
     public String generatePrimitiveCode(boolean required) {
         switch (this) {
@@ -183,12 +195,12 @@ public enum DataType {
     }
 
     /**
-     * Generates code for creating a primitive JSON schema element with additional metadata.
+     * 生成用于创建具有附加元数据的原始JSON模式元素的代码。
      *
-     * @param required whether the element is required
-     * @param name     the name of the element
-     * @param desc     the description of the element
-     * @return the generated code as a string
+     * @param required 元素是否是必需的
+     * @param name     元素的名称
+     * @param desc     元素的描述
+     * @return 生成的代码作为字符串
      */
     public String generatePrimitiveCode(boolean required, String name, String desc) {
         final String code;

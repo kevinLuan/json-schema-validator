@@ -21,34 +21,32 @@ import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**
- * The NumberParser class is responsible for parsing a string representation of a number
- * into either a Double or Long type, and provides validation against specified constraints.
+ * NumberParser类负责将数字的字符串表示解析为Double或Long类型，并提供针对指定约束的验证。
  */
 public class NumberParser {
 
-    // Indicates if the parsed number is of type Double
+    // 表示解析的数字是否为Double类型
     public boolean isDouble;
-    // Indicates if the parsed number is of type Long
+    // 表示解析的数字是否为Long类型
     public boolean isLong;
-    // Holds the parsed number value
+    // 保存解析的数字值
     public Number  value;
 
     /**
-     * Checks if the parsed number value is null.
+     * 检查解析的数字值是否为null。
      * 
-     * @return true if the value is null, false otherwise.
+     * @return 如果值为null则返回true，否则返回false。
      */
     public boolean isNull() {
         return this.value == null;
     }
 
     /**
-     * Parses the given string into a NumberParser object. Determines if the number
-     * is a Double or Long based on the presence of a decimal point.
+     * 将给定的字符串解析为NumberParser对象。根据小数点的存在确定数字是Double还是Long。
      * 
-     * @param value   the string representation of the number to parse.
-     * @param require a boolean flag indicating if the value is required.
-     * @return a NumberParser object containing the parsed number.
+     * @param value   要解析的数字的字符串表示。
+     * @param require 一个布尔标志，指示该值是否为必需。
+     * @return 包含解析数字的NumberParser对象。
      */
     public static NumberParser parse(String value, boolean require) {
         NumberParser numberParser = new NumberParser();
@@ -65,11 +63,9 @@ public class NumberParser {
     }
 
     /**
-     * Validates the parsed number against the constraints defined in the given
-     * Primitive object. Throws a ValidationException if the value does not meet
-     * the required constraints.
+     * 根据给定Primitive对象中定义的约束验证解析的数字。如果值不符合所需的约束，则抛出ValidationException。
      * 
-     * @param primitive the Primitive object containing validation constraints.
+     * @param primitive 包含验证约束的Primitive对象。
      */
     public void check(Primitive primitive) {
         if (primitive.isRequired()) {

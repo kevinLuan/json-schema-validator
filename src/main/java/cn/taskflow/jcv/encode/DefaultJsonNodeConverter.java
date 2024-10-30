@@ -30,27 +30,27 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * DefaultJsonNodeConverter is a utility class for converting between Java objects and JsonNode objects.
- * It provides methods to parse JSON strings, convert Java objects to JsonNode, and handle various JSON node types.
+ * DefaultJsonNodeConverter 是一个用于在 Java 对象和 JsonNode 对象之间进行转换的实用类。
+ * 它提供了解析 JSON 字符串、将 Java 对象转换为 JsonNode 以及处理各种 JSON 节点类型的方法。
  */
 public class DefaultJsonNodeConverter implements JsonNodeConverter {
-    // ObjectMapper instance used for JSON processing
+    // 用于 JSON 处理的 ObjectMapper 实例
     public final ObjectMapper mapper;
 
     /**
-     * Constructor to initialize DefaultJsonNodeConverter with a given ObjectMapper.
+     * 构造函数，用给定的 ObjectMapper 初始化 DefaultJsonNodeConverter。
      * 
-     * @param mapper the ObjectMapper to be used for JSON operations
+     * @param mapper 用于 JSON 操作的 ObjectMapper
      */
     public DefaultJsonNodeConverter(ObjectMapper mapper) {
         this.mapper = mapper;
     }
 
     /**
-     * Checks if a given JsonNode is null, missing, or explicitly set to null.
+     * 检查给定的 JsonNode 是否为 null、缺失或显式设置为 null。
      * 
-     * @param jsonNode the JsonNode to check
-     * @return true if the node is null, missing, or explicitly null; false otherwise
+     * @param jsonNode 要检查的 JsonNode
+     * @return 如果节点为 null、缺失或显式为 null，则返回 true；否则返回 false
      */
     public boolean isNull(JsonNode jsonNode) {
         if (jsonNode == null || jsonNode.isNull() || jsonNode.isMissingNode()) {
@@ -60,11 +60,11 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Converts an object to its string representation. If the object is a JsonNode,
-     * it handles arrays and objects differently from value nodes.
+     * 将对象转换为其字符串表示形式。如果对象是 JsonNode，
+     * 则对数组和对象的处理方式不同于值节点。
      * 
-     * @param value the object to convert
-     * @return the string representation of the object
+     * @param value 要转换的对象
+     * @return 对象的字符串表示形式
      */
     public String toString(Object value) {
         if (value != null) {
@@ -83,10 +83,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Converts a JsonNode to its string representation, handling different node types.
+     * 将 JsonNode 转换为其字符串表示形式，处理不同的节点类型。
      * 
-     * @param node the JsonNode to convert
-     * @return the string representation of the JsonNode
+     * @param node 要转换的 JsonNode
+     * @return JsonNode 的字符串表示形式
      */
     public String toString(JsonNode node) {
         if (node == null || node.isNull()) {
@@ -113,10 +113,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Parses a JsonNode and returns its corresponding Java object representation.
+     * 解析 JsonNode 并返回其对应的 Java 对象表示。
      * 
-     * @param node the JsonNode to parse
-     * @return the Java object representation of the JsonNode
+     * @param node 要解析的 JsonNode
+     * @return JsonNode 的 Java 对象表示
      */
     public Object parserValue(JsonNode node) {
         if (node == null || node.isNull()) {
@@ -137,17 +137,17 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
                 return node.asBoolean();
             } else if (node.isTextual()) {
                 return node.asText();
-            } else { // Other types
+            } else { // 其他类型
                 return node.textValue();
             }
         }
     }
 
     /**
-     * Parses an ObjectNode and returns a map representation of its fields.
+     * 解析 ObjectNode 并返回其字段的映射表示。
      * 
-     * @param node the ObjectNode to parse
-     * @return a map containing the fields of the ObjectNode
+     * @param node 要解析的 ObjectNode
+     * @return 包含 ObjectNode 字段的映射
      */
     public Map<String, Object> parserMap(ObjectNode node) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -167,10 +167,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Parses an ArrayNode and returns a list representation of its elements.
+     * 解析 ArrayNode 并返回其元素的列表表示。
      * 
-     * @param arrayNode the ArrayNode to parse
-     * @return a list containing the elements of the ArrayNode
+     * @param arrayNode 要解析的 ArrayNode
+     * @return 包含 ArrayNode 元素的列表
      */
     public List<Object> parserArrayNode(ArrayNode arrayNode) {
         List<Object> list = new ArrayList<Object>();
@@ -186,10 +186,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Parses a JSON string and returns the corresponding JsonNode.
+     * 解析 JSON 字符串并返回相应的 JsonNode。
      * 
-     * @param json the JSON string to parse
-     * @return the JsonNode representation of the JSON string
+     * @param json 要解析的 JSON 字符串
+     * @return JSON 字符串的 JsonNode 表示
      */
     public JsonNode parser(String json) {
         try {
@@ -200,10 +200,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Converts a Java object to a JsonNode.
+     * 将 Java 对象转换为 JsonNode。
      * 
-     * @param value the Java object to convert
-     * @return the JsonNode representation of the Java object
+     * @param value 要转换的 Java 对象
+     * @return Java 对象的 JsonNode 表示
      */
     public JsonNode convert(Object value) {
         if (value == null) {
@@ -217,10 +217,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Converts a Java object to its JSON string representation.
+     * 将 Java 对象转换为其 JSON 字符串表示。
      * 
-     * @param pojo the Java object to convert
-     * @return the JSON string representation of the object
+     * @param pojo 要转换的 Java 对象
+     * @return 对象的 JSON 字符串表示
      */
     public String stringify(Object pojo) {
         try {
@@ -231,12 +231,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Parses a JSON string into a Java object of the specified class type.
+     * 将 JSON 字符串解析为指定类类型的 Java 对象。
      * 
-     * @param <T> the type of the desired object
-     * @param json the JSON string to parse
-     * @param a the class of T
-     * @return the parsed Java object
+     * @param <T> 所需对象的类型
+     * @param json 要解析的 JSON 字符串
+     * @param a T 的类
+     * @return 解析后的 Java 对象
      */
     public <T> T parse(String json, Class<T> a) {
         T result = null;
@@ -249,12 +249,12 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Parses a JSON string into a Java object of the specified type reference.
+     * 将 JSON 字符串解析为指定类型引用的 Java 对象。
      * 
-     * @param <T> the type of the desired object
-     * @param json the JSON string to parse
-     * @param a the type reference of T
-     * @return the parsed Java object
+     * @param <T> 所需对象的类型
+     * @param json 要解析的 JSON 字符串
+     * @param a T 的类型引用
+     * @return 解析后的 Java 对象
      */
     public <T> T parse(String json, TypeReference<T> a) {
         T result = null;
@@ -267,10 +267,10 @@ public class DefaultJsonNodeConverter implements JsonNodeConverter {
     }
 
     /**
-     * Converts a JsonNode to a pretty-printed JSON string.
+     * 将 JsonNode 转换为格式化的 JSON 字符串。
      * 
-     * @param jsonNode the JsonNode to convert
-     * @return the pretty-printed JSON string
+     * @param jsonNode 要转换的 JsonNode
+     * @return 格式化的 JSON 字符串
      */
     @Override
     public String prettyPrinter(JsonNode jsonNode) {

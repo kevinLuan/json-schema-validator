@@ -17,25 +17,22 @@
 package cn.taskflow.jcv.exception;
 
 /**
- * ValidationException is a custom exception that extends IllegalArgumentException.
- * It is used to indicate that a validation error has occurred, providing a message
- * and the path where the error was found.
+ * ValidationException 是一个自定义异常，继承自 IllegalArgumentException。
+ * 它用于指示发生了验证错误，提供错误信息和错误发生的路径。
  * 
- * This exception is particularly useful in scenarios where input validation is
- * critical, and the path information helps in pinpointing the exact location
- * of the validation failure within a data structure or configuration.
+ * 这个异常在输入验证至关重要的场景中特别有用，路径信息有助于精确定位数据结构或配置中验证失败的确切位置。
  * 
  * @author SHOUSHEN.LUAN
  * @since 2024-09-25
  */
 public class ValidationException extends IllegalArgumentException {
-    private String path; // The path where the validation error occurred
+    private String path; // 验证错误发生的路径
 
     /**
-     * Constructs a new ValidationException with the specified detail message and path.
+     * 构造一个新的 ValidationException，具有指定的详细信息和路径。
      *
-     * @param msg  the detail message, saved for later retrieval by the getMessage() method.
-     * @param path the path where the validation error occurred, saved for later retrieval by the getPath() method.
+     * @param msg  详细信息，供 getMessage() 方法稍后检索。
+     * @param path 验证错误发生的路径，供 getPath() 方法稍后检索。
      */
     public ValidationException(String msg, String path) {
         super(msg);
@@ -43,9 +40,9 @@ public class ValidationException extends IllegalArgumentException {
     }
 
     /**
-     * Returns the path where the validation error occurred.
+     * 返回验证错误发生的路径。
      *
-     * @return the path as a String.
+     * @return 路径作为字符串返回。
      */
     public String getPath() {
         return this.path;

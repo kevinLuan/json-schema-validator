@@ -22,100 +22,99 @@ import cn.taskflow.jcv.validation.EnumValidation;
 import java.util.Objects;
 
 /**
- * Represents a JSON string type within the validation framework.
- * This class extends the Primitive class to provide additional functionality
- * specific to JSON string handling.
+ * 表示验证框架中的JSON字符串类型。
+ * 该类扩展了Primitive类，以提供特定于JSON字符串处理的附加功能。
  * 
  * @autor SHOUSHEN.LUAN
  * @since 2024-02-03
  */
 public class JsonString extends Primitive {
     /**
-     * Constructs a JsonString object with the specified parameters.
+     * 使用指定的参数构造JsonString对象。
      *
-     * @param name        the name of the JSON string
-     * @param require     whether the JSON string is required
-     * @param dataType    the data type of the JSON string
-     * @param description a description of the JSON string
-     * @param min         the minimum value constraint (not applicable for strings)
-     * @param max         the maximum value constraint (not applicable for strings)
+     * @param name        JSON字符串的名称
+     * @param require     JSON字符串是否是必需的
+     * @param dataType    JSON字符串的数据类型
+     * @param description JSON字符串的描述
+     * @param min         最小值约束（不适用于字符串）
+     * @param max         最大值约束（不适用于字符串）
      */
     public JsonString(String name, boolean require, DataType dataType, String description, Number min, Number max) {
         super(name, require, dataType, description, min, max);
     }
 
     /**
-     * Creates a required JsonString parameter.
+     * 创建一个必需的JsonString参数。
      *
-     * @param name the name of the JSON string
-     * @return a new instance of JsonString marked as required
+     * @param name JSON字符串的名称
+     * @return 一个标记为必需的JsonString实例
      */
     public static JsonString required(String name) {
         return new JsonString(name, true, DataType.String, null, null, null);
     }
 
     /**
-     * Creates a required JsonString parameter with a description.
+     * 创建一个带有描述的必需JsonString参数。
      *
-     * @param name        the name of the JSON string
-     * @param description a description of the JSON string
-     * @return a new instance of JsonString marked as required with a description
+     * @param name        JSON字符串的名称
+     * @param description JSON字符串的描述
+     * @return 一个标记为必需且带有描述的JsonString实例
      */
     public static JsonString required(String name, String description) {
         return new JsonString(name, true, DataType.String, description, null, null);
     }
 
     /**
-     * Creates a non-null JsonString parameter.
-     * This basic type can only be used when the parent node is an Array, e.g., array[0,1,2].
+     * 创建一个非空的JsonString参数。
+     * 这种基本类型只能在父节点是数组时使用，例如：array[0,1,2]。
      *
-     * @return a new instance of JsonString marked as non-null
+     * @return 一个标记为非空的JsonString实例
      */
     public static JsonString ofNonNull() {
         return new JsonString("", true, DataType.String, null, null, null);
     }
 
     /**
-     * Creates a nullable JsonString parameter.
+     * 创建一个可为空的JsonString参数。
      *
-     * @return a new instance of JsonString marked as nullable
+     * @return 一个标记为可空的JsonString实例
      */
     public static JsonString ofNullable() {
         return new JsonString("", false, DataType.String, null, null, null);
     }
 
     /**
-     * Creates an optional JsonString parameter with a description.
+     * 创建一个带有描述的可选JsonString参数。
      *
-     * @param name        the name of the JSON string
-     * @param description a description of the JSON string
-     * @return a new instance of JsonString marked as optional with a description
+     * @param name        JSON字符串的名称
+     * @param description JSON字符串的描述
+     * @return 一个标记为可选且带有描述的JsonString实例
      */
     public static JsonString optional(String name, String description) {
         return new JsonString(name, false, DataType.String, description, null, null);
     }
 
     /**
-     * Creates an optional JsonString parameter.
+     * 创建一个可选的JsonString参数。
      *
-     * @param name the name of the JSON string
-     * @return a new instance of JsonString marked as optional
+     * @param name JSON字符串的名称
+     * @return 一个标记为可选的JsonString实例
      */
     public static JsonString optional(String name) {
         return new JsonString(name, false, DataType.String, null, null, null);
     }
 
     /**
-     * Specifies that the value of this JsonString must be within the given enum range.
+     * 指定此JsonString的值必须在给定的枚举范围内。
      *
-     * @param enumClass the enum class to validate against
-     * @param <E>       the type of the enum
-     * @return this JsonString instance, for method chaining
+     * @param enumClass 要验证的枚举类
+     * @param <E>       枚举的类型
+     * @return 此JsonString实例，用于方法链
      */
     public <E extends Enum<E>> JsonString inEnum(Class<E> enumClass) {
         return this.withValidator((schema, node) -> {
             if (node == null || node.isNull()) {
-                return true; // Supports optional fields, null is valid
+                return true; // 支持可选字段，null是有效的
             }
             try {
                 Enum.valueOf(enumClass, node.asText());
@@ -127,12 +126,12 @@ public class JsonString extends Primitive {
     }
 
     /**
-     * Specifies that the value of this JsonString must be within the given array of enum values.
+     * 指定此JsonString的值必须在给定的枚举值数组内。
      *
-     * @param values the array of enum values to validate against
-     * @param <E>    the type of the enum
-     * @return this JsonString instance, for method chaining
-     * @throws IllegalArgumentException if the values array is null or empty
+     * @param values 要验证的枚举值数组
+     * @param <E>    枚举的类型
+     * @return 此JsonString实例，用于方法链
+     * @throws IllegalArgumentException 如果值数组为null或为空
      */
     public <E extends Enum<E>> JsonString inEnum(E[] values) {
         if (values == null || values.length < 1) {
