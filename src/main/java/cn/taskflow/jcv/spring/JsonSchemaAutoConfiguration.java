@@ -62,7 +62,7 @@ public class JsonSchemaAutoConfiguration {
 
     @Bean
     public JsonNodeConverter jsonNodeConverter(@Autowired(required = false) ObjectMapper objectMapper) {
-        Optional<NamingStrategy> optional = NamingStrategy.parser(environment.getProperty("naming.strategy"));
+        Optional<NamingStrategy> optional = NamingStrategy.parser(environment.getProperty("jsv.naming.strategy"));
         NamingStrategy strategy = optional.orElseGet(() -> {
             return objectMapper == null ? NamingStrategy.CAMEL_CASE : NamingStrategy.DEFAULT;
         });
