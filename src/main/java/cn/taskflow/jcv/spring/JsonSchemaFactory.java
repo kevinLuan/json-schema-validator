@@ -28,7 +28,7 @@ import java.util.Optional;
  * JsonSchemaFactory 负责管理和提供对 JSON 模式定义的访问。
  * 它从 Spring 应用程序上下文中检索 JSON 模式 bean，并提供方法来
  * 验证 JSON 数据是否符合这些模式。
- * 
+ *
  * @author SHOUSHEN.LUAN
  * @since 2024-09-28
  */
@@ -79,6 +79,23 @@ public class JsonSchemaFactory {
         } else {
             throw new IllegalArgumentException(
                 String.format("schema:'%s' definition not found", schemaValidate.value()));
+        }
+    }
+
+    public void validate(JsonSchemaValidate jsv, Object body) {
+        Optional<JsonSchema> optional = getSchema(jsv.value());
+        if (optional.isPresent()) {
+            try {
+                Validator.fromSchema(optional.get()).validate(body);
+            } catch (Exception e) {
+                if (IllegalArgumentException.class.isAssignableFrom(e.getClass())) {
+                    throw (IllegalArgumentException) e;
+                } else {
+                    throw new IllegalArgumentException(e.getMessage(), e);
+                }
+            }
+        } else {
+            throw new IllegalArgumentException(String.format("schema:'%s' definition not found", jsv.value()));
         }
     }
 }

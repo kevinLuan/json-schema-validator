@@ -36,10 +36,16 @@ public class JsvUtils {
     }
 
     public static String formatParamError(String path) {
+        if (StringUtils.isBlank(path)) {
+            return "Parameter error";
+        }
         return "`" + path + "` parameter error";
     }
 
     public static String formatParamMissing(String path) {
+        if (StringUtils.isBlank(path)) {
+            return "Missing parameter";
+        }
         return "Missing `" + path + "` parameter";
     }
 

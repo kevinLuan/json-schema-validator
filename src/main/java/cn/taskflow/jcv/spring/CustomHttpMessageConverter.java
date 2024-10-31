@@ -33,7 +33,8 @@ import java.lang.reflect.Type;
  * @author SHOUSHEN.LUAN
  * @since 2024-09-25
  */
-public class CustomHttpMessageConverter extends MappingJackson2HttpMessageConverter {
+@Deprecated
+class CustomHttpMessageConverter extends MappingJackson2HttpMessageConverter {
     private final JsonSchemaRequestBodyValidator jsonSchemaRequestBodyValidator;
 
     /**

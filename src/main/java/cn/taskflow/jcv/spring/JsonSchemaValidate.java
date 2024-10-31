@@ -25,14 +25,14 @@ import java.lang.annotation.*;
  * This annotation is used to indicate that the annotated element should be validated
  * against a specified JSON schema. The schema is identified by its name, which is
  * provided as the value of this annotation.
- * 
+ * <p>
  * This annotation can be applied to method parameters and methods, and it is retained
  * at runtime to allow for reflection-based processing.
- * 
+ * <p>
  * The annotation is also indexed for better performance in Spring applications.
- * 
+ * <p>
  * Usage example:
- * 
+ *
  * <pre>
  * {@code
  * @JsonSchemaValidate("userSchema")
@@ -41,13 +41,12 @@ import java.lang.annotation.*;
  * }
  * }
  * </pre>
- * 
+ * <p>
  * In the example above, both the method and the parameter are validated against the
  * "userSchema" JSON schema.
- * 
+ *
  * @see JsonSchemaFactory
  * @see JsonSchemaRequestBodyValidator
- * 
  * @since 2024-09-28
  */
 @Target({ ElementType.PARAMETER, ElementType.METHOD })
@@ -57,8 +56,15 @@ import java.lang.annotation.*;
 public @interface JsonSchemaValidate {
     /**
      * The name of the JSON schema to validate against.
-     * 
+     *
      * @return the schema name
      */
     String value();
+
+    /**
+     * 验证时机策略
+     *
+     * @return
+     */
+    ValidationStrategy strategy() default ValidationStrategy.BEFORE_BODY_READ;
 }
