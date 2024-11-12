@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.utils;
+package cn.taskflow.jcv.codegen;
 
 /**
  * The GenerateOptional class is used to specify options for generating code from JSON schemas.

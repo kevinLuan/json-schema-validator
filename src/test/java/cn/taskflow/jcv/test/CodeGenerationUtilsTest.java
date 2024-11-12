@@ -17,10 +17,10 @@
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
-import cn.taskflow.jcv.utils.GenerateOptional;
+import cn.taskflow.jcv.codegen.GenerateOptional;
 import cn.taskflow.jcv.utils.IOUtils;
 import com.github.javaparser.StaticJavaParser;
-import cn.taskflow.jcv.utils.CodeGenerationUtils;
+import cn.taskflow.jcv.codegen.CodeGenerationUtils;
 import org.junit.Test;
 
 import java.io.IOException;

@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.utils;
+package cn.taskflow.jcv.codegen;
 
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.exception.ValidationException;
+import cn.taskflow.jcv.utils.StringUtils;
 
 import java.util.Optional;
 

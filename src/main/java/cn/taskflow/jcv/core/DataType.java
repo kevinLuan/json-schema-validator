@@ -18,7 +18,7 @@ package cn.taskflow.jcv.core;
 
 import cn.taskflow.jcv.exception.NotSupportedException;
 import cn.taskflow.jcv.exception.ValidationException;
-import cn.taskflow.jcv.utils.CodeGenerationUtils;
+import cn.taskflow.jcv.codegen.CodeGenerationUtils;
 import cn.taskflow.jcv.utils.JsvUtils;
 
 /**

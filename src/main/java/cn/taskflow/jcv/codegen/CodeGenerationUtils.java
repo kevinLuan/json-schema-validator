@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.utils;
+package cn.taskflow.jcv.codegen;
 
 import cn.taskflow.jcv.core.JsonBasicSchema;
 import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import cn.taskflow.jcv.extension.SchemaOptions;
 import cn.taskflow.jcv.extension.SchemaRequirementEvaluator;
+import cn.taskflow.jcv.utils.JsonParser;
+import cn.taskflow.jcv.utils.JsonSchemaCodec;
 
 /**
  * 用于从JSON模式生成Java代码的代码生成实用程序类。
