@@ -36,10 +36,15 @@ public class MockDataGenerator {
         Object generate(Class<?> type, Type genericType, Set<Class<?>> visitedClasses);
     }
 
+    public interface InstanceGenerator {
+        Object generate(Class<?> type, Set<Class<?>> visitedClasses);
+    }
+
     /**
      * Interface for custom mock value generators.
      */
     private static MockValueGenerator customGenerator = (type, genericType, visitedClasses) -> null;
+    private static InstanceGenerator instanceGenerator = (type, visitedClasses) -> null;
 
     /**
      * 设置自定义的模拟值生成器。
@@ -48,6 +53,10 @@ public class MockDataGenerator {
      */
     public static void setCustomMockValueGenerator(MockValueGenerator generator) {
         customGenerator = generator;
+    }
+
+    public static void setInstanceGenerator(InstanceGenerator generator) {
+        instanceGenerator = generator;
     }
 
     /**
@@ -97,20 +106,40 @@ public class MockDataGenerator {
         try {
             Constructor[] constructors = clazz.getDeclaredConstructors();
             Object instance;
-            if (Arrays.stream(constructors).anyMatch(c -> c.getParameterCount() == 0)) {
+            if (Arrays.stream(constructors).anyMatch(c -> c.getParameterCount() == 0 && Modifier.isPublic(c.getModifiers()))) {
                 instance = clazz.getDeclaredConstructor().newInstance();
             } else {
-                Class<?>[] paramTypes = constructors[0].getParameterTypes();
-                Type[] types = constructors[0].getGenericParameterTypes();
-                Object[] args = new Object[constructors[0].getParameterCount()];
+                Optional<Constructor> optional = Arrays.stream(constructors).filter((c) -> Modifier.isPublic(c.getModifiers())).findAny();
+                Constructor constructor;
+                if (optional.isPresent()) {
+                    constructor = optional.get();
+                } else {
+                    constructor = constructors[0];
+                    try {
+                        constructor.setAccessible(true);
+                    } catch (Exception e) {
+                        instance = instanceGenerator.generate(clazz, visitedClasses);
+                        if (instance == null) {
+                            throw new UndeclaredThrowableException(e, "createInstance(" + clazz.getName() + ") ERROR");
+                        }
+                        return instance;
+                    }
+                }
+                Class<?>[] paramTypes = constructor.getParameterTypes();
+                Type[] types = constructor.getGenericParameterTypes();
+                Object[] args = new Object[constructor.getParameterCount()];
                 for (int i = 0; i < paramTypes.length; i++) {
                     args[i] = generateMockValue(paramTypes[i], types[i], visitedClasses);
                 }
-                instance = constructors[0].newInstance(args);
+                instance = constructor.newInstance(args);
             }
             return instance;
         } catch (Exception e) {
-            throw new UndeclaredThrowableException(e, "createInstance(" + clazz.getName() + ") ERROR");
+            Object instance = instanceGenerator.generate(clazz, visitedClasses);
+            if (instance == null) {
+                throw new UndeclaredThrowableException(e, "createInstance(" + clazz.getName() + ") ERROR");
+            }
+            return instance;
         }
     }
 
