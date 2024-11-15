@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * 
  * 作者: KEVIN LUAN
  */
-public interface JsonSchema {
+public interface JsonSchema extends Cloneable {
     Logger LOG = LoggerFactory.getLogger(JsonSchema.class);
 
     /**
@@ -137,4 +137,10 @@ public interface JsonSchema {
      * @throws ValidationException 如果验证失败
      */
     void verify(JsonNode jsonNode) throws ValidationException;
+
+    /**
+     * 深度克隆Schema
+     * @return
+     */
+    JsonSchema clone();
 }

@@ -72,6 +72,15 @@ public class MockDataGenerator {
         return GsonEncoder.INSTANCE.encode(instance);
     }
 
+    public static <E extends Enum<E>> E getRandomEnumInstance(Class<E> enumClass) {
+        if (Enum.class.isAssignableFrom(enumClass)) {
+            E[] enumConstants = enumClass.getEnumConstants();
+            int randomIndex = new Random().nextInt(enumConstants.length);
+            return enumConstants[randomIndex];
+        }
+        throw new IllegalArgumentException("Provided class is not an enum type");
+    }
+
     /**
      * 生成指定类的模拟实例。
      *
@@ -83,11 +92,14 @@ public class MockDataGenerator {
         if (visitedClasses.contains(clazz)) {
             return null; // 避免循环引用
         }
+        if (Enum.class.isAssignableFrom(clazz)) {
+            return getRandomEnumInstance((Class<? extends Enum>) clazz);
+        }
         visitedClasses.add(clazz);
         try {
             Object instance = createInstance(clazz, visitedClasses);
             if (!clazz.getName().startsWith("java.")) {
-                for (Field field : clazz.getDeclaredFields()) {
+                for (Field field : getAllFields(clazz)) {
                     if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
                         continue;//skip
                     }
@@ -100,6 +112,18 @@ public class MockDataGenerator {
         } finally {
             visitedClasses.remove(clazz);
         }
+    }
+
+    /**
+     * 获取类及其所有父类的字段
+     */
+    private static List<Field> getAllFields(Class<?> clazz) {
+        List<Field> fields = new ArrayList<>();
+        while (clazz != null && !clazz.equals(Object.class)) {
+            fields.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return fields;
     }
 
     private static Object createInstance(Class<?> clazz, Set<Class<?>> visitedClasses) {
@@ -129,7 +153,11 @@ public class MockDataGenerator {
                 Type[] types = constructor.getGenericParameterTypes();
                 Object[] args = new Object[constructor.getParameterCount()];
                 for (int i = 0; i < paramTypes.length; i++) {
-                    args[i] = generateMockValue(paramTypes[i], types[i], visitedClasses);
+                    if (types.length > 0) {
+                        args[i] = generateMockValue(paramTypes[i], types[i], visitedClasses);
+                    } else {
+                        args[i] = generateMockValue(paramTypes[i], null, visitedClasses);
+                    }
                 }
                 instance = constructor.newInstance(args);
             }

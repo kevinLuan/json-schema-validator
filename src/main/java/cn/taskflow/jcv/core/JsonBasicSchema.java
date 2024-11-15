@@ -25,6 +25,7 @@
  */
 package cn.taskflow.jcv.core;
 
+import cn.taskflow.jcv.codegen.CodeGenerationUtils;
 import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
@@ -229,5 +230,10 @@ public class JsonBasicSchema implements JsonSchema {
                 }
             }
         });
+    }
+
+    @Override
+    public JsonSchema clone() {
+        return CodeGenerationUtils.deserialization(CodeGenerationUtils.serialization(this));
     }
 }
