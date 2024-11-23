@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package cn.taskflow.jcv.validation;
+
 import cn.taskflow.jcv.core.JsonString;
 import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.exception.ValidationException;

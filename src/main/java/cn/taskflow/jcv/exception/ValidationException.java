@@ -18,6 +18,7 @@ package cn.taskflow.jcv.exception;
 
 import cn.taskflow.jcv.core.JsonSchema;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
 
 /**
  * ValidationException 是一个自定义异常，继承自 IllegalArgumentException。
@@ -28,6 +29,7 @@ import com.fasterxml.jackson.databind.JsonNode;
  * @author SHOUSHEN.LUAN
  * @since 2024-09-25
  */
+@Getter
 public class ValidationException extends IllegalArgumentException {
     private String     path;  // 验证错误发生的路径
     private JsonSchema schema;
