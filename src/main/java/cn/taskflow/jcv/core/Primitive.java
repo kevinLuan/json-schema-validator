@@ -18,6 +18,8 @@ package cn.taskflow.jcv.core;
 
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
+import cn.taskflow.jcv.validation.CustomValidationRule;
+import cn.taskflow.jcv.validation.ValueRangeValidation;
 
 /**
  * 表示一个基本参数，这是参数的最小单位。
@@ -196,6 +198,40 @@ public class Primitive extends JsonBasicSchema {
      */
     public Primitive setExampleValue(Object exampleValue) {
         super.exampleValue = String.valueOf(exampleValue);
+        return this;
+    }
+
+    /**
+     * 限定数据范围
+     *
+     * @param values
+     * @return
+     */
+    public Primitive withinValues(Object... values) {
+        for (CustomValidationRule validationRule : validationRules) {
+            if (validationRule.getClass() == ValueRangeValidation.class) {
+                ((ValueRangeValidation) validationRules).addWithinValues(values);
+                return this;
+            }
+        }
+        validationRules.add(ValueRangeValidation.fromWithinValues(values));
+        return this;
+    }
+
+    /**
+     * 排除数据范围
+     *
+     * @param values
+     * @return
+     */
+    public Primitive excludeValues(Object... values) {
+        for (CustomValidationRule validationRule : validationRules) {
+            if (validationRule.getClass() == ValueRangeValidation.class) {
+                ((ValueRangeValidation) validationRules).addExcludeValues(values);
+                return this;
+            }
+        }
+        validationRules.add(ValueRangeValidation.fromExcludeValues(values));
         return this;
     }
 }

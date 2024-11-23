@@ -19,6 +19,8 @@ package cn.taskflow.jcv.codegen;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import com.github.javafaker.Faker;
 import lombok.SneakyThrows;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.*;
 import java.math.BigDecimal;
@@ -30,6 +32,7 @@ import java.util.*;
  * 根据Java类定义生成Mock对象
  */
 public class MockDataGenerator {
+    static Logger log = LoggerFactory.getLogger(MockDataGenerator.class);
     private static final Faker faker = new Faker();
 
     public interface MockValueGenerator {
@@ -94,6 +97,9 @@ public class MockDataGenerator {
         }
         if (Enum.class.isAssignableFrom(clazz)) {
             return getRandomEnumInstance((Class<? extends Enum>) clazz);
+        } else if (clazz.isInterface()) {
+            log.info("自动跳过接口实例化:{}", clazz.getName());
+            return null;
         }
         visitedClasses.add(clazz);
         try {

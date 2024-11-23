@@ -36,36 +36,38 @@ import cn.taskflow.jcv.utils.NodeHelper;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.Optional;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 表示具有属性和验证功能的基本JSON模式。
  */
 public class JsonBasicSchema implements JsonSchema {
-    private String                                    name;                                           // The name of the schema element
-    private boolean                                   required;                                       // Indicates if the element is required
-    private DataType                                  dataType;                                       // The data type of the element
-    private String                                    description;                                    // A description of the schema element
+    private String                                name;                                    // The name of the schema element
+    private boolean                               required;                                // Indicates if the element is required
+    private DataType                              dataType;                                // The data type of the element
+    private String                                description;                             // A description of the schema element
 
     // Parent node in the schema hierarchy
-    public transient JsonSchema                       parentNode;
+    public transient JsonSchema                   parentNode;
 
     // Child nodes (for ParamArray, ParamObject)
-    JsonBasicSchema[]                                 children               = new JsonBasicSchema[0];
+    JsonBasicSchema[]                             children        = new JsonBasicSchema[0];
 
     // Minimum value constraint (for Primitive types)
-    Number                                            min;
+    Number                                        min;
 
     // Maximum value constraint (for Primitive types)
-    Number                                            max;
+    Number                                        max;
 
     /**
      * 示例值（仅对原始类型节点有效）
      */
-    String                                            exampleValue;
+    String                                        exampleValue;
 
     @JsonIgnore
-    transient volatile Optional<CustomValidationRule> validationRuleOptional = Optional.empty();
+    transient volatile List<CustomValidationRule> validationRules = new LinkedList<>();
 
     public JsonBasicSchema() {
     }
@@ -90,7 +92,7 @@ public class JsonBasicSchema implements JsonSchema {
      * @return 应用验证器的当前模式实例
      */
     public <T extends JsonBasicSchema> T withValidator(CustomValidationRule customValidationRule) {
-        this.validationRuleOptional = Optional.of(customValidationRule);
+        this.validationRules.add(Objects.requireNonNull(customValidationRule));
         return (T) this;
     }
 
@@ -220,8 +222,8 @@ public class JsonBasicSchema implements JsonSchema {
 
     @Override
     public void verify(JsonNode jsonNode) {
-        validationRuleOptional.ifPresent((func) -> {
-            if (!func.validate(this, jsonNode)) {
+        for (CustomValidationRule validationRule : validationRules) {
+            if (!validationRule.validate(this, jsonNode)) {
                 String path = getPath();
                 if (StringUtils.isNotBlank(path)) {
                     throw new ValidationException("Invalid parameter `" + path + "`", path);
@@ -229,7 +231,7 @@ public class JsonBasicSchema implements JsonSchema {
                     throw new IllegalArgumentException("Parameter validation failure");
                 }
             }
-        });
+        }
     }
 
     @Override
