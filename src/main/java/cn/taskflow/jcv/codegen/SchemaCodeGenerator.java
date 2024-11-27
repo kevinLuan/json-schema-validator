@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.utils;
+package cn.taskflow.jcv.codegen;
 
 import cn.taskflow.jcv.core.*;
 import cn.taskflow.jcv.exception.ValidationException;
+import cn.taskflow.jcv.utils.StringUtils;
 
 import java.util.Optional;
 
@@ -32,6 +33,7 @@ class SchemaCodeGenerator {
 
     /**
      * 根据JsonSchema生成相应的Java代码
+     *
      * @param jsonSchema 输入的JsonSchema对象
      * @return 生成的Java代码字符串
      */
@@ -49,7 +51,8 @@ class SchemaCodeGenerator {
 
     /**
      * 解析JsonArray对象并生成相应的Java代码
-     * @param array 输入的JsonArray对象
+     *
+     * @param array   输入的JsonArray对象
      * @param builder 用于构建Java代码的StringBuilder
      */
     private static void parserArray(JsonArray array, StringBuilder builder) {
@@ -113,7 +116,8 @@ class SchemaCodeGenerator {
 
     /**
      * 解析JsonObject对象并生成相应的Java代码
-     * @param object 输入的JsonObject对象
+     *
+     * @param object  输入的JsonObject对象
      * @param builder 用于构建Java代码的StringBuilder
      */
     private static void parserObject(JsonObject object, StringBuilder builder) {
@@ -168,20 +172,24 @@ class SchemaCodeGenerator {
 
     /**
      * 删除字符串末尾的逗号
+     *
      * @param str 输入的字符串
      * @return 删除逗号后的字符串
      */
     private static String remoteLastComma(String str) {
         int lastCommaIndex = str.lastIndexOf(",");
-        String endWith = str.substring(lastCommaIndex);
-        if (endWith.equals(",") || endWith.equals("," + NEW_LINE)) {
-            str = str.substring(0, lastCommaIndex);
+        if (lastCommaIndex != -1) {
+            String endWith = str.substring(lastCommaIndex);
+            if (endWith.equals(",") || endWith.equals("," + NEW_LINE)) {
+                str = str.substring(0, lastCommaIndex);
+            }
         }
         return str;
     }
 
     /**
      * 在StringBuilder末尾添加新行
+     *
      * @param builder 输入的StringBuilder
      * @return 添加新行后的StringBuilder内容
      */
@@ -194,8 +202,9 @@ class SchemaCodeGenerator {
 
     /**
      * 解析Primitive对象并生成相应的Java代码
+     *
      * @param primitive 输入的Primitive对象
-     * @param builder 用于构建Java代码的StringBuilder
+     * @param builder   用于构建Java代码的StringBuilder
      */
     private static void parserPrimitive(Primitive primitive, StringBuilder builder) {
         String name = primitive.getName(); // 获取基本类型名称
@@ -211,6 +220,7 @@ class SchemaCodeGenerator {
 
     /**
      * 构建示例值的代码
+     *
      * @param primitive 输入的Primitive对象
      * @return 示例值的代码字符串
      */
@@ -229,6 +239,7 @@ class SchemaCodeGenerator {
 
     /**
      * 格式化参数为字符串
+     *
      * @param description 输入的描述
      * @return 格式化后的字符串
      */
@@ -241,6 +252,7 @@ class SchemaCodeGenerator {
 
     /**
      * 获取数据类型的字符串表示
+     *
      * @param type 输入的数据类型
      * @return 数据类型的字符串表示
      */

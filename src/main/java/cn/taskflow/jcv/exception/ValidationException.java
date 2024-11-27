@@ -16,17 +16,30 @@
  */
 package cn.taskflow.jcv.exception;
 
+import cn.taskflow.jcv.core.JsonSchema;
+import com.fasterxml.jackson.databind.JsonNode;
+import lombok.Getter;
+
 /**
  * ValidationException 是一个自定义异常，继承自 IllegalArgumentException。
  * 它用于指示发生了验证错误，提供错误信息和错误发生的路径。
- * 
+ * <p>
  * 这个异常在输入验证至关重要的场景中特别有用，路径信息有助于精确定位数据结构或配置中验证失败的确切位置。
- * 
+ *
  * @author SHOUSHEN.LUAN
  * @since 2024-09-25
  */
+@Getter
 public class ValidationException extends IllegalArgumentException {
-    private String path; // 验证错误发生的路径
+    private String     path;  // 验证错误发生的路径
+    private JsonSchema schema;
+    private JsonNode   node;
+
+    public ValidationException append(JsonSchema schema, JsonNode node) {
+        this.schema = schema;
+        this.node = node;
+        return this;
+    }
 
     /**
      * 构造一个新的 ValidationException，具有指定的详细信息和路径。

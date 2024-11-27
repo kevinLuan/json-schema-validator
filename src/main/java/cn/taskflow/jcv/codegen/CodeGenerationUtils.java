@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.taskflow.jcv.utils;
+package cn.taskflow.jcv.codegen;
 
 import cn.taskflow.jcv.core.JsonBasicSchema;
 import cn.taskflow.jcv.core.JsonSchema;
 import cn.taskflow.jcv.encode.GsonEncoder;
 import cn.taskflow.jcv.extension.SchemaOptions;
 import cn.taskflow.jcv.extension.SchemaRequirementEvaluator;
+import cn.taskflow.jcv.utils.JsonParser;
+import cn.taskflow.jcv.utils.JsonSchemaCodec;
 
 /**
  * 用于从JSON模式生成Java代码的代码生成实用程序类。
  * 该类提供了将JSON数据转换为Java代码表示的方法，并处理JSON模式的序列化和反序列化。
- * 
+ *
  * @作者 SHOUSHEN.LUAN
  * @自 2023-04-16
  */
@@ -58,10 +60,15 @@ public class CodeGenerationUtils {
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
+    public static String generateSchemaCode(Class<?> type, GenerateOptional optional) {
+        String json = MockDataGenerator.getJsonMock(type);
+        return generateSchemaCode(json, optional);
+    }
+
     /**
      * 使用特定选项为JSON模式生成Java代码。
      *
-     * @param json 表示模式的JSON字符串
+     * @param json   表示模式的JSON字符串
      * @param option 指定生成选项的GenerateOptional实例
      * @return 生成的Java代码作为字符串
      */
@@ -78,7 +85,7 @@ public class CodeGenerationUtils {
     /**
      * 使用SchemaProcess选项为JSON模式生成Java代码。
      *
-     * @param json 表示模式的JSON字符串
+     * @param json   表示模式的JSON字符串
      * @param option 指定处理选项的SchemaProcess实例
      * @return 生成的Java代码作为字符串
      */
@@ -90,7 +97,7 @@ public class CodeGenerationUtils {
     /**
      * 使用SchemaOptions为JSON模式生成Java代码。
      *
-     * @param json 表示模式的JSON字符串
+     * @param json   表示模式的JSON字符串
      * @param option 指定选项的SchemaOptions实例
      * @return 生成的Java代码作为字符串
      */
