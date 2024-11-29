@@ -48,6 +48,32 @@ class SchemaCodeGenerator {
         }
         return builder + ";";
     }
+    /**
+     * 根据传入的参数构造者，判断是否应该插入逗号分割符，
+     * @param builder 字符串构造者
+     * @return 插入返回：true,否则返回：false
+     */
+    private static boolean shouldAppendComma(StringBuilder builder) {
+        // 从后向前遍历，跳过空格
+        for (int i = builder.length() - 1; i >= 0; i--) {
+            char c = builder.charAt(i);
+            // 跳过空格继续向前查找
+            if (Character.isWhitespace(c)) {
+                continue;
+            }
+            // 找到第一个非空格字符，判断是否为逗号
+            if (c != ',') {
+                if (c == '(') {
+                    return false;
+                } else {
+                    builder.append(',');
+                    return true;
+                }
+            }
+            break;
+        }
+        return false;
+    }
 
     /**
      * 解析JsonArray对象并生成相应的Java代码
@@ -65,9 +91,13 @@ class SchemaCodeGenerator {
             builder.append("JsonArray.");
             builder.append(array.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
                 : "optional");
-            builder.append("(").append(formatParam(name));
+            builder.append("(");
+            if (StringUtils.isNotBlank(name)) {
+                builder.append(formatParam(name));
+            }
             if (includeDesc) {
-                builder.append(",").append(formatParam(description));
+                shouldAppendComma(builder);
+                builder.append(formatParam(description));
             }
             builder.append(")");
         } else {
@@ -78,29 +108,21 @@ class SchemaCodeGenerator {
             builder.append("JsonArray.");
             builder.append(children.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
                 : "optional");
-            builder.append("(").append(formatParam(name));
-
-            boolean hasAdditionalParams = false;
-
+            builder.append("(");
+            if (StringUtils.isNotBlank(name)) {
+                builder.append(formatParam(name));
+            }
             if (CodeGenerationUtils.getOptional().isGenerateDesc() && description != null && !description.isEmpty()) {
-                builder.append(",").append(formatParam(description));
-                hasAdditionalParams = true;
+                shouldAppendComma(builder);
+                builder.append(formatParam(description));
             }
 
             if (children.isObject()) {
-                StringBuilder stringBuilder = new StringBuilder();
-                parserObject(children.asObject(), stringBuilder);
-                if (hasAdditionalParams || !stringBuilder.toString().trim().isEmpty()) {
-                    builder.append(",");
-                }
-                builder.append(NEW_LINE);
-                builder.append(stringBuilder);
+                shouldAppendComma(builder);
+                parserObject(children.asObject(), builder);
             } else if (CodeGenerationUtils.getOptional().isGenerateExample() && children.isPrimitive()) {
                 String example = children.asPrimitive().getExampleValue();
                 if (example != null && example.trim().length() > 0) {
-                    if (hasAdditionalParams) {
-                        builder.append(",");
-                    }
                     String childrenCode = children.getDataType().generatePrimitiveCode(children.isRequired());
                     if (children.getDataType().isNumber() || children.getDataType().isBoolean()) {
                         childrenCode += ".setExampleValue(" + example + ")";
@@ -128,23 +150,20 @@ class SchemaCodeGenerator {
         for (int i = 0; i < childrens.length; i++) {
             JsonSchema jsonSchema = childrens[i];
             if (i != 0) {
-                nodeBuilder.append(",");
+                shouldAppendComma(builder);
                 newLine(nodeBuilder);
             }
             if (jsonSchema.isArray()) {
                 newLine(nodeBuilder);
-                StringBuilder stringBuilder = new StringBuilder();
-                parserArray(jsonSchema.asArray(), stringBuilder);
-                nodeBuilder.append(stringBuilder.toString());
+                shouldAppendComma(nodeBuilder);
+                parserArray(jsonSchema.asArray(), nodeBuilder);
             } else if (jsonSchema.isObject()) {
-                StringBuilder childrenObjectBuilder = new StringBuilder();
-                parserObject(jsonSchema.asObject(), childrenObjectBuilder);
-                nodeBuilder.append(childrenObjectBuilder.toString());
+                shouldAppendComma(nodeBuilder);
+                parserObject(jsonSchema.asObject(), nodeBuilder);
             } else if (jsonSchema.isPrimitive()) {
-                StringBuilder stringBuilder = new StringBuilder();
-                parserPrimitive(jsonSchema.asPrimitive(), stringBuilder);
+                shouldAppendComma(nodeBuilder);
+                parserPrimitive(jsonSchema.asPrimitive(), nodeBuilder);
                 newLine(nodeBuilder);
-                nodeBuilder.append(stringBuilder);
             }
         }
         builder.append("JsonObject.");
