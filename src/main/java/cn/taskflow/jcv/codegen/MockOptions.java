@@ -21,8 +21,10 @@ package cn.taskflow.jcv.codegen;
  * @since 2024-11-29
  */
 public class MockOptions {
-    private int arraySize = 1;
-    private int mapSize   = 1;
+    private int    arraySize    = 1;
+    private int    mapSize      = 1;
+    /*仅对Map类型的key为String类型是选择自定义生成能力,若mapKeyPrefix设置为null,将仍会自动生成*/
+    private String mapKeyPrefix = "mock_";
 
     // Private constructor to enforce builder usage
     private MockOptions() {
@@ -35,6 +37,10 @@ public class MockOptions {
 
     public int getMapSize() {
         return mapSize;
+    }
+
+    public String getMapKeyPrefix() {
+        return mapKeyPrefix;
     }
 
     // Builder class
@@ -52,6 +58,11 @@ public class MockOptions {
 
         public Builder mapSize(int size) {
             options.mapSize = size;
+            return this;
+        }
+
+        public Builder mapKeyPrefix(String prefix) {
+            options.mapKeyPrefix = prefix;
             return this;
         }
 

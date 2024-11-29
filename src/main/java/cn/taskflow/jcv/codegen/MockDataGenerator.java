@@ -290,13 +290,19 @@ public class MockDataGenerator {
         } else {
             return Collections.emptyMap(); // 默认返回空映射
         }
+        MockOptions options = getOptions();
         if (genericType instanceof ParameterizedType) {
             Type[] typeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
             if (typeArguments.length == 2 && typeArguments[0] instanceof Class && typeArguments[1] instanceof Class) {
                 Class<?> keyType = (Class<?>) typeArguments[0];
                 Class<?> valueType = (Class<?>) typeArguments[1];
-                for (int i = 0; i < getOptions().getMapSize(); i++) {
-                    Object key = generateMockValue(keyType, keyType, visitedClasses);
+                for (int i = 0; i < options.getMapSize(); i++) {
+                    Object key;//通常情况下Map类型的
+                    if (keyType == String.class && options.getMapKeyPrefix() != null) {
+                        key = options.getMapKeyPrefix() + i;
+                    } else {
+                        key = generateMockValue(keyType, keyType, visitedClasses);
+                    }
                     Object value = generateMockValue(valueType, valueType, visitedClasses);
                     map.put(key, value);
                 }
@@ -306,6 +312,6 @@ public class MockDataGenerator {
     }
 
     private static MockOptions getOptions() {
-        return THREAD_LOCAL.get() == null ? THREAD_LOCAL.get() : MockOptions.defaultOptions();
+        return THREAD_LOCAL.get() != null ? THREAD_LOCAL.get() : MockOptions.defaultOptions();
     }
 }
