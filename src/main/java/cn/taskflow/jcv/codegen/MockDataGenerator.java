@@ -34,6 +34,7 @@ import java.util.*;
 public class MockDataGenerator {
     static Logger log = LoggerFactory.getLogger(MockDataGenerator.class);
     private static final Faker faker = new Faker();
+    private static final ThreadLocal<MockOptions> THREAD_LOCAL = new ThreadLocal<>();
 
     public interface MockValueGenerator {
         Object generate(Class<?> type, Type genericType, Set<Class<?>> visitedClasses);
@@ -69,13 +70,18 @@ public class MockDataGenerator {
      * @return JSON格式的字符串。
      */
     @SneakyThrows
-    public static String getJsonMock(Class<?> clazz) {
-        Set<Class<?>> visitedClasses = new HashSet<>();
-        Object instance = generateMockInstance(clazz, visitedClasses);
-        return GsonEncoder.INSTANCE.encode(instance);
+    public static String getJsonMock(Class<?> clazz, MockOptions options) {
+        try {
+            THREAD_LOCAL.set(options);
+            Set<Class<?>> visitedClasses = new HashSet<>();
+            Object instance = generateMockInstance(clazz, visitedClasses);
+            return GsonEncoder.INSTANCE.encode(instance);
+        } finally {
+            THREAD_LOCAL.remove();
+        }
     }
 
-    public static <E extends Enum<E>> E getRandomEnumInstance(Class<E> enumClass) {
+    private static <E extends Enum<E>> E getRandomEnumInstance(Class<E> enumClass) {
         if (Enum.class.isAssignableFrom(enumClass)) {
             E[] enumConstants = enumClass.getEnumConstants();
             int randomIndex = new Random().nextInt(enumConstants.length);
@@ -230,7 +236,7 @@ public class MockDataGenerator {
      * @return 数组的模拟数据。
      */
     private static Object generateMockArray(Class<?> componentType, Set<Class<?>> visitedClasses) {
-        int arrayLength = 3; // 示例长度
+        int arrayLength = getOptions().getArraySize(); // 示例长度
         Object array = Array.newInstance(componentType, arrayLength);
         for (int i = 0; i < arrayLength; i++) {
             Object element = generateMockValue(componentType, componentType, visitedClasses);
@@ -259,7 +265,7 @@ public class MockDataGenerator {
         if (genericType instanceof ParameterizedType) {
             Type elementType = ((ParameterizedType) genericType).getActualTypeArguments()[0];
             if (elementType instanceof Class) {
-                for (int i = 0; i < 3; i++) { // 生成几个元素
+                for (int i = 0; i < getOptions().getArraySize(); i++) { // 生成几个元素
                     Object element = generateMockValue((Class<?>) elementType, elementType, visitedClasses);
                     if (element != null) { // 确保非空元素
                         collection.add(element);
@@ -289,7 +295,7 @@ public class MockDataGenerator {
             if (typeArguments.length == 2 && typeArguments[0] instanceof Class && typeArguments[1] instanceof Class) {
                 Class<?> keyType = (Class<?>) typeArguments[0];
                 Class<?> valueType = (Class<?>) typeArguments[1];
-                for (int i = 0; i < 3; i++) { // 生成几个条目
+                for (int i = 0; i < getOptions().getMapSize(); i++) {
                     Object key = generateMockValue(keyType, keyType, visitedClasses);
                     Object value = generateMockValue(valueType, valueType, visitedClasses);
                     map.put(key, value);
@@ -297,5 +303,9 @@ public class MockDataGenerator {
             }
         }
         return map;
+    }
+
+    private static MockOptions getOptions() {
+        return THREAD_LOCAL.get() == null ? THREAD_LOCAL.get() : MockOptions.defaultOptions();
     }
 }

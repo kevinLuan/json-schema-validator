@@ -61,7 +61,7 @@ public class CodeGenerationUtils {
     }
 
     public static String generateSchemaCode(Class<?> type, GenerateOptional optional) {
-        String json = MockDataGenerator.getJsonMock(type);
+        String json = MockDataGenerator.getJsonMock(type, MockOptions.defaultOptions());
         return generateSchemaCode(json, optional);
     }
 

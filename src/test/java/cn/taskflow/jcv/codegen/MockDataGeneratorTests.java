@@ -26,7 +26,8 @@ import org.junit.Test;
 public class MockDataGeneratorTests {
     @Test
     public void test() {
-        String json = MockDataGenerator.getJsonMock(Person.class);
+        MockOptions options = MockOptions.builder().arraySize(3).mapSize(3).build();
+        String json = MockDataGenerator.getJsonMock(Person.class, options);
         System.out.println(json);
         String schema = CodeGenerationUtils.generateSchemaCode(json, SchemaOptions.OPTIONAL);
         System.out.println(schema);

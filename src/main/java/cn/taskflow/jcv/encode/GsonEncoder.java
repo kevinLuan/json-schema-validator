@@ -17,6 +17,7 @@
 package cn.taskflow.jcv.encode;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * The {@code GsonEncoder} class provides methods to encode objects into JSON strings
@@ -33,7 +34,8 @@ public class GsonEncoder implements Encoder {
     /**
      * Gson instance used for JSON serialization and deserialization.
      */
-    private static Gson       gson     = new Gson();
+    private static Gson       gson     = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting()
+                                           .setDateFormat("yyyy-MM-dd HH:mm:ss").create();
 
     /**
      * Encodes an object into its JSON representation.
