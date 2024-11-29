@@ -48,6 +48,7 @@ class SchemaCodeGenerator {
         }
         return builder + ";";
     }
+
     /**
      * 根据传入的参数构造者，判断是否应该插入逗号分割符，
      * @param builder 字符串构造者

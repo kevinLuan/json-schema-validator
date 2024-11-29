@@ -31,32 +31,32 @@ import org.junit.Test;
 public class CodeGenerationTests {
     @Test
     public void test() {
-        String json = "[" +
-                "  {" +
-                "    'id': 1024263244258258627," +
-                "    'menuId': 1024263244258258626," +
-                "    'name': 'Paninis'" +
-                "  }," +
-                "  {" +
-                "    'id': 1024263244258258629," +
-                "    'menuId': 1024263244258258626," +
-                "    'name': 'Flagels'" +
-                "  }" +
-                "]";
+        String json = "[" + //
+                      "  {" + //
+                      "    'id': 1024263244258258627," + //
+                      "    'menuId': 1024263244258258626," + //
+                      "    'name': 'Paninis'" + //
+                      "  }," + //
+                      "  {" + //
+                      "    'id': 1024263244258258629," + //
+                      "    'menuId': 1024263244258258626," + //
+                      "    'name': 'Flagels'" + //
+                      "  }" + //
+                      "]";
         String schemaCode = CodeGenerationUtils.generateSchemaCode(json.replace('\'', '"'));
-        JsonArray jsonArray = JsonArray.optional(JsonObject.optional(JsonNumber.optional("id"), JsonNumber.optional("menuId"), JsonString.optional("name")));
+        JsonArray jsonArray = JsonArray.optional(JsonObject.optional(JsonNumber.optional("id"),
+            JsonNumber.optional("menuId"), JsonString.optional("name")));
         Assert.assertEquals(schemaCode, CodeGenerationUtils.generateSchemaCode(jsonArray));
-
 
     }
 
     @Test
     public void testValidate() {
         JsonArray schema = JsonArray.required(//
-                JsonObject.required(//
-                        JsonNumber.optional("id"),//
-                        JsonNumber.optional("menuId"),//
-                        JsonString.optional("name")//
+            JsonObject.required(//
+                JsonNumber.optional("id"),//
+                JsonNumber.optional("menuId"),//
+                JsonString.optional("name")//
                 ));
         Validator.fromSchema(schema).validate("[{}]");
     }

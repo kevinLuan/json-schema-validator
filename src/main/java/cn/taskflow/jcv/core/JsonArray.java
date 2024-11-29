@@ -108,6 +108,7 @@ public class JsonArray extends JsonBasicSchema {
     public static JsonArray required() {
         return new JsonArray(null, true, null, null);
     }
+
     public static JsonArray required(JsonBasicSchema schema) {
         return new JsonArray(null, true, null, schema);
     }
