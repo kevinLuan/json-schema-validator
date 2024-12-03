@@ -32,8 +32,7 @@ import cn.taskflow.jcv.utils.JsonSchemaCodec;
  * @自 2023-04-16
  */
 public class CodeGenerationUtils {
-    // 使用ThreadLocal存储GenerateOptional实例以进行线程安全操作
-    static ThreadLocal<GenerateOptional> THREAD_LOCAL = new ThreadLocal<>();
+    static ThreadLocal<GenerateOptions> THREAD_LOCAL = new ThreadLocal<>();
 
     /**
      * 从ThreadLocal存储中检索当前的GenerateOptional实例。
@@ -41,11 +40,11 @@ public class CodeGenerationUtils {
      *
      * @return 当前的GenerateOptional实例，如果没有设置则返回默认实例
      */
-    public static GenerateOptional getOptional() {
+    public static GenerateOptions getOptions() {
         if (THREAD_LOCAL.get() != null) {
             return THREAD_LOCAL.get();
         } else {
-            return new GenerateOptional(false, false, false);
+            return GenerateOptions.defaultOptions();
         }
     }
 
@@ -60,21 +59,26 @@ public class CodeGenerationUtils {
         return SchemaCodeGenerator.generate(jsonSchema);
     }
 
-    public static String generateSchemaCode(Class<?> type, GenerateOptional optional) {
+    public static String generateSchemaCode(Class<?> type, GenerateOptions options) {
         String json = MockDataGenerator.getJsonMock(type, MockOptions.defaultOptions());
-        return generateSchemaCode(json, optional);
+        return generateSchemaCode(json, options);
+    }
+
+    public static <T> String generateSchemaCode(TypeReference<T> typeRef, GenerateOptions options) {
+        String json = MockDataGenerator.getJsonMock(typeRef, MockOptions.defaultOptions());
+        return generateSchemaCode(json, options);
     }
 
     /**
      * 使用特定选项为JSON模式生成Java代码。
      *
      * @param json   表示模式的JSON字符串
-     * @param option 指定生成选项的GenerateOptional实例
+     * @param options 指定生成选项的GenerateOptional实例
      * @return 生成的Java代码作为字符串
      */
-    public static String generateSchemaCode(String json, GenerateOptional option) {
+    public static String generateSchemaCode(String json, GenerateOptions options) {
         try {
-            THREAD_LOCAL.set(option);
+            THREAD_LOCAL.set(options);
             JsonSchema jsonSchema = JsonParser.parseJsonSchema(json);
             return SchemaCodeGenerator.generate(jsonSchema);
         } finally {

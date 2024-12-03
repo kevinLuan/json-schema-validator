@@ -86,12 +86,12 @@ class SchemaCodeGenerator {
         String name = array.getName(); // 获取数组名称
         String description = array.getDescription(); // 获取数组描述
         Optional<JsonSchema> optional = array.getSchemaForFirstChildren(); // 获取第一个子元素的Schema
-        boolean includeDesc = CodeGenerationUtils.getOptional().isGenerateDesc() && description != null
+        boolean includeDesc = CodeGenerationUtils.getOptions().isGenerateDesc() && description != null
                               && !description.isEmpty(); // 判断是否需要生成描述
         if (!optional.isPresent()) {
             builder.append("JsonArray.");
-            builder.append(array.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
-                : "optional");
+            builder
+                .append(array.isRequired() || CodeGenerationUtils.getOptions().isRequire() ? "required" : "optional");
             builder.append("(");
             if (StringUtils.isNotBlank(name)) {
                 builder.append(formatParam(name));
@@ -107,13 +107,13 @@ class SchemaCodeGenerator {
                 throw new ValidationException("Unsupported type: " + children, children.getPath());
             }
             builder.append("JsonArray.");
-            builder.append(children.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
+            builder.append(children.isRequired() || CodeGenerationUtils.getOptions().isRequire() ? "required"
                 : "optional");
             builder.append("(");
             if (StringUtils.isNotBlank(name)) {
                 builder.append(formatParam(name));
             }
-            if (CodeGenerationUtils.getOptional().isGenerateDesc() && description != null && !description.isEmpty()) {
+            if (CodeGenerationUtils.getOptions().isGenerateDesc() && description != null && !description.isEmpty()) {
                 shouldAppendComma(builder);
                 builder.append(formatParam(description));
             }
@@ -121,7 +121,7 @@ class SchemaCodeGenerator {
             if (children.isObject()) {
                 shouldAppendComma(builder);
                 parserObject(children.asObject(), builder);
-            } else if (CodeGenerationUtils.getOptional().isGenerateExample() && children.isPrimitive()) {
+            } else if (CodeGenerationUtils.getOptions().isGenerateExample() && children.isPrimitive()) {
                 String example = children.asPrimitive().getExampleValue();
                 if (example != null && example.trim().length() > 0) {
                     String childrenCode = children.getDataType().generatePrimitiveCode(children.isRequired());
@@ -168,14 +168,14 @@ class SchemaCodeGenerator {
             }
         }
         builder.append("JsonObject.");
-        builder.append(object.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required" : "optional");
+        builder.append(object.isRequired() || CodeGenerationUtils.getOptions().isRequire() ? "required" : "optional");
         builder.append("(");
         //生成字段名称
         if (name != null && name.length() > 0) {
             builder.append(formatParam(name)).append(",");
         }
         //生成描述
-        if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+        if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
             builder.append(formatParam(description)).append(",");
         }
         if (StringUtils.isNotBlank(nodeBuilder.toString())) {
@@ -246,7 +246,7 @@ class SchemaCodeGenerator {
      */
     private static String buildExampleValue(Primitive primitive) {
         if (primitive.getExampleValue() != null && primitive.getExampleValue().length() > 0) {
-            if (CodeGenerationUtils.getOptional().isGenerateExample()) {
+            if (CodeGenerationUtils.getOptions().isGenerateExample()) {
                 if (primitive.getDataType().isNumber() || primitive.getDataType().isBoolean()) {
                     return ".setExampleValue(" + primitive.getExampleValue() + ")";
                 } else {

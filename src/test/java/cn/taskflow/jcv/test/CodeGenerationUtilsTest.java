@@ -17,7 +17,7 @@
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
-import cn.taskflow.jcv.codegen.GenerateOptional;
+import cn.taskflow.jcv.codegen.GenerateOptions;
 import cn.taskflow.jcv.utils.IOUtils;
 import com.github.javaparser.StaticJavaParser;
 import cn.taskflow.jcv.codegen.CodeGenerationUtils;
@@ -47,6 +47,6 @@ public class CodeGenerationUtilsTest {
     @Test
     public void testSimple() {
         String json = "{\"name\":\"x\",\"description\":\"x\",\"paused\":false,\"runCatchupScheduleInstances\":false,\"startTime\":1729935819148,\"endTime\":0,\"timeZone\":\"Asia/Shanghai\",\"triggerType\":\"SCHEDULE\",\"timerTaskTrigger\":{\"dayOfWeeks\":[],\"dayOfMonths\":[],\"skipWeekends\":false,\"skipHolidays\":false},\"cronTrigger\":{},\"startWorkflowRequest\":{\"version\":1,\"input\":{},\"taskToDomain\":{},\"priority\":0,\"idempotencyStrategy\":\"FAIL\"},\"overwrite\":false}";
-        System.out.println(CodeGenerationUtils.generateSchemaCode(json, new GenerateOptional()));
+        System.out.println(CodeGenerationUtils.generateSchemaCode(json, GenerateOptions.defaultOptions()));
     }
 }

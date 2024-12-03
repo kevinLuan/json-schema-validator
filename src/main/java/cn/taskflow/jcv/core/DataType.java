@@ -194,14 +194,14 @@ public enum DataType {
         final String code;
         switch (this) {
             case Number:
-                if (required || CodeGenerationUtils.getOptional().isRequire()) {
-                    if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+                if (required || CodeGenerationUtils.getOptions().isRequire()) {
+                    if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
                         code = JsvUtils.f("JsonNumber.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                     } else {
                         code = JsvUtils.f("JsonNumber.required('%s')", name);
                     }
                 } else {
-                    if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+                    if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
                         code = JsvUtils.f("JsonNumber.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                     } else {
                         code = JsvUtils.f("JsonNumber.optional('%s')", name);
@@ -209,14 +209,14 @@ public enum DataType {
                 }
                 break;
             case String:
-                if (required || CodeGenerationUtils.getOptional().isRequire()) {
-                    if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+                if (required || CodeGenerationUtils.getOptions().isRequire()) {
+                    if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
                         code = JsvUtils.f("JsonString.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                     } else {
                         code = JsvUtils.f("JsonString.required('%s')", name);
                     }
                 } else {
-                    if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+                    if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
                         code = JsvUtils.f("JsonString.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                     } else {
                         code = JsvUtils.f("JsonString.optional('%s')", name);
@@ -224,14 +224,14 @@ public enum DataType {
                 }
                 break;
             case Boolean:
-                if (required || CodeGenerationUtils.getOptional().isRequire()) {
-                    if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+                if (required || CodeGenerationUtils.getOptions().isRequire()) {
+                    if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
                         code = JsvUtils.f("JsonBoolean.required('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                     } else {
                         code = JsvUtils.f("JsonBoolean.required('%s')", name);
                     }
                 } else {
-                    if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+                    if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
                         code = JsvUtils.f("JsonBoolean.optional('%s',%s)", name, JsvUtils.formatStringArgs(desc));
                     } else {
                         code = JsvUtils.f("JsonBoolean.optional('%s')", name);

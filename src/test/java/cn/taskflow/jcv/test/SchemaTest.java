@@ -17,7 +17,7 @@
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.codegen.CodeGenerationUtils;
-import cn.taskflow.jcv.codegen.GenerateOptional;
+import cn.taskflow.jcv.codegen.GenerateOptions;
 import cn.taskflow.jcv.utils.*;
 import cn.taskflow.jcv.core.JsonNumber;
 import cn.taskflow.jcv.core.JsonObject;
@@ -83,7 +83,7 @@ public class SchemaTest {
                       + "                    \"title\": \"土黄金色\"\n" + "                }\n" + "            ]\n"
                       + "        }\n" + "    ]\n" + "}";
         System.out.println(json);
-        String javaCode = CodeGenerationUtils.generateSchemaCode(json, new GenerateOptional());
+        String javaCode = CodeGenerationUtils.generateSchemaCode(json, GenerateOptions.defaultOptions());
         System.out.println("生成代码: " + javaCode);
     }
 
