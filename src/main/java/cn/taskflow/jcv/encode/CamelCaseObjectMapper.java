@@ -25,6 +25,7 @@ import java.util.TimeZone;
 
 /**
  * 这是一个自定义的ObjectMapper类，使用蛇形命名策略。
+ *
  * @作者 SHOUSHEN.LUAN
  * @自 2024-10-30
  */
@@ -33,8 +34,8 @@ public class CamelCaseObjectMapper extends ObjectMapper {
      * 构造函数，配置ObjectMapper的属性。
      */
     public CamelCaseObjectMapper() {
-        // 设置属性命名策略为蛇形命名
-        setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+        // 默认驼峰命名法
+        setPropertyNamingStrategy(PropertyNamingStrategies.LOWER_CAMEL_CASE);
 
         // 配置ObjectMapper在反序列化时不因未知属性而失败
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

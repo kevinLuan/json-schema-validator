@@ -92,7 +92,6 @@ public class ValueRangeValidation implements CustomValidationRule {
                     throw new IllegalArgumentException("The parameter is out of the legal range");
                 }
             }
-            return false;
         }
         return true;
     }

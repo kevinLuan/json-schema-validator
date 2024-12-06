@@ -17,6 +17,7 @@
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,6 +30,7 @@ import cn.taskflow.jcv.encode.NodeFactory;
 import cn.taskflow.jcv.validation.ArgumentVerifyHandler;
 import cn.taskflow.jcv.validation.DataVerifyHandler;
 import cn.taskflow.jcv.validation.Validator;
+import lombok.Getter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -111,6 +113,38 @@ public class ValidatorTest {
         String expected = "{'result':{'array_any':[{'a':10,'obj':{}}],'array_any_simple':[1,2,3,4,5],'extendMap':{'a':10,'obj':{}},'name':'张三丰','ids':['100'],'items':[{'name':'手机','id':'2'}],'age':'100.11'},'status':{'status_code':100,'status_reasion':'参数错误'}}";
         expected = expected.replace("'", "\"");
         Assert.assertEquals(expected, NodeFactory.stringify(map));
+    }
+
+    @Getter
+    static class MyObj {
+        private String actionName = "hello";
+        private Number helloKitty = 123;
+    }
+
+    @Test
+    public void testCamelValidate() {
+        MyObj myObj = new MyObj();
+        JsonNode jsonNode = NodeFactory.getJsonNodeConverter(true).convert(myObj);
+        Assert.assertEquals(myObj.getActionName(), jsonNode.get("actionName").asText());
+        Assert.assertEquals(myObj.getHelloKitty(), jsonNode.get("helloKitty").asInt());
+        Map<String, Object> map = Validator
+            .fromSchema(JsonObject.required(JsonString.required("actionName"), JsonNumber.required("helloKitty")))
+            .validate(myObj, true).extract(myObj, true);
+        Assert.assertTrue(map.containsKey("actionName"));
+        Assert.assertTrue(map.containsKey("helloKitty"));
+    }
+
+    @Test
+    public void testSnakeCaseValidate() {
+        MyObj myObj = new MyObj();
+        JsonNode jsonNode = NodeFactory.getJsonNodeConverter(false).convert(myObj);
+        Assert.assertEquals(myObj.getActionName(), jsonNode.get("action_name").asText());
+        Assert.assertEquals(myObj.getHelloKitty(), jsonNode.get("hello_kitty").asInt());
+        Map<String, Object> map = Validator
+            .fromSchema(JsonObject.required(JsonString.required("action_name"), JsonNumber.required("hello_kitty")))
+            .validate(myObj, false).extract(myObj, false);
+        Assert.assertTrue(map.containsKey("action_name"));
+        Assert.assertTrue(map.containsKey("hello_kitty"));
     }
 
     private JsonSchema buildParam() {
