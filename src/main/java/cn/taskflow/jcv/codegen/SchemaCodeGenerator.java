@@ -50,6 +50,33 @@ class SchemaCodeGenerator {
     }
 
     /**
+     * 根据传入的参数构造者，判断是否应该插入逗号分割符，
+     * @param builder 字符串构造者
+     * @return 插入返回：true,否则返回：false
+     */
+    private static boolean shouldAppendComma(StringBuilder builder) {
+        // 从后向前遍历，跳过空格
+        for (int i = builder.length() - 1; i >= 0; i--) {
+            char c = builder.charAt(i);
+            // 跳过空格继续向前查找
+            if (Character.isWhitespace(c)) {
+                continue;
+            }
+            // 找到第一个非空格字符，判断是否为逗号
+            if (c != ',') {
+                if (c == '(') {
+                    return false;
+                } else {
+                    builder.append(',');
+                    return true;
+                }
+            }
+            break;
+        }
+        return false;
+    }
+
+    /**
      * 解析JsonArray对象并生成相应的Java代码
      *
      * @param array   输入的JsonArray对象
@@ -59,15 +86,19 @@ class SchemaCodeGenerator {
         String name = array.getName(); // 获取数组名称
         String description = array.getDescription(); // 获取数组描述
         Optional<JsonSchema> optional = array.getSchemaForFirstChildren(); // 获取第一个子元素的Schema
-        boolean includeDesc = CodeGenerationUtils.getOptional().isGenerateDesc() && description != null
+        boolean includeDesc = CodeGenerationUtils.getOptions().isGenerateDesc() && description != null
                               && !description.isEmpty(); // 判断是否需要生成描述
         if (!optional.isPresent()) {
             builder.append("JsonArray.");
-            builder.append(array.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
-                : "optional");
-            builder.append("(").append(formatParam(name));
+            builder
+                .append(array.isRequired() || CodeGenerationUtils.getOptions().isRequire() ? "required" : "optional");
+            builder.append("(");
+            if (StringUtils.isNotBlank(name)) {
+                builder.append(formatParam(name));
+            }
             if (includeDesc) {
-                builder.append(",").append(formatParam(description));
+                shouldAppendComma(builder);
+                builder.append(formatParam(description));
             }
             builder.append(")");
         } else {
@@ -76,31 +107,23 @@ class SchemaCodeGenerator {
                 throw new ValidationException("Unsupported type: " + children, children.getPath());
             }
             builder.append("JsonArray.");
-            builder.append(children.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required"
+            builder.append(children.isRequired() || CodeGenerationUtils.getOptions().isRequire() ? "required"
                 : "optional");
-            builder.append("(").append(formatParam(name));
-
-            boolean hasAdditionalParams = false;
-
-            if (CodeGenerationUtils.getOptional().isGenerateDesc() && description != null && !description.isEmpty()) {
-                builder.append(",").append(formatParam(description));
-                hasAdditionalParams = true;
+            builder.append("(");
+            if (StringUtils.isNotBlank(name)) {
+                builder.append(formatParam(name));
+            }
+            if (CodeGenerationUtils.getOptions().isGenerateDesc() && description != null && !description.isEmpty()) {
+                shouldAppendComma(builder);
+                builder.append(formatParam(description));
             }
 
             if (children.isObject()) {
-                StringBuilder stringBuilder = new StringBuilder();
-                parserObject(children.asObject(), stringBuilder);
-                if (hasAdditionalParams || !stringBuilder.toString().trim().isEmpty()) {
-                    builder.append(",");
-                }
-                builder.append(NEW_LINE);
-                builder.append(stringBuilder);
-            } else if (CodeGenerationUtils.getOptional().isGenerateExample() && children.isPrimitive()) {
+                shouldAppendComma(builder);
+                parserObject(children.asObject(), builder);
+            } else if (CodeGenerationUtils.getOptions().isGenerateExample() && children.isPrimitive()) {
                 String example = children.asPrimitive().getExampleValue();
                 if (example != null && example.trim().length() > 0) {
-                    if (hasAdditionalParams) {
-                        builder.append(",");
-                    }
                     String childrenCode = children.getDataType().generatePrimitiveCode(children.isRequired());
                     if (children.getDataType().isNumber() || children.getDataType().isBoolean()) {
                         childrenCode += ".setExampleValue(" + example + ")";
@@ -128,34 +151,31 @@ class SchemaCodeGenerator {
         for (int i = 0; i < childrens.length; i++) {
             JsonSchema jsonSchema = childrens[i];
             if (i != 0) {
-                nodeBuilder.append(",");
+                shouldAppendComma(builder);
                 newLine(nodeBuilder);
             }
             if (jsonSchema.isArray()) {
                 newLine(nodeBuilder);
-                StringBuilder stringBuilder = new StringBuilder();
-                parserArray(jsonSchema.asArray(), stringBuilder);
-                nodeBuilder.append(stringBuilder.toString());
+                shouldAppendComma(nodeBuilder);
+                parserArray(jsonSchema.asArray(), nodeBuilder);
             } else if (jsonSchema.isObject()) {
-                StringBuilder childrenObjectBuilder = new StringBuilder();
-                parserObject(jsonSchema.asObject(), childrenObjectBuilder);
-                nodeBuilder.append(childrenObjectBuilder.toString());
+                shouldAppendComma(nodeBuilder);
+                parserObject(jsonSchema.asObject(), nodeBuilder);
             } else if (jsonSchema.isPrimitive()) {
-                StringBuilder stringBuilder = new StringBuilder();
-                parserPrimitive(jsonSchema.asPrimitive(), stringBuilder);
+                shouldAppendComma(nodeBuilder);
+                parserPrimitive(jsonSchema.asPrimitive(), nodeBuilder);
                 newLine(nodeBuilder);
-                nodeBuilder.append(stringBuilder);
             }
         }
         builder.append("JsonObject.");
-        builder.append(object.isRequired() || CodeGenerationUtils.getOptional().isRequire() ? "required" : "optional");
+        builder.append(object.isRequired() || CodeGenerationUtils.getOptions().isRequire() ? "required" : "optional");
         builder.append("(");
         //生成字段名称
         if (name != null && name.length() > 0) {
             builder.append(formatParam(name)).append(",");
         }
         //生成描述
-        if (CodeGenerationUtils.getOptional().isGenerateDesc()) {
+        if (CodeGenerationUtils.getOptions().isGenerateDesc()) {
             builder.append(formatParam(description)).append(",");
         }
         if (StringUtils.isNotBlank(nodeBuilder.toString())) {
@@ -226,7 +246,7 @@ class SchemaCodeGenerator {
      */
     private static String buildExampleValue(Primitive primitive) {
         if (primitive.getExampleValue() != null && primitive.getExampleValue().length() > 0) {
-            if (CodeGenerationUtils.getOptional().isGenerateExample()) {
+            if (CodeGenerationUtils.getOptions().isGenerateExample()) {
                 if (primitive.getDataType().isNumber() || primitive.getDataType().isBoolean()) {
                     return ".setExampleValue(" + primitive.getExampleValue() + ")";
                 } else {

@@ -17,7 +17,7 @@
 package cn.taskflow.jcv.validation;
 
 import cn.taskflow.jcv.core.*;
-import cn.taskflow.jcv.encode.NodeFactory;
+import cn.taskflow.jcv.encode.*;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.extension.JsonSchemaTypeAdjuster;
 import cn.taskflow.jcv.extension.JsonSchemaParentRefresher;
@@ -41,6 +41,7 @@ public class Validator {
 
     /**
      * Sets a filter for handling unknown nodes during validation
+     *
      * @param filter The filter to handle unknown nodes
      * @return This validator instance
      */
@@ -51,6 +52,7 @@ public class Validator {
 
     /**
      * Creates a validator from JSON schemas using default verify handler
+     *
      * @param jsonSchemas The JSON schemas to validate against
      * @return A new validator instance
      */
@@ -60,8 +62,9 @@ public class Validator {
 
     /**
      * Creates a validator from JSON schemas with custom verify handler
+     *
      * @param verifyHandler Custom verify handler
-     * @param jsonSchemas The JSON schemas to validate against
+     * @param jsonSchemas   The JSON schemas to validate against
      * @return A new validator instance
      */
     public static Validator fromSchema(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
@@ -72,6 +75,7 @@ public class Validator {
 
     /**
      * Validates data supplied by a function
+     *
      * @param dataSupplier Function that supplies data as strings
      * @return This validator instance
      */
@@ -82,6 +86,7 @@ public class Validator {
 
     /**
      * Extracts data supplied by a function into a map
+     *
      * @param dataSupplier Function that supplies data as strings
      * @return Map of extracted data
      */
@@ -91,6 +96,7 @@ public class Validator {
 
     /**
      * Validates a JsonNode against the schema
+     *
      * @param jsonNode The node to validate
      * @return This validator instance
      */
@@ -101,6 +107,7 @@ public class Validator {
 
     /**
      * Validates a JSON string against the schema
+     *
      * @param json The JSON string to validate
      * @return This validator instance
      */
@@ -111,16 +118,22 @@ public class Validator {
 
     /**
      * Validates an object by converting it to JSON first
+     *
      * @param obj The object to validate
      * @return This validator instance
      */
     public Validator validate(Object obj) {
-        dataValidator.validate(NodeFactory.convert(obj));
+        return this.validate(obj, true);
+    }
+
+    public Validator validate(Object obj, boolean camelCase) {
+        dataValidator.validate(NodeFactory.getJsonNodeConverter(camelCase).convert(obj));
         return this;
     }
 
     /**
      * Extracts data from a JsonNode into a map
+     *
      * @param json The JsonNode to extract from
      * @return Map of extracted data
      */
@@ -130,16 +143,22 @@ public class Validator {
 
     /**
      * Extracts data from an object by converting it to JSON first
+     *
      * @param obj The object to extract from
      * @return Map of extracted data
      */
     public Map<String, Object> extract(Object obj) {
-        JsonNode json = NodeFactory.convert(obj);
+        return this.extract(obj, true);
+    }
+
+    public Map<String, Object> extract(Object obj, boolean camelCase) {
+        JsonNode json = NodeFactory.getJsonNodeConverter(camelCase).convert(obj);
         return dataValidator.extract(json);
     }
 
     /**
      * Extracts data from a JSON string into a map
+     *
      * @param json The JSON string to extract from
      * @return Map of extracted data
      */
@@ -157,6 +176,7 @@ public class Validator {
 
         /**
          * Sets the filter for handling unknown nodes
+         *
          * @param filter The filter to use
          */
         public void setUnknownNodeFilter(UnknownNodeFilter filter) {
@@ -168,7 +188,8 @@ public class Validator {
 
         /**
          * Constructor for AbstractDataValidator
-         * @param jsonSchemas List of JSON schemas to validate against
+         *
+         * @param jsonSchemas   List of JSON schemas to validate against
          * @param verifyHandler Handler for verification
          */
         public AbstractDataValidator(List<JsonSchema> jsonSchemas, VerifyHandler verifyHandler) {
@@ -180,6 +201,7 @@ public class Validator {
 
         /**
          * Validates a JsonNode against the first schema
+         *
          * @param jsonNode Node to validate
          * @return This validator instance
          */
@@ -190,6 +212,7 @@ public class Validator {
 
         /**
          * Extracts data from a JsonNode according to schema
+         *
          * @param jsonNode Node to extract from
          * @return Map of extracted data
          */
@@ -207,6 +230,7 @@ public class Validator {
 
         /**
          * Validates data from a supplier function
+         *
          * @param dataSupplier Function supplying data
          * @return This validator instance
          */
@@ -217,6 +241,7 @@ public class Validator {
 
         /**
          * Extracts data from a supplier function according to schema
+         *
          * @param dataSupplier Function supplying data
          * @return Map of extracted data
          */
@@ -250,8 +275,9 @@ public class Validator {
 
         /**
          * Creates a new AbstractDataValidator instance
+         *
          * @param verifyHandler Handler for verification
-         * @param jsonSchemas Schemas to validate against
+         * @param jsonSchemas   Schemas to validate against
          * @return New AbstractDataValidator instance
          */
         public static AbstractDataValidator make(VerifyHandler verifyHandler, JsonSchema... jsonSchemas) {
@@ -260,7 +286,8 @@ public class Validator {
 
         /**
          * Validates and processes an object node
-         * @param node Node to validate
+         *
+         * @param node       Node to validate
          * @param jsonSchema Schema to validate against
          */
         protected void object(JsonNode node, JsonSchema jsonSchema) {
@@ -289,8 +316,9 @@ public class Validator {
 
         /**
          * Deletes nodes that don't exist in schema
+         *
          * @param objectNode Node to clean
-         * @param children Schema children to check against
+         * @param children   Schema children to check against
          */
         void delete(ObjectNode objectNode, JsonSchema[] children) {
             Iterator<String> iterator = objectNode.fieldNames();
@@ -314,8 +342,9 @@ public class Validator {
 
         /**
          * Checks if a field name exists in schema children
+         *
          * @param children Schema children to check
-         * @param name Field name to look for
+         * @param name     Field name to look for
          * @return true if exists, false otherwise
          */
         boolean exists(JsonSchema[] children, String name) {
@@ -329,7 +358,8 @@ public class Validator {
 
         /**
          * Validates and processes an array node
-         * @param jsonNode Node to validate
+         *
+         * @param jsonNode   Node to validate
          * @param jsonSchema Schema to validate against
          */
         void array(JsonNode jsonNode, JsonSchema jsonSchema) {
@@ -354,6 +384,7 @@ public class Validator {
 
         /**
          * Checks if a node is empty or null
+         *
          * @param node Node to check
          * @return true if empty, false otherwise
          */
@@ -377,6 +408,7 @@ public class Validator {
 
         /**
          * Creates a new DataStructValidator instance
+         *
          * @param dataValidator The abstract validator to use
          * @return New DataStructValidator instance
          */
@@ -386,8 +418,9 @@ public class Validator {
 
         /**
          * Validates a JsonNode against a schema
+         *
          * @param jsonSchema Schema to validate against
-         * @param jsonNode Node to validate
+         * @param jsonNode   Node to validate
          */
         public void validate(JsonSchema jsonSchema, JsonNode jsonNode) {
             if (jsonSchema == null) {
@@ -416,8 +449,9 @@ public class Validator {
 
         /**
          * Validates data from a supplier against schemas
+         *
          * @param dataSupplier Function supplying data
-         * @param jsonSchemas Schemas to validate against
+         * @param jsonSchemas  Schemas to validate against
          */
         public void validate(Function<String, String> dataSupplier, JsonSchema... jsonSchemas) {
             if (dataSupplier == null) {
@@ -457,8 +491,9 @@ public class Validator {
 
         /**
          * Validates an array node against schema
+         *
          * @param jsonSchema Schema to validate against
-         * @param value Node to validate
+         * @param value      Node to validate
          */
         void checkArray(JsonSchema jsonSchema, JsonNode value) {
             if (jsonSchema.isArray() && value.isArray()) {
@@ -495,8 +530,9 @@ public class Validator {
 
         /**
          * Validates a simple (primitive) value against schema
+         *
          * @param jsonSchema Schema to validate against
-         * @param node Node to validate
+         * @param node       Node to validate
          */
         void checkSimple(JsonSchema jsonSchema, JsonNode node) {
             if (jsonSchema.isPrimitive()) {
@@ -540,8 +576,9 @@ public class Validator {
 
         /**
          * Validates an object node against schema
+         *
          * @param jsonSchema Schema to validate against
-         * @param jsonNode Node to validate
+         * @param jsonNode   Node to validate
          */
         void checkObject(JsonSchema jsonSchema, JsonNode jsonNode) {
             if (!jsonSchema.isObject() || !jsonNode.isObject()) {

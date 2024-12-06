@@ -29,95 +29,255 @@ import java.sql.Timestamp;
 import java.util.*;
 
 /**
- * 根据Java类定义生成Mock对象
+ * Mock数据生成器
+ * 负责根据解析的类型生成相应的模拟数据
  */
 public class MockDataGenerator {
-    static Logger log = LoggerFactory.getLogger(MockDataGenerator.class);
+    private static final Logger log = LoggerFactory.getLogger(MockDataGenerator.class);
     private static final Faker faker = new Faker();
+    private static final ThreadLocal<MockOptions> THREAD_LOCAL = new ThreadLocal<>();
 
+    /**
+     * 自定义Mock值生成器接口
+     */
     public interface MockValueGenerator {
         Object generate(Class<?> type, Type genericType, Set<Class<?>> visitedClasses);
     }
 
+    /**
+     * 自定义实例生成器接口
+     */
     public interface InstanceGenerator {
         Object generate(Class<?> type, Set<Class<?>> visitedClasses);
     }
 
-    /**
-     * Interface for custom mock value generators.
-     */
     private static MockValueGenerator customGenerator = (type, genericType, visitedClasses) -> null;
     private static InstanceGenerator instanceGenerator = (type, visitedClasses) -> null;
 
     /**
-     * 设置自定义的模拟值生成器。
-     *
-     * @param generator 自定义生成器。
+     * 设置自定义的模拟值生成器
      */
     public static void setCustomMockValueGenerator(MockValueGenerator generator) {
         customGenerator = generator;
     }
 
+    /**
+     * 设置自定义的实例生成器
+     */
     public static void setInstanceGenerator(InstanceGenerator generator) {
         instanceGenerator = generator;
     }
 
     /**
-     * 生成指定类的JSON格式模拟数据。
-     *
-     * @param clazz 要生成模拟数据的类。
-     * @return JSON格式的字符串。
+     * 生成指定类的JSON格式模拟数据
      */
     @SneakyThrows
-    public static String getJsonMock(Class<?> clazz) {
-        Set<Class<?>> visitedClasses = new HashSet<>();
-        Object instance = generateMockInstance(clazz, visitedClasses);
-        return GsonEncoder.INSTANCE.encode(instance);
+    public static String getJsonMock(Class<?> clazz, MockOptions options) {
+        try {
+            THREAD_LOCAL.set(options);
+            Set<Class<?>> visitedClasses = new HashSet<>();
+            Object instance = generateMockInstance(clazz, visitedClasses);
+            return GsonEncoder.INSTANCE.encode(instance);
+        } finally {
+            THREAD_LOCAL.remove();
+        }
     }
 
-    public static <E extends Enum<E>> E getRandomEnumInstance(Class<E> enumClass) {
+    /**
+     * 生成指定TypeReference的JSON格式模拟数据
+     */
+    public static <T> String getJsonMock(TypeReference<T> typeReference, MockOptions options) {
+        try {
+            THREAD_LOCAL.set(options);
+            Set<Class<?>> visitedClasses = new HashSet<>();
+
+            // 获取TypeReference中的实际类型
+            Type type = typeReference.getType();
+            if (type instanceof ParameterizedType) {
+                ParameterizedType parameterizedType = (ParameterizedType) type;
+                Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+                Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+                // 创建类型映射
+                Map<TypeVariable<?>, Type> typeMap = new HashMap<>();
+                TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
+                for (int i = 0; i < typeParameters.length; i++) {
+                    typeMap.put(typeParameters[i], actualTypeArguments[i]);
+                }
+
+                // 生成实例并处理泛型
+                Object instance = createInstance(rawType, visitedClasses);
+                processFields(instance, rawType, typeMap, visitedClasses);
+
+                return GsonEncoder.INSTANCE.encode(instance);
+            }
+
+            return "{}";
+        } finally {
+            THREAD_LOCAL.remove();
+        }
+    }
+
+    /**
+     * 生成模拟实例
+     */
+    @SneakyThrows
+    private static Object generateMockInstance(Class<?> clazz, Set<Class<?>> visitedClasses) {
+        if (shouldSkipInstance(clazz, visitedClasses)) {
+            return null;
+        }
+        if (Enum.class.isAssignableFrom(clazz)) {
+            return getRandomEnumInstance((Class<? extends Enum>) clazz);
+        }
+
+        visitedClasses.add(clazz);
+        try {
+            Object instance = createInstance(clazz, visitedClasses);
+
+            // 获取完整的类层次结构
+            List<Class<?>> classHierarchy = new ArrayList<>();
+            Class<?> currentClass = clazz;
+            while (currentClass != null && !currentClass.getName().startsWith("java.")) {
+                classHierarchy.add(0, currentClass);
+                currentClass = currentClass.getSuperclass();
+            }
+
+            // 处理每个类的字段
+            Map<TypeVariable<?>, Type> typeMap = new HashMap<>();
+            buildTypeMap(clazz, typeMap);
+
+            for (Class<?> cls : classHierarchy) {
+                for (Field field : cls.getDeclaredFields()) {
+                    if (shouldSkipField(field)) {
+                        continue;
+                    }
+                    field.setAccessible(true);
+
+                    Type genericType = field.getGenericType();
+                    if (genericType instanceof TypeVariable) {
+                        Type actualType = typeMap.get(genericType);
+                        if (actualType == null) {
+                            actualType = TypeResolver.resolveTypeVariable((TypeVariable<?>) genericType);
+                        }
+                        Class<?> actualClass = TypeResolver.resolveActualType(actualType);
+                        Object value = generateMockValue(actualClass, actualType, visitedClasses);
+                        field.set(instance, value);
+                    } else {
+                        Object value = generateMockValue(field.getType(), genericType, visitedClasses);
+                        if (value != null) {
+                            field.set(instance, value);
+                        }
+                    }
+                }
+            }
+
+            return instance;
+        } finally {
+            visitedClasses.remove(clazz);
+        }
+    }
+
+    /**
+     * 构建类型映射
+     */
+    private static void buildTypeMap(Class<?> clazz, Map<TypeVariable<?>, Type> typeMap) {
+        Type genericSuperclass = clazz.getGenericSuperclass();
+        if (genericSuperclass instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) genericSuperclass;
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+            for (int i = 0; i < typeParameters.length; i++) {
+                typeMap.put(typeParameters[i], actualTypeArguments[i]);
+            }
+
+            // 递归处理父类
+            buildTypeMap(rawType, typeMap);
+        }
+    }
+
+    /**
+     * 生成模拟值
+     */
+    private static Object generateMockValue(Class<?> type, Type genericType, Set<Class<?>> visitedClasses) {
+        // 处理自定义生成器
+        Object customValue = customGenerator.generate(type, genericType, visitedClasses);
+        if (customValue != null) {
+            return customValue;
+        }
+
+        // 处理数组类型
+        if (type.isArray()) {
+            return generateMockArray(type.getComponentType(), visitedClasses);
+        }
+
+        // 处理集合类型
+        if (Collection.class.isAssignableFrom(type)) {
+            return generateMockCollection((Class<? extends Collection>) type, genericType, visitedClasses);
+        }
+
+        // 处理Map类型
+        if (Map.class.isAssignableFrom(type)) {
+            return generateMockMap((Class<? extends Map>) type, genericType, visitedClasses);
+        }
+
+        // 处理基本类型
+        if (type.isPrimitive() || type == String.class ||
+                Number.class.isAssignableFrom(type) ||
+                Boolean.class == type) {
+            return generateBasicTypeValue(type);
+        }
+
+        // 处理复杂类型
+        if (!type.isPrimitive() && !type.getName().startsWith("java.")) {
+            return generateMockInstance(type, visitedClasses);
+        }
+
+        return null;
+    }
+
+    /**
+     * 生成基本类型的模拟值
+     */
+    private static Object generateBasicTypeValue(Class<?> type) {
+        if (type == String.class) {
+            return faker.lorem().word();
+        } else if (type == Boolean.class || type == boolean.class) {
+            return faker.bool().bool();
+        } else if (type == Integer.class || type == int.class) {
+            return faker.number().numberBetween(0, 100);
+        } else if (type == Long.class || type == long.class) {
+            return faker.number().randomNumber();
+        } else if (type == Double.class || type == double.class) {
+            return faker.number().randomDouble(2, 0, 100);
+        } else if (type == Float.class || type == float.class) {
+            return (float) faker.number().randomDouble(2, 0, 100);
+        } else if (type == Short.class || type == short.class) {
+            return (short) faker.number().numberBetween(0, 100);
+        } else if (type == Byte.class || type == byte.class) {
+            return (byte) faker.number().numberBetween(0, 100);
+        } else if (type == Character.class || type == char.class) {
+            return faker.lorem().character();
+        } else if (type == BigDecimal.class) {
+            return BigDecimal.valueOf(faker.number().randomDouble(2, 0, 100));
+        } else if (type == BigInteger.class) {
+            return BigInteger.valueOf(faker.number().randomNumber());
+        } else if (Date.class.isAssignableFrom(type)) {
+            return faker.date().birthday();
+        } else if (type == Timestamp.class) {
+            return new Timestamp(faker.date().birthday().getTime());
+        }
+        return null;
+    }
+
+    private static <E extends Enum<E>> E getRandomEnumInstance(Class<E> enumClass) {
         if (Enum.class.isAssignableFrom(enumClass)) {
             E[] enumConstants = enumClass.getEnumConstants();
             int randomIndex = new Random().nextInt(enumConstants.length);
             return enumConstants[randomIndex];
         }
         throw new IllegalArgumentException("Provided class is not an enum type");
-    }
-
-    /**
-     * 生成指定类的模拟实例。
-     *
-     * @param clazz 要生成实例的类。
-     * @return 类的实例对象。
-     */
-    @SneakyThrows
-    private static Object generateMockInstance(Class<?> clazz, Set<Class<?>> visitedClasses) {
-        if (visitedClasses.contains(clazz)) {
-            return null; // 避免循环引用
-        }
-        if (Enum.class.isAssignableFrom(clazz)) {
-            return getRandomEnumInstance((Class<? extends Enum>) clazz);
-        } else if (clazz.isInterface()) {
-            log.info("自动跳过接口实例化:{}", clazz.getName());
-            return null;
-        }
-        visitedClasses.add(clazz);
-        try {
-            Object instance = createInstance(clazz, visitedClasses);
-            if (!clazz.getName().startsWith("java.")) {
-                for (Field field : getAllFields(clazz)) {
-                    if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
-                        continue;//skip
-                    }
-                    field.setAccessible(true);
-                    Object value = generateMockValue(field.getType(), field.getGenericType(), visitedClasses);
-                    field.set(instance, value);
-                }
-            }
-            return instance;
-        } finally {
-            visitedClasses.remove(clazz);
-        }
     }
 
     /**
@@ -178,59 +338,28 @@ public class MockDataGenerator {
     }
 
     /**
-     * 根据字段类型生成模拟值。
-     *
-     * @param type        字段的类型。
-     * @param genericType 字段的泛型类型。
-     * @return 模拟值。
+     * 判断是否应该跳过实例生成
      */
-    private static Object generateMockValue(Class<?> type, Type genericType, Set<Class<?>> visitedClasses) {
-        if (type.isArray()) {
-            return generateMockArray(type.getComponentType(), visitedClasses);
-        } else if (type == String.class) {
-            return faker.lorem().word();
-        } else if (type == int.class || type == Integer.class) {
-            return faker.number().numberBetween(0, 100);
-        } else if (type == long.class || type == Long.class) {
-            return faker.number().randomNumber();
-        } else if (type == double.class || type == Double.class) {
-            return faker.number().randomDouble(2, 0, 100);
-        } else if (type == boolean.class || type == Boolean.class) {
-            return faker.bool().bool();
-        } else if (type == float.class || type == Float.class) {
-            return (float) faker.number().randomDouble(2, 0, 100);
-        } else if (type == short.class || type == Short.class) {
-            return (short) faker.number().numberBetween(0, 100);
-        } else if (type == byte.class || type == Byte.class) {
-            return (byte) faker.number().numberBetween(0, 100);
-        } else if (type == char.class || type == Character.class) {
-            return faker.lorem().character();
-        } else if (Collection.class.isAssignableFrom(type)) {
-            return generateMockCollection((Class<? extends Collection>) type, genericType, visitedClasses);
-        } else if (Map.class.isAssignableFrom(type)) {
-            return generateMockMap((Class<? extends Map>) type, genericType, visitedClasses);
-        } else if (type == Timestamp.class) {
-            return new Timestamp(faker.date().birthday().getTime());
-        } else if (Date.class.isAssignableFrom(type)) {
-            return faker.date().birthday();
-        } else if (BigInteger.class.isAssignableFrom(type)) {
-            return BigInteger.valueOf(faker.number().randomNumber());
-        } else if (BigDecimal.class.isAssignableFrom(type)) {
-            return BigDecimal.valueOf(faker.number().randomDouble(2, 0, 100));
-        } else if (!type.isPrimitive()) {
-            return generateMockInstance(type, visitedClasses);
-        }
-        return customGenerator.generate(type, genericType, visitedClasses);
+    private static boolean shouldSkipInstance(Class<?> clazz, Set<Class<?>> visitedClasses) {
+        return visitedClasses.contains(clazz) || clazz.isInterface();
     }
 
     /**
-     * 生成数组类型的模拟数据。
+     * 判断是否应该跳过字段处理
+     */
+    private static boolean shouldSkipField(Field field) {
+        int modifiers = field.getModifiers();
+        return Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers);
+    }
+
+    /**
+     * 生成数组类的模拟数据。
      *
      * @param componentType 数组的组件类型。
      * @return 数组的模拟数据。
      */
     private static Object generateMockArray(Class<?> componentType, Set<Class<?>> visitedClasses) {
-        int arrayLength = 3; // 示例长度
+        int arrayLength = getOptions().getArraySize(); // 例长度
         Object array = Array.newInstance(componentType, arrayLength);
         for (int i = 0; i < arrayLength; i++) {
             Object element = generateMockValue(componentType, componentType, visitedClasses);
@@ -248,25 +377,45 @@ public class MockDataGenerator {
      */
     private static Collection<?> generateMockCollection(Class<? extends Collection> collectionType, Type genericType, Set<Class<?>> visitedClasses) {
         Collection<Object> collection;
+        // 创建具体的集合实例
         if (List.class.isAssignableFrom(collectionType)) {
             collection = new ArrayList<>();
         } else if (Set.class.isAssignableFrom(collectionType)) {
             collection = new HashSet<>();
         } else {
-            return Collections.emptyList(); // 默认返回空列表
+            try {
+                collection = (Collection<Object>) collectionType.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                collection = new ArrayList<>();
+            }
         }
 
+        // 获取元素类型
+        Class<?> elementType = Object.class;
+        Type actualElementType = Object.class;
+        
         if (genericType instanceof ParameterizedType) {
-            Type elementType = ((ParameterizedType) genericType).getActualTypeArguments()[0];
-            if (elementType instanceof Class) {
-                for (int i = 0; i < 3; i++) { // 生成几个元素
-                    Object element = generateMockValue((Class<?>) elementType, elementType, visitedClasses);
-                    if (element != null) { // 确保非空元素
-                        collection.add(element);
-                    }
+            ParameterizedType paramType = (ParameterizedType) genericType;
+            Type[] typeArgs = paramType.getActualTypeArguments();
+            if (typeArgs.length > 0) {
+                actualElementType = typeArgs[0];
+                if (actualElementType instanceof Class) {
+                    elementType = (Class<?>) actualElementType;
+                } else if (actualElementType instanceof ParameterizedType) {
+                    elementType = (Class<?>) ((ParameterizedType) actualElementType).getRawType();
                 }
             }
         }
+
+        // 生成元素
+        int size = getOptions().getArraySize();
+        for (int i = 0; i < size; i++) {
+            Object element = generateMockValue(elementType, actualElementType, visitedClasses);
+            if (element != null) {
+                collection.add(element);
+            }
+        }
+
         return collection;
     }
 
@@ -278,24 +427,187 @@ public class MockDataGenerator {
      * @return 映射的模拟数据。
      */
     private static Map<?, ?> generateMockMap(Class<? extends Map> mapType, Type genericType, Set<Class<?>> visitedClasses) {
-        Map<Object, Object> map;
-        if (Map.class.isAssignableFrom(mapType)) {
-            map = new HashMap<>();
-        } else {
-            return Collections.emptyMap(); // 默认返回空映射
-        }
+        Map<Object, Object> map = new HashMap<>();
+
+        // 获取键值类型
+        Class<?> keyType = String.class;
+        Class<?> valueType = Object.class;
+        Type actualValueType = Object.class;
+
         if (genericType instanceof ParameterizedType) {
-            Type[] typeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
-            if (typeArguments.length == 2 && typeArguments[0] instanceof Class && typeArguments[1] instanceof Class) {
-                Class<?> keyType = (Class<?>) typeArguments[0];
-                Class<?> valueType = (Class<?>) typeArguments[1];
-                for (int i = 0; i < 3; i++) { // 生成几个条目
-                    Object key = generateMockValue(keyType, keyType, visitedClasses);
-                    Object value = generateMockValue(valueType, valueType, visitedClasses);
-                    map.put(key, value);
+            ParameterizedType paramType = (ParameterizedType) genericType;
+            Type[] typeArgs = paramType.getActualTypeArguments();
+            if (typeArgs.length > 1) {
+                // 获取值类型
+                Type valueTypeArg = typeArgs[1];
+                actualValueType = valueTypeArg;
+                if (valueTypeArg instanceof Class) {
+                    valueType = (Class<?>) valueTypeArg;
+                } else if (valueTypeArg instanceof ParameterizedType) {
+                    valueType = (Class<?>) ((ParameterizedType) valueTypeArg).getRawType();
                 }
             }
         }
+
+        // 生成键值对
+        int size = getOptions().getMapSize();
+        for (int i = 0; i < size; i++) {
+            String key = getOptions().getMapKeyPrefix() + i;
+            Object value = generateMockValue(valueType, actualValueType, visitedClasses);
+            if (value != null) {
+                map.put(key, value);
+            }
+        }
+
         return map;
+    }
+
+    /**
+     * 获取当前线程的MockOptions配置
+     */
+    private static MockOptions getOptions() {
+        return THREAD_LOCAL.get() != null ? THREAD_LOCAL.get() : MockOptions.defaultOptions();
+    }
+
+    /**
+     * 处理集合类型字段
+     */
+    @SneakyThrows
+    private static void processCollectionField(Object instance, Field field,
+                                               Class<?> collectionType,
+                                               Type elementType,
+                                               Set<Class<?>> visitedClasses) {
+        Collection<Object> collection;
+        if (List.class.isAssignableFrom(collectionType)) {
+            collection = new ArrayList<>();
+        } else if (Set.class.isAssignableFrom(collectionType)) {
+            collection = new HashSet<>();
+        } else {
+            try {
+                collection = (Collection<Object>) collectionType.getDeclaredConstructor().newInstance();
+            } catch (Exception e) {
+                collection = new ArrayList<>();
+            }
+        }
+
+        // 解析元素类型
+        Class<?> actualElementType = TypeResolver.resolveActualType(elementType);
+
+        // 生成集合元素
+        for (int i = 0; i < getOptions().getArraySize(); i++) {
+            Object element = generateMockValue(actualElementType, elementType, visitedClasses);
+            if (element != null) {
+                collection.add(element);
+            }
+        }
+
+        field.set(instance, collection);
+    }
+
+    /**
+     * 处理Map类型字段
+     */
+    @SneakyThrows
+    private static void processMapField(Object instance, Field field,
+                                        Class<?> mapType,
+                                        Type valueType,
+                                        Set<Class<?>> visitedClasses) {
+        Map<String, Object> map = new HashMap<>();
+
+        // 解析值类型
+        Class<?> actualValueType = TypeResolver.resolveActualType(valueType);
+
+        // 生成Map元素
+        for (int i = 0; i < getOptions().getMapSize(); i++) {
+            String key = getOptions().getMapKeyPrefix() + i;
+            Object value = generateMockValue(actualValueType, valueType, visitedClasses);
+            if (value != null) {
+                map.put(key, value);
+            }
+        }
+
+        field.set(instance, map);
+    }
+
+    /**
+     * 处理字段，包括泛型字段
+     */
+    @SneakyThrows
+    private static void processFields(Object instance, Class<?> clazz,
+                                      Map<TypeVariable<?>, Type> typeMap,
+                                      Set<Class<?>> visitedClasses) {
+        // 获取完整的类层次结构
+        List<Class<?>> classHierarchy = new ArrayList<>();
+        Class<?> currentClass = clazz;
+        while (currentClass != null && !currentClass.getName().startsWith("java.")) {
+            classHierarchy.add(0, currentClass);
+            currentClass = currentClass.getSuperclass();
+        }
+
+        // 处理每个类的字段
+        for (Class<?> cls : classHierarchy) {
+            for (Field field : cls.getDeclaredFields()) {
+                if (shouldSkipField(field)) {
+                    continue;
+                }
+                try {
+                    generateFieldMockData(instance, typeMap, visitedClasses, field);
+                } catch (Exception e) {
+                    log.error("field:{} 生成 mock 数据出错",field.getName(),e);
+                }
+            }
+        }
+    }
+
+    private static void generateFieldMockData(Object instance, Map<TypeVariable<?>, Type> typeMap, Set<Class<?>> visitedClasses, Field field) throws IllegalAccessException {
+        field.setAccessible(true);
+        Type genericType = field.getGenericType();
+        if (genericType instanceof TypeVariable) {
+            // 处理泛型字段
+            Type actualType = typeMap.get(genericType);
+            if (actualType != null) {
+                Object value;
+                if (actualType instanceof Class) {
+                    value = generateMockValue((Class<?>) actualType, actualType, visitedClasses);
+                } else if (actualType instanceof ParameterizedType) {
+                    Class<?> rawType = (Class<?>) ((ParameterizedType) actualType).getRawType();
+                    value = generateMockValue(rawType, actualType, visitedClasses);
+                } else {
+                    value = generateMockValue(Object.class, actualType, visitedClasses);
+                }
+                field.set(instance, value);
+            }
+        } else if (genericType instanceof ParameterizedType) {
+            // 处理参数化类型字段
+            ParameterizedType parameterizedType = (ParameterizedType) genericType;
+            Class<?> rawType = (Class<?>) parameterizedType.getRawType();
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+
+            // 创建新的类型映射
+            Map<TypeVariable<?>, Type> fieldTypeMap = new HashMap<>(typeMap);
+            TypeVariable<?>[] typeParameters = rawType.getTypeParameters();
+            for (int i = 0; i < typeParameters.length; i++) {
+                if (actualTypeArguments[i] instanceof TypeVariable) {
+                    Type actualType = typeMap.get(actualTypeArguments[i]);
+                    if (actualType != null) {
+                        fieldTypeMap.put(typeParameters[i], actualType);
+                    }
+                } else {
+                    fieldTypeMap.put(typeParameters[i], actualTypeArguments[i]);
+                }
+            }
+
+            Object value = generateMockValue(rawType, parameterizedType, visitedClasses);
+            if (value != null) {
+                processFields(value, rawType, fieldTypeMap, visitedClasses);
+                field.set(instance, value);
+            }
+        } else {
+            // 处理普通字段
+            Object value = generateMockValue(field.getType(), genericType, visitedClasses);
+            if (value != null) {
+                field.set(instance, value);
+            }
+        }
     }
 }

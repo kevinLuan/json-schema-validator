@@ -26,7 +26,7 @@ import java.util.TimeZone;
  */
 public class SnakeCaseObjectMapper extends ObjectMapper {
     public SnakeCaseObjectMapper() {
-        // 设置属性命名策略为蛇形命名法
+        // 默认下划线命名法
         setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
         // 配置反序列化时忽略未知属性
         configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);

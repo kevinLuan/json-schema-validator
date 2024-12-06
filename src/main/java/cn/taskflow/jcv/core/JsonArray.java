@@ -25,7 +25,7 @@ import java.util.Optional;
  * 表示JSON模式中的数组参数类型。
  * 此类用于定义JSON数组的结构和验证规则。
  * 它扩展了JsonBasicSchema类以继承通用模式属性。
- * 
+ * <p>
  * 作者：KEVIN LUAN
  */
 public class JsonArray extends JsonBasicSchema {
@@ -105,6 +105,14 @@ public class JsonArray extends JsonBasicSchema {
         return new JsonArray(name, true, null, null);
     }
 
+    public static JsonArray required() {
+        return new JsonArray(null, true, null, null);
+    }
+
+    public static JsonArray required(JsonBasicSchema schema) {
+        return new JsonArray(null, true, null, schema);
+    }
+
     /**
      * 创建具有指定名称和描述的必需JsonArray。
      *
@@ -148,6 +156,19 @@ public class JsonArray extends JsonBasicSchema {
      */
     public static JsonArray optional(String name) {
         return new JsonArray(name, false, null, null);
+    }
+
+    public static JsonArray optional(JsonBasicSchema schema) {
+        return new JsonArray(null, false, null, schema);
+    }
+
+    /**
+     * 对于一个值类型的参数
+     *
+     * @return
+     */
+    public static JsonArray optional() {
+        return new JsonArray(null, false, null, null);
     }
 
     /**

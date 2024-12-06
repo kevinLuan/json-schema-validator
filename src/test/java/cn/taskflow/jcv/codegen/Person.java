@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -47,13 +48,14 @@ public class Person {
 
     @Data
     public static class Order {
-        private String      orderId;
-        private String      product;
-        private int         quantity;
-        private double      price;
-        private Date        orderDate;
-        private List<Goods> goods;
-        private Timestamp   createTime;
+        private String              orderId;
+        private String              product;
+        private int                 quantity;
+        private double              price;
+        private Date                orderDate;
+        private List<Goods>         goods;
+        private Timestamp           createTime;
+        private Map<String, Object> extendsProperties = new HashMap<>();
     }
 
     @Data
