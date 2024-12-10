@@ -16,10 +16,6 @@
  */
 package cn.taskflow.jcv.codegen;
 
-/**
- * @author SHOUSHEN.LUAN
- * @since 2024-11-29
- */
 public class MockOptions {
     private int    arraySize    = 1;
     private int    mapSize      = 1;
