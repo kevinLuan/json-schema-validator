@@ -24,8 +24,6 @@ import java.lang.reflect.Type;
  * 该类利用Java的参数化类型能力在运行时保留泛型类型信息。
  * 它对于需要了解泛型类型的操作非常有用，例如JSON序列化和反序列化。
  *
- * @author SHOUSHEN.LUAN
- * @since 2024-12-02
  * @param <T> 由此TypeReference捕获的类型参数
  */
 public abstract class TypeReference<T> implements Comparable<TypeReference<T>> {

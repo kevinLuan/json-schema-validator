@@ -27,9 +27,6 @@ import cn.taskflow.jcv.utils.JsonSchemaCodec;
 /**
  * 用于从JSON模式生成Java代码的代码生成实用程序类。
  * 该类提供了将JSON数据转换为Java代码表示的方法，并处理JSON模式的序列化和反序列化。
- *
- * @作者 SHOUSHEN.LUAN
- * @自 2023-04-16
  */
 public class CodeGenerationUtils {
     static ThreadLocal<GenerateOptions> THREAD_LOCAL = new ThreadLocal<>();

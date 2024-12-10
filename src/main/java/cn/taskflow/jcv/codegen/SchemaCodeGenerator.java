@@ -25,8 +25,6 @@ import java.util.Optional;
 /**
  * 将Param转换到JavaCode
  * 该类用于将JsonSchema对象转换为Java代码表示
- *
- * @author KEVIN LUAN
  */
 class SchemaCodeGenerator {
     private final static String NEW_LINE = ""; // 定义一个常量用于表示新行
