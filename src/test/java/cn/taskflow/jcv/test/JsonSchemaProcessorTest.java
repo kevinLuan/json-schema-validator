@@ -17,7 +17,10 @@
 package cn.taskflow.jcv.test;
 
 import cn.taskflow.jcv.core.*;
+import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsonSchemaProcessor;
+import cn.taskflow.jcv.validation.Validator;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class JsonSchemaProcessorTest {
@@ -35,6 +38,21 @@ public class JsonSchemaProcessorTest {
                 JsonNumber.ofNonNull().setMax(100) //
                 )//
             );
+    }
+
+    @Test
+    public void testRegex() {
+        JsonSchema schema = JsonNumber.required("age", "年龄").matchesRegex("^(1[8-9]|[2-5][0-9]|60)$");
+        for (int i = 18; i <= 60; i++) {
+            Validator.fromSchema(schema).validate(i);
+        }
+        try {
+            Validator.fromSchema(schema).validate(188);
+            Assert.fail("未出现逾期结果");
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
+            Assert.assertEquals("age", e.getPath());
+        }
     }
 
     @Test

@@ -19,6 +19,7 @@ package cn.taskflow.jcv.core;
 import cn.taskflow.jcv.exception.ValidationException;
 import cn.taskflow.jcv.utils.JsvUtils;
 import cn.taskflow.jcv.validation.CustomValidationRule;
+import cn.taskflow.jcv.validation.RegexValidation;
 import cn.taskflow.jcv.validation.ValueRangeValidation;
 
 /**
@@ -232,6 +233,25 @@ public class Primitive extends JsonBasicSchema {
             }
         }
         validationRules.add(ValueRangeValidation.fromExcludeValues(values));
+        return this;
+    }
+
+    /**
+     * 添加正则表达式验证规则。如果提供多个正则表达式，任意一个匹配即视为验证通过。
+     *
+     * @param patterns 一个或多个正则表达式模式
+     * @return 当前的Primitive实例，支持链式调用
+     * @throws IllegalArgumentException 如果提供的正则表达式语法无效
+     */
+    public Primitive matchesRegex(String... patterns) {
+        if (patterns == null || patterns.length < 1) {
+            throw new IllegalArgumentException("patterns cannot be empty");
+        }
+        RegexValidation regexValidation = RegexValidation.fromRegex(patterns[0]);
+        for (int i = 1; i < patterns.length; i++) {
+            regexValidation.addPattern(patterns[i]);
+        }
+        validationRules.add(regexValidation);
         return this;
     }
 }
