@@ -17,8 +17,11 @@
 package cn.taskflow.jcv.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author KEVIN.LUAN
@@ -63,5 +66,19 @@ public class JsonNodeTraverserTests {
                 System.out.println(path + " --> " + node.asText());
             }
         });
+    }
+
+    @Test
+    public void test() throws JsonProcessingException {
+        Map<String,String> map =new HashMap<>();
+        map.put("id","1001");
+        map.put("name","John Doe ${for_ref.output.element} ::: ${for_ref.output.index}");
+        String json = new ObjectMapper().writeValueAsString(map);
+        JsonNodeTraverser.traverse(json, (path, node) -> {
+            if (node.isValueNode()) {
+                System.out.println(path + " --> " + node.asText());
+            }
+        });
+
     }
 }
