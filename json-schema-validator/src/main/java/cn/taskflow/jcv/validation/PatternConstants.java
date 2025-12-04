@@ -23,7 +23,7 @@ package cn.taskflow.jcv.validation;
 public class PatternConstants {
 
     // 手机号正则表达式：中国大陆手机号，以1开头，后面跟随10位数字
-    public static final String PHONE                  = "^1[0-9]{10}$";
+    public static final String PHONE                  = "^1[3-9]\\d{9}$";
 
     // 电子邮件地址正则表达式：简单验证格式
     public static final String EMAIL                  = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
@@ -39,4 +39,6 @@ public class PatternConstants {
 
     // 字母数字组合，长度从1到64
     public static final String LETTERS_DIGITS_1_TO_64 = "^[a-zA-Z0-9]{1,64}$";
+    //    工作流名称只允许字母、数字和下划线，并以字母开头
+    public static final String NAME                   = "^[a-zA-Z][a-zA-Z0-9_]{0,29}$";
 }

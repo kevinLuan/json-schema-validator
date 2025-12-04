@@ -8,7 +8,7 @@
         <artifactId>json-schema-validator-parent</artifactId>
         <version>${revision}</version>
     </parent>
-
+    <name>json-schema-validator-spring</name>
     <artifactId>json-schema-validator-spring</artifactId>
 
     <properties>
